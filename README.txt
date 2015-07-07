@@ -2,8 +2,8 @@
 ########################################################################
 #
 # Project: pyMetalink
-# URL: http://www.nabber.org/projects/
-# E-mail: webmaster@nabber.org
+# URL: https://github.com/metalink-dev/pymetalink
+# E-mail: nabber00@gmail.com
 #
 # Copyright: (C) 2007-2015, Neil McNab, Hampus Wessman
 # License: GNU General Public License Version 2
@@ -22,11 +22,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-#
-# Filename: $URL: https://metalinks.svn.sourceforge.net/svnroot/metalinks/checker/metalink.py $
-# Last Updated: $Date: 2008-03-24 00:31:39 -0700 (Mon, 24 Mar 2008) $
-# Version: $Rev: 130 $
-# Author(s): Neil McNab
 #
 # Description:
 #   pyMetalink is a library for python to support advanced download features

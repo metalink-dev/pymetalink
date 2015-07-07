@@ -13,7 +13,7 @@ LICENSE = 'GNU GPL'
 DESC = 'A metalink library for Python.'
 AUTHOR_NAME = 'Neil McNab'
 EMAIL = 'nabber00@gmail.com'
-URL = 'http://www.metalinker.org'
+URL = 'https://github.com/metalink-dev/pymetalink'
 
 
 def clean():
@@ -32,16 +32,6 @@ def clean():
     try:
         shutil.rmtree("dist")
     except: pass
-#    try:
-#        shutil.rmtree("buildMetalink")
-#    except: pass
-#    try:
-#        shutil.rmtree("buildmetalinkw")
-#    except: pass
-    
-#    try:
-#        shutil.rmtree("tests_temp")
-#    except: pass
     
     for filename in filelist:
         if filename not in ignore:
@@ -49,19 +39,6 @@ def clean():
                 os.remove(filename)
             except: pass
 
-def create_zip(rootpath, zipname, mode="w"):
-    print zipname
-    myzip = zipfile.ZipFile(zipname, mode, zipfile.ZIP_DEFLATED)
-    for root, dirs, files in os.walk(rootpath):
-        for filename in files:
-            filepath = os.path.join(root, filename)
-            filehandle = open(filepath, "rb")
-            filepath = filepath[len(rootpath):]
-            text = filehandle.read()
-            #print filepath, len(text)
-            myzip.writestr(filepath, text)
-            filehandle.close()
-    myzip.close()
 
             
 def rec_search(end, abspath = True):

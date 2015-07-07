@@ -3,8 +3,8 @@
 ########################################################################
 #
 # Project: pyMetalink
-# URL: http://www.nabber.org/projects/
-# E-mail: webmaster@nabber.org
+# URL: https://github.com/metalink-dev/pymetalink
+# E-mail: nabber00@gmail.com
 #
 # Copyright: (C) 2007-2015, Neil McNab
 # License: GNU General Public License Version 2
@@ -23,10 +23,6 @@
 # You should have received a copy of the GNU General Public License
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
-#
-# Filename: $URL$
-# Last Updated: $Date$
-# Author(s): Neil McNab
 #
 # Description:
 #   Download library that can handle metalink files, RFC 5854, RFC 6249.
