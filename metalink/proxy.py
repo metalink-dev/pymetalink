@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 ########################################################################
 #
-# Project: Metalink Checker
+# Project: pyMetalink
 # URL: http://www.nabber.org/projects/
 # E-mail: webmaster@nabber.org
 #
@@ -39,13 +39,13 @@
 #   httplib.HTTPConnection => proxy.HTTPConnection 
 #   httplib.HTTPSConnection => proxy.HTTPSConnection 
 #
-# import proxy
+# import metalink.proxy
 #
 # # optional, set your own proxy settings 
-# proxy.HTTP_PROXY = "http://user:pass@myproxy:80"
+# metalink.proxy.HTTP_PROXY = "http://user:pass@myproxy:80"
 #
 # # initialize proxy from whatever system settings we can find
-# proxy.set_proxies()
+# metalink.proxy.set_proxies()
 #
 # # all urllib2 calls are now configured for proxy
 # urllib2.urlopen("http://example.com/test.html")

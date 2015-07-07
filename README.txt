@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 ########################################################################
 #
-# Project: Metalink Checker
+# Project: pyMetalink
 # URL: http://www.nabber.org/projects/
 # E-mail: webmaster@nabber.org
 #
-# Copyright: (C) 2007-2011, Neil McNab
+# Copyright: (C) 2007-2015, Neil McNab, Hampus Wessman
 # License: GNU General Public License Version 2
 #   (http://www.gnu.org/copyleft/gpl.html)
 #
@@ -29,64 +29,20 @@
 # Author(s): Neil McNab
 #
 # Description:
-#   Metalink Checker is a command line application that checks general 
-# validity (valid XML) or downloads (executes) metalink files. It downloads 
-# the files, checks their SHA1 or MD5 verification and verifies that the 
-# files are working.
+#   pyMetalink is a library for python to support advanced download features
 #
-#   Command line application and Python library that checks or downloads
-# metalink files.  Requires Python 2.5 or newer.
+# Example:
 #
-# Instructions:
-#   1. You need to have Python installed.
-#   2. To check PGP signatures you need to install gpg (http://www.gnupg.org) or gpg4win (http://www.gpg4win.org/)
-#   3. Run on the command line using: python metalink.py
+# import metalink.download
 #
-# Usage: metalinkc.py [-c|-d|-j|--convert|--rconvert] [options] arg1 arg2 ...
-#
-# Options:
-#   --version             show program's version number and exit
-#   -h, --help            show this help message and exit
-#   -d, --download        Actually download the file(s) in the metalink
-#   -c, --check           Check the metalink file URLs
-#   -t TIMEOUT, --timeout=TIMEOUT
-#                         Set timeout in seconds to wait for response
-#                         (default=10)
-#   -o OS, --os=OS        Operating System preference
-#   -s, --no-segmented    Do not use the segmented download method
-#   -l LANG, --lang=LANG  Language preference (ISO-639/3166)
-#   --country=LOC         Two letter country preference (ISO 3166-1 alpha-2)
-#   -k DIR, --pgp-keys=DIR
-#                         Directory with the PGP keys that you trust (default:
-#                         working directory)
-#  -p FILE, --pgp-store=FILE
-#                         File with the PGP keys that you trust (default:
-#                         ~/.gnupg/pubring.gpg)
-#   -g GPG, --gpg-binary=GPG
-#                         (optional) Location of gpg binary path if not in the
-#                         default search path
-#   -j, --convert-jigdo   Convert Jigdo format file to Metalink
-#   --port=PORT           Streaming server port to use (default: No streaming
-#                         server)
-#   --html=HTML           Extract links from HTML webpage
-#   --convert             Conversion from 3 to 4 (IETF RFC)
-#   --rconvert            Reverses conversion from 4 (IETF RFC) to 3
-#   --output=OUTFILE      Output conversion result to this file instead of
-#                         screen
-#   -r, --rss             RSS/Atom Feed Mode, implies -d
-#   -w WRITEDIR           Directory to write output files to (default: current
-#                         directory)
-#
-# Library Instructions:
-#   - Use as expected.
-#
-# import metalink
-#
-# files = metalink.get("file.metalink", os.getcwd())
-# results = metalink.check_metalink("file.metalink")
+# files = metalink.download.get("file.metalink", os.getcwd())
 #
 # CHANGELOG:
 #
+# Version 6.1
+# -----------
+# - Packaged as pure Python package for easy_install and pip
+# 
 # Version 6.0
 # -----------
 # - Support for RFC 3230 - Instance Digests in HTTP
@@ -102,9 +58,6 @@
 # Version 5.0
 # -----------
 # - Added support for Metalink v4 (IETF RFC)
-# - Changed executable name from metalink to metalinkc
-# - Removed unneeded -f options
-# - Added conversion options
 #
 # Version 4.4
 # -----------
@@ -114,9 +67,7 @@
 # -----------
 # - Added custom HTTP header support
 # - Added option to parse an HTML file for .metalink files to check
-# - Started Debian packaging
 # - Added a beta feature for media streaming
-# - Added a minimal GUI for checking
 # - Various bugfixes
 #
 # Version 4.2
@@ -127,7 +78,6 @@
 #
 # Version 4.1
 # -----------
-# - Start of transition of how command line options are used
 # - XML parsing speed and memory improvements
 # - Checking function is now multithreaded for speed improvements
 # - Displays download bitrates
@@ -143,7 +93,6 @@
 # Version 3.8
 # -----------
 # - Will now download any file type and auto-detect metalink files
-# - Added option to disable segmented downloads to command line
 # - Added support for metalink "Accept" HTTP header
 #
 # Version 3.7.4
@@ -246,4 +195,5 @@
 # - download priority based on speed
 # - use maxconnections
 # - dump FTP data chunks directly to file instead of holding in memory
+# 
 ########################################################################
