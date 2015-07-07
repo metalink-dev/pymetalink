@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 ########################################################################
 #
-# Project: Metalink Checker
-# URL: http://www.nabber.org/projects/
-# E-mail: webmaster@nabber.org
+# Project: pyMetalink
+# URL: https://github.com/metalink-dev/pymetalink/
+# E-mail: nabber00@gmail.com
 #
 # Copyright: (C) 2007-2011, Neil McNab
 # License: GNU General Public License Version 2
