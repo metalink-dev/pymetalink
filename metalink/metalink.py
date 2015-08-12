@@ -6,7 +6,7 @@
 # URL: https://github.com/metalink-dev/pymetalink
 # E-mail: nabber00@gmail.com
 #
-# Copyright: (C) 2007-2012, Hampus Wessman, Neil McNab
+# Copyright: (C) 2007-2015, Hampus Wessman, Neil McNab
 # License: GNU General Public License Version 2
 #   (http://www.gnu.org/copyleft/gpl.html)
 #
@@ -384,6 +384,8 @@ class MetalinkFile4(MetalinkFileBase):
     def __init__(self, filename, attrs = {}, do_ed2k=True, do_magnet=False):
         self.description = ""
         self.identity = ""
+        self.license_name = ""
+        self.license_url = ""
         self.publisher_name = ""
         self.publisher_url = ""
         self.version = ""
@@ -440,6 +442,15 @@ class MetalinkFile4(MetalinkFileBase):
             if self.publisher_url.strip() != "":
                 lictext += ' url="' + self.publisher_url + '"'
             text += '      <publisher%s></publisher>\n' % lictext
+        # License info
+        if self.license_name.strip() != "" or self.license_url.strip() != "":
+            #text += '  <license>\n'
+            lictext = ""
+            if self.license_name.strip() != "":
+                lictext += ' name="' + self.license_name + '"'
+            if self.license_url.strip() != "":
+                lictext += ' url="' + self.license_url + '"'
+            text += '      <license%s></license>\n' % lictext
         # Release info
         if self.identity.strip() != "":
             text += '      <identity>'+self.identity+'</identity>\n'
@@ -583,15 +594,8 @@ class MetalinkBase:
     def __init__(self):
         self.errors = []
         self.files = []
-
         self.generator = GENERATOR
         self.origin = ""
-        self.identity = ""
-        self.publisher_name = ""
-        self.publisher_url = ""
-        self.description = ""
-        self.version = ""
-
         self.data = ""
 
         self.p = xml.parsers.expat.ParserCreate(namespace_separator=XMLSEP)
@@ -653,9 +657,14 @@ class MetalinkBase:
 class Metalink(MetalinkBase):
     def __init__(self):
         self.ver = 3
+        self.identity = ""
+        self.publisher_name = ""
+        self.publisher_url = ""
         self.copyright = ""
+        self.description = ""
         self.license_name = ""
         self.license_url = ""
+        self.version = ""
         self.tags = ""
         self.type = ""
         self.pubdate = ""
@@ -668,13 +677,16 @@ class Metalink(MetalinkBase):
         origin = ""
         if self.origin.strip() != "":
             origin = 'origin="'+self.origin+'" '
+        pubdate = ""
+        if self.pubdate.strip() != "":
+            pubdate = 'pubdate="'+self.pubdate+'" '
         typetext = ""
         if self.type.strip() != "":
             typetext = 'type="'+self.type+'" '
         gentext = ""
         if self.generator.strip() != "":
             gentext = 'generator="'+self.generator+'" '
-        text += '<metalink version="3.0" '+origin + typetext + gentext + 'xmlns="' + self.XMLNS + '">\n'
+        text += '<metalink version="3.0" '+ origin + pubdate + typetext + gentext + 'xmlns="' + self.XMLNS + '">\n'
         text += self.generate_info()
         text += '  <files>\n'
         for fileobj in self.files:
@@ -868,7 +880,7 @@ class Metalink4(MetalinkBase):
             elif name in ("url", "metaurl"):
                 fileobj = self.files[-1]
                 fileobj.add_url(self.data.strip(), attrs=tag.attrs)
-            elif name in ("publisher",):
+            elif name in ("publisher", "license"):
                 fileobj = self.files[-1]
                 try:
                     setattr(fileobj, name + "_name", tag.attrs["name"])
@@ -1288,7 +1300,7 @@ def convert_4to3(metalinkobj4):
         for attr in ('filename', 'pieces', 'piecelength', 'language', 'os', 'size'):
             setattr(fileobj3, attr, getattr(fileobj4, attr))
         setattr(fileobj3, "piecetype", getattr(fileobj4, "piecetype").replace("-", ""))
-        for attr in ('description', 'version', 'identity', 'publisher_url', 'publisher_name'):
+        for attr in ('description', 'version', 'identity', 'license_url', 'license_name', 'publisher_url', 'publisher_name'):
             setattr(metalinkobj3, attr, getattr(fileobj4, attr))
         # copy hashlist, change key names
         for key in fileobj4.hashlist.keys():
@@ -1321,7 +1333,7 @@ def convert_3to4(metalinkobj3):
         # copy common attributes
         for attr in ('filename', 'pieces', 'piecelength', 'piecetype', 'language', 'os', 'size'):
             setattr(fileobj4, attr, getattr(fileobj3, attr))
-        for attr in ('description', 'identity', 'version', 'publisher_url', 'publisher_name'):
+        for attr in ('description', 'identity', 'version', 'license_url', 'license_name', 'publisher_url', 'publisher_name'):
             setattr(fileobj4, attr, getattr(metalinkobj3, attr))
         # copy hashlist, change key names
         for key in fileobj3.hashlist.keys():

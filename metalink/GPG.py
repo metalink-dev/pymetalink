@@ -70,7 +70,8 @@ class Signature:
         self.username = None
         self.error = None
         self.nopubkey = False
-
+    def NEWSIG(self, value):
+        pass
     def BADSIG(self, value):
         self.error = "BADSIG"
         self.valid = 0
