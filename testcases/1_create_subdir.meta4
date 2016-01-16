@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metalink xmlns="urn:ietf:params:xml:ns:metalink">
+<updated>2016-01-16T00:41:05Z</updated>
+<generator>curl Metalink Generator</generator>
+<published>2015-12-02T07:04:19Z</published>
+<file name="subdir/curl-7.46.0.tar.bz2">
+<publisher>
+ <name>curl</name>
+ <url>http://curl.haxx.se/</url>
+</publisher>
+<description>curl Generic source tar, bzip2</description>
+<version>7.46.0</version>
+<size>3494481</size>
+<hash type="md5">9979f989a2a9930d10f1b3deeabc2148</hash>
+<hash type="sha-1">96fbe5abe8ecfb923e4ab0a579b3d6be43ef0e96</hash>
+<hash type="sha-256">b7d726cdd8ed4b6db0fa1b474a3c59ebbbe4dcd4c61ac5e7ade0e0270d3195ad</hash>
+<signature mediatype="application/pgp-signature">
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEABECAAYFAlZel9kACgkQeOEcayedXJGZAACdFMiz+Sjw9HJjoMdta8OhhzTi
+I+8AoJ0CFoYKuDIKND8o1bDbZg4ZFtsq
+=q8l3
+-----END PGP SIGNATURE-----
+</signature>
+      <pieces type="sha-1" length="262144">
+        <hash>6656eabfe860ce103c7bce675d39722f3ea7f5e7</hash>
+        <hash>308891d3724fc8277d28c2bd8092d36f8ac33462</hash>
+        <hash>d3f5a481d56be96ae9252adb57ee951f654989fd</hash>
+        <hash>67c5a2e3550bfe912ca2d7941cfff223db550895</hash>
+        <hash>ad52fdc71152b360759b1caddbd4beb347f8f5ae</hash>
+        <hash>2b8d33033e8619e72cec1506fd4fc9b54fb2ab66</hash>
+        <hash>ce36abb9de94222cff6504943c52d9c495f3cd48</hash>
+        <hash>0add1d5dcc393cfd4a7d0e0b3052263dec2b17eb</hash>
+        <hash>37e233909586bb1f3cc0febba71b94275830748d</hash>
+        <hash>46544ed2fbaa3cb016c63bc731977089634fac23</hash>
+        <hash>17d2c13004546ee95ada829b46f368a7a73cf859</hash>
+        <hash>a4c8748273db42dbacb5ef6db1f7391bff55d021</hash>
+        <hash>68de3f16b43a5dd55c4877fd620101cf6d8f404f</hash>
+        <hash>1c20ed47e99fd0021c6e5261220128733c8773d8</hash>
+      </pieces>
+<!-- resource preferences are for use in United states -->
+<url location="ca" priority="20">http://curl.mirror.anstey.ca/curl-7.46.0.tar.bz2</url>
+<url location="de" priority="30">http://dl.uxnr.de/mirror/curl/curl-7.46.0.tar.bz2</url>
+<url location="de" priority="30">http://ngcobalt13.uxnr.de/mirror/curl/curl-7.46.0.tar.bz2</url>
+<url location="sg" priority="30">http://www.execve.net/curl/curl-7.46.0.tar.bz2</url>
+<url location="se" priority="30">http://curl.haxx.se/download/curl-7.46.0.tar.bz2</url>
+<url location="se" priority="30">ftp://ftp.sunet.se/pub/www/utilities/curl/curl-7.46.0.tar.bz2</url>
+<url location="us" priority="10">http://curl.askapache.com/download/curl-7.46.0.tar.bz2</url>
+<url>ed2k://|file|curl-7.46.0.tar.bz2|bde7b636d9420593444314fc911bb101|bde7b636d9420593444314fc911bb101|/</url>
+</file>
+</metalink>
