@@ -12,8 +12,8 @@
 <version>7.46.0</version>
 <size>3494481</size>
 <hash type="md5">ffff989a2a9930d10f1b3deeabc2148</hash>
-<hash type="sha-1">96fbe5abe8ecfb923e4ab0a579b3d6be43ef0e96</hash>
-<hash type="sha-256">b7d726cdd8ed4b6db0fa1b474a3c59ebbbe4dcd4c61ac5e7ade0e0270d3195ad</hash>
+<hash type="sha-1">ffffe5abe8ecfb923e4ab0a579b3d6be43ef0e96</hash>
+<hash type="sha-256">ffff26cdd8ed4b6db0fa1b474a3c59ebbbe4dcd4c61ac5e7ade0e0270d3195ad</hash>
 <signature mediatype="application/pgp-signature">
 -----BEGIN PGP SIGNATURE-----
 Version: GnuPG v1

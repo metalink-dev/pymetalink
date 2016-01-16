@@ -365,7 +365,7 @@ def download_file_urls(metalinkfile, force = False, handlers = {}, segmented = S
         manager = NormalManager(metalinkfile, headers)
         manager.set_callbacks(handlers)
         manager.run()
-        
+
     if manager.get_status():
         return metalinkfile.filename
     return False
@@ -401,6 +401,9 @@ class Manager:
             setattr(self, key + "_handler", callbackdict[key])
 
     def run(self, wait=None):
+        '''
+        Return True on success, false on error
+        '''
         result = self.status
         while result:
             if self.pause_handler != None and self.pause_handler():
@@ -414,6 +417,9 @@ class Manager:
         return self.get_status()
         
     def cycle(self):
+        '''
+        return True to continue in loop, false to exit
+        '''
         pass
          
     def get_status(self):
@@ -464,7 +470,7 @@ class NormalManager(Manager):
         self.urllist = start_sort(metalinkfile.get_url_dict())
         self.start_number = 0
         self.number = 0
-        self.count = 1
+        self.count = 0
         self.headers = headers.copy()
 
     def random_start(self):
@@ -489,12 +495,18 @@ class NormalManager(Manager):
             manager.set_bitrate_callback(self.bitrate_handler)
             manager.set_time_callback(self.time_handler)
             self.get_bitrate = manager.get_bitrate
-            self.status = manager.run()
+            manager.run()
+            #print self.status
+            if manager.get_status():
+                return False
 
             self.number = (self.number + 1) % len(self.urllist)
             self.count += 1
             
-            return self.count <= len(self.urllist)
+            if self.count == len(self.urllist):
+                self.status = False
+            
+            return self.count < len(self.urllist)
         except KeyboardInterrupt:
             print "Download Interrupted!"
             try:

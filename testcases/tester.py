@@ -65,7 +65,12 @@ FILELIST = [
     {"filename": "curl-7.46.0.tar.bz2",
     "size": 3494481,
     "checksums": {"sha1": "96fbe5abe8ecfb923e4ab0a579b3d6be43ef0e96"}},
-
+    {"filename": "curl-7.46.0.tar.bz2.1",
+    "size": 3494481,
+    "checksums": {"sha1": "96fbe5abe8ecfb923e4ab0a579b3d6be43ef0e96"}},
+    {"filename": "curl-7.46.0.tar.bz2.2",
+    "size": 3494481,
+    "checksums": {"sha1": "96fbe5abe8ecfb923e4ab0a579b3d6be43ef0e96"}},
 ]
 
 class TestMetalink(unittest.TestCase):
@@ -97,10 +102,10 @@ class TestMetalink(unittest.TestCase):
         self.run_test("2_only_http.meta4")
     def test_3_fail_bad_only_advanced_checksums(self):
         self.run_test("3_fail_bad_only_advanced_checksums.meta4")
-    def test_3_fail_metalink_bad_piece1and2(self):
-        self.run_test("3_fail_metalink_bad_piece1and2.meta4")
-    def test_3_fail_metalink_bad_piece2(self):
-        self.run_test("3_fail_metalink_bad_piece2.meta4")
+    def test_3_metalink_bad_piece1and2(self):
+        self.run_test("3_metalink_bad_piece1and2.meta4")
+    def test_3_metalink_bad_piece2(self):
+        self.run_test("3_metalink_bad_piece2.meta4")
     def test_3_only_advanced_checksums(self):
         self.run_test("3_only_advanced_checksums.meta4")
     def test_4_empty_size_only_p2p(self):

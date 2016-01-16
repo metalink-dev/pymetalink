@@ -9,7 +9,7 @@ import metalink.download as download
 def run():
     for item in sys.argv[1:]:
             progress = ProgressBar()
-            result = download.get(item, os.getcwd(), handlers={"status": progress.download_update, "bitrate": progress.set_bitrate, "time": progress.set_time}, segmented = False)
+            result = download.get(item, os.getcwd(), handlers={"status": progress.download_update, "bitrate": progress.set_bitrate, "time": progress.set_time}, segmented = True)
             progress.download_end()
             if not result:
                 sys.exit(-1)
