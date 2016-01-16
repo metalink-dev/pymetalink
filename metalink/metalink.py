@@ -65,6 +65,7 @@ HASHMAP = { "sha256": "sha-256",
             "sha512": "sha-512",
             "sha224": "sha-224",
             "sha384": "sha-384",
+            "pgp": "application/pgp-signature",
             }
 
 def hashlookup(text):
@@ -467,8 +468,8 @@ class MetalinkFile4(MetalinkFileBase):
             text += '      <os>'+self.os+'</os>\n'
         # Verification
         for key in self.hashlist.keys():
-            if key == 'pgp' and self.hashlist[key] != "":
-                text += '      <signature type="%s">' % key + self.hashlist[key] + '</signature>\n'
+            if key == 'application/pgp-signature' and self.hashlist[key] != "":
+                text += '      <signature mediatype="%s">' % key + self.hashlist[key] + '</signature>\n'
             elif self.hashlist[key] != "":
                 text += '      <hash type="%s">' % hashlookup(key) + self.hashlist[key].lower() + '</hash>\n'
         if len(self.pieces) > 1:
@@ -894,7 +895,7 @@ class Metalink4(MetalinkBase):
                 #setattr(fileobj, "hash_" + hashtype, self.data)
                 fileobj.hashlist[hashtype] = self.data.strip()
             elif name == "signature":
-                hashtype = tag.attrs["type"]
+                hashtype = tag.attrs["mediatype"]
                 fileobj = self.files[-1]
                 #setattr(fileobj, "hash_" + hashtype, self.data)
                 fileobj.hashlist[hashtype] = self.data
