@@ -50,7 +50,7 @@ import unittest
 import ctypes
 
 # Metalink Checker
-CMD = "\"" + sys.executable + "\" ../metalinkc.py %s"
+CMD = "\"" + sys.executable + "\" ../console.py %s"
 # Aria2
 # CMD = "\"c:\\program files\\aria2\\aria2c.exe\" -M %s"
 
