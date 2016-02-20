@@ -5,7 +5,7 @@
 # URL: http://www.nabber.org/projects/
 # E-mail: webmaster@nabber.org
 #
-# Copyright: (C) 2007-2015, Neil McNab
+# Copyright: (C) 2007-2016, Neil McNab
 # License: GNU General Public License Version 2
 #   (http://www.gnu.org/copyleft/gpl.html)
 #
@@ -48,9 +48,10 @@ import subprocess
 import shutil
 import unittest
 import ctypes
+import signal
 
 # Metalink Checker
-CMD = "\"" + sys.executable + "\" ../metalinkc.py -d %s"
+CMD = "\"" + sys.executable + "\" ../console.py %s"
 # Aria2
 # CMD = "\"c:\\program files\\aria2\\aria2c.exe\" -M %s"
 
@@ -62,18 +63,15 @@ IGNORE_TESTS = [] #["3_metalink-bad-piece1and2-without-torrent",
                 #"3_metalink-bad-piece2-without-torrent"]
 
 FILELIST = [
-    {"filename": "curl-7.18.1.tar.bz2",
-    "size": 1700966,
-    "checksums": {"sha1": "685b9388ee9e646158a83cd435f7be664816ad78"}},
-    {"filename": "curl-7.18.1.tar.gz",
-    "size": 2225578,
-    "checksums": {"sha1": "5d72f9fbf3eab6474a8dc22192056119030087f6"}},
-    {"filename": "curl-7.18.1.zip",
-    "size": 2787188,
-    "checksums": {"sha1": "87de05976acb909c7edbed8ba0935f0a51332195"}},
-    {"filename": "OOo_2.3.1_Win32Intel_install_en-US.exe",
-    "size": 112341981,
-    "checksums": {"sha1": "2c2849d173b1a5e6f8a3dc986383ee897bf4364d"}}
+    {"filename": "curl-7.46.0.tar.bz2",
+    "size": 3494481,
+    "checksums": {"sha1": "96fbe5abe8ecfb923e4ab0a579b3d6be43ef0e96"}},
+    {"filename": "curl-7.46.0.tar.bz2.1",
+    "size": 3494481,
+    "checksums": {"sha1": "96fbe5abe8ecfb923e4ab0a579b3d6be43ef0e96"}},
+    {"filename": "curl-7.46.0.tar.bz2.2",
+    "size": 3494481,
+    "checksums": {"sha1": "96fbe5abe8ecfb923e4ab0a579b3d6be43ef0e96"}},
 ]
 
 class TestMetalink(unittest.TestCase):
@@ -82,47 +80,47 @@ class TestMetalink(unittest.TestCase):
         clean()
 
     def test_1_create_subdir(self):
-        self.run_test("1_create_subdir.metalink")
+        self.run_test("1_create_subdir.meta4")
     def test_1_empty_size(self):
-        self.run_test("1_empty_size.metalink")
+        self.run_test("1_empty_size.meta4")
     def test_1_fail_bad_directory_and_network_errors(self):
-        self.run_test("1_fail_bad_directory_and_network_errors.metalink")
+        self.run_test("1_fail_bad_directory_and_network_errors.meta4")
     def test_1_http_redirect(self):
-        self.run_test("1_http_redirect.metalink")
+        self.run_test("1_http_redirect.meta4")
     def test_1_metalink_one_file(self):
-        self.run_test("1_metalink_one_file.metalink")
+        self.run_test("1_metalink_one_file.meta4")
     def test_1_metalink_three_files(self):
-        self.run_test("1_metalink_three_files.metalink")
+        self.run_test("1_metalink_three_files.meta4")
     def test_1_no_checksums(self):
-        self.run_test("1_no_checksums.metalink")
+        self.run_test("1_no_checksums.meta4")
     def test_1_only_ftp_and_http(self):
-        self.run_test("1_only_ftp_and_http.metalink")
-    def test_2_fail_metalink_one_file_bad_main_crc(self):
-        self.run_test("2_fail_metalink_one_file_bad_main_crc.metalink")
+        self.run_test("1_only_ftp_and_http.meta4")
+    def test_2_fail_metalink_one_file_bad_main_md5(self):
+        self.run_test("2_fail_metalink_one_file_bad_main_md5.meta4")
     def test_2_only_ftp(self):
-        self.run_test("2_only_ftp.metalink")
+        self.run_test("2_only_ftp.meta4")
     def test_2_only_http(self):
-        self.run_test("2_only_http.metalink")
+        self.run_test("2_only_http.meta4")
     def test_3_fail_bad_only_advanced_checksums(self):
-        self.run_test("3_fail_bad_only_advanced_checksums.metalink")
-    def test_3_fail_metalink_bad_piece1and2(self):
-        self.run_test("3_fail_metalink_bad_piece1and2.metalink")
-    def test_3_fail_metalink_bad_piece2(self):
-        self.run_test("3_fail_metalink_bad_piece2.metalink")
+        self.run_test("3_fail_bad_only_advanced_checksums.meta4")
+    def test_3_metalink_bad_piece1and2(self):
+        self.run_test("3_metalink_bad_piece1and2.meta4")
+    def test_3_metalink_bad_piece2(self):
+        self.run_test("3_metalink_bad_piece2.meta4")
     def test_3_only_advanced_checksums(self):
-        self.run_test("3_only_advanced_checksums.metalink")
+        self.run_test("3_only_advanced_checksums.meta4")
     def test_4_empty_size_only_p2p(self):
-        self.run_test("4_empty_size_only_p2p.metalink")
+        self.run_test("4_empty_size_only_p2p.meta4")
     def test_4_fail_metalink_bad_piece1and2_only_p2p(self):
-        self.run_test("4_fail_metalink_bad_piece1and2_only_p2p.metalink")
+        self.run_test("4_fail_metalink_bad_piece1and2_only_p2p.meta4")
     def test_4_fail_metalink_bad_piece2_only_p2p(self):
-        self.run_test("4_fail_metalink_bad_piece2_only_p2p.metalink")
-    def test_4_fail_metalink_one_file_bad_main_crc_only_p2p(self):
-        self.run_test("4_fail_metalink_one_file_bad_main_crc_only_p2p.metalink")
+        self.run_test("4_fail_metalink_bad_piece2_only_p2p.meta4")
+    def test_4_fail_metalink_one_file_bad_main_md5_only_p2p(self):
+        self.run_test("4_fail_metalink_one_file_bad_main_md5_only_p2p.meta4")
     def test_4_no_checksums_only_p2p(self):
-        self.run_test("4_no_checksums_only_p2p.metalink")
+        self.run_test("4_no_checksums_only_p2p.meta4")
     def test_4_only_p2p(self):
-        self.run_test("4_only_p2p.metalink")
+        self.run_test("4_only_p2p.meta4")
 
     def run_test(self, filename):
         subdir = "."
@@ -160,11 +158,11 @@ def suite(level = 3):
     filenames = os.listdir(filedir)
 
     for filename in filenames:
-        if filename.endswith(".metalink") and filename[:-9] not in IGNORE_TESTS:
+        if filename.endswith(".meta4") and filename[:-6] not in IGNORE_TESTS:
             mysplit = filename.split("_", 1)
             myint = IsInt(mysplit[0])
             if myint and (int(mysplit[0]) <= int(level)):
-                suiteobj.addTest(TestMetalink("test_" + filename[:-9]))
+                suiteobj.addTest(TestMetalink("test_" + filename[:-6]))
   
     return suiteobj
 
@@ -191,7 +189,7 @@ def filehash(thisfile, filesha):
         return ""
 
     data = filehandle.read()
-    while(data != ""):
+    while(data != b""):
         filesha.update(data)
         data = filehandle.read()
 
@@ -235,7 +233,7 @@ def system(command, timeout=600, cwd=None):
 def kill(pid):
     if os.name == 'nt':
         return winkill(pid)
-    return os.kill(pid)      
+    return os.kill(pid, signal.SIGKILL)      
             
 def winkill(pid):
     """kill function for Win32"""

@@ -5,7 +5,7 @@
 # URL: http://www.nabber.org/projects/
 # E-mail: webmaster@nabber.org
 #
-# Copyright: (C) 2007-2011, Neil McNab
+# Copyright: (C) 2007-2016, Neil McNab
 # License: GNU General Public License Version 2
 #   (http://www.gnu.org/copyleft/gpl.html)
 #
@@ -48,6 +48,7 @@ import subprocess
 import shutil
 import unittest
 import ctypes
+import signal
 
 # Metalink Checker
 CMD = "\"" + sys.executable + "\" ../console.py %s"
@@ -232,7 +233,7 @@ def system(command, timeout=600, cwd=None):
 def kill(pid):
     if os.name == 'nt':
         return winkill(pid)
-    return os.kill(pid)      
+    return os.kill(pid, signal.SIGKILL)      
             
 def winkill(pid):
     """kill function for Win32"""

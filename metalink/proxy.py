@@ -48,18 +48,31 @@
 #
 ########################################################################
 
+import sys
+
+if sys.version_info < (3,):
+    import httplib
+    import urlparse
+    import HTMLParser
+    import urllib2
+else:
+    import http.client as httplib
+    import urllib.parse as urlparse
+    import urllib.request as urllib2
+    import html.parser as HTMLParser
+    unicode = str
+    import urllib.request
+    urllib.ftpwrapper=urllib.request.ftpwrapper
+    urllib.FancyURLopener=urllib.request.FancyURLopener
+
 import os
-import urllib2
 import ftplib
-import httplib
 import urllib
 import socket
-import urlparse
 import ssl
 import base64
 import locale
 import gettext
-import sys
 
 # Configure proxies (user and password optional)
 # HTTP_PROXY = http://user:password@myproxy:port
@@ -92,7 +105,11 @@ def translate():
     if localelang == None:
         localelang = "LC_ALL"
     t = gettext.translation(base, localedir, [localelang], None, 'en')
-    return t.ugettext
+    try:
+        return t.ugettext
+    # python3
+    except:
+        return t.gettext
 
 _ = translate()
 
@@ -189,11 +206,11 @@ def get_proxy_info():
     SOCKS_PROXY=""
 
     # from environment variables
-    if os.environ.has_key('http_proxy') and HTTP_PROXY == "":
+    if 'http_proxy' in os.environ and HTTP_PROXY == "":
         HTTP_PROXY=os.environ['http_proxy']
-    if os.environ.has_key('ftp_proxy') and FTP_PROXY == "":
+    if 'ftp_proxy' in os.environ and FTP_PROXY == "":
         FTP_PROXY=os.environ['ftp_proxy']
-    if os.environ.has_key('https_proxy') and HTTPS_PROXY == "":
+    if 'https_proxy' in os.environ and HTTPS_PROXY == "":
         HTTPS_PROXY=os.environ['https_proxy']
 
     # from IE in registry
@@ -247,9 +264,9 @@ class ftpwrapper(urllib.ftpwrapper):
             try:
                 cmd = 'RETR ' + self.dir + file
                 conn = self.ftp.ntransfercmd(cmd)
-            except ftplib.error_perm, reason:
+            except ftplib.error_perm as reason:
                 if str(reason)[:3] != '550':
-                    raise IOError, ('ftp error', reason), sys.exc_info()[2]
+                    raise IOError(('ftp error', reason), sys.exc_info()[2])
                     
         self.busy = 1
         # Pass back both a suitably decorated object and a retrieval length
@@ -323,7 +340,7 @@ class FTP(ftplib.FTP):
             # parse proxy URL
             url = urlparse.urlparse(FTP_PROXY)
             if not (url[0] == "" or url[0] == "http"):
-                raise AssertionError, _("Transport not supported for FTP_PROXY, %s") % url.scheme
+                raise AssertionError(_("Transport not supported for FTP_PROXY, %s") % url.scheme)
             
             port = httplib.HTTP_PORT
             if url[1].find("@") != -1:
@@ -418,7 +435,7 @@ class HTTPConnection(httplib.HTTPConnection):
         if HTTP_PROXY != "":
             proxy = urlparse.urlparse(HTTP_PROXY)
             if not (proxy.scheme == "" or proxy.scheme == "http"):
-                raise AssertionError, "Transport %s not supported for HTTP_PROXY" % proxy.scheme
+                raise AssertionError("Transport %s not supported for HTTP_PROXY" % proxy.scheme)
 
             host = proxy.hostname
             
@@ -448,7 +465,7 @@ class HTTPSConnection(httplib.HTTPSConnection):
             headers = {}
             proxy = urlparse.urlparse(HTTPS_PROXY)
             if not (proxy.scheme == "" or proxy.scheme == "http"):
-                raise AssertionError, "Transport %s not supported for HTTPS_PROXY" % proxy.scheme
+                raise AssertionError("Transport %s not supported for HTTPS_PROXY" % proxy.scheme)
 
             if proxy.username is not None:
                 userpass = base64.encodestring(proxy.username+':'+proxy.password)
