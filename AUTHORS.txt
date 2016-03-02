@@ -1,2 +1,4 @@
 Neil McNab <webmaster@nabber.org>
 Hampus Wessman
+Andrew Kuchling
+Richard Jones

@@ -1,0 +1,630 @@
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- ViewVC :: http://www.viewvc.org/ -->
+<head>
+<title>SourceForge.net Repository - [pycrypto] Log of /gpg/GPG.py</title>
+<meta name="generator" content="ViewVC 1.1.6" />
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="description" content="The world's largest development and download repository of Open Source code and applications" />
+<meta name="keywords" content="Open Source, Development, Developers, Projects, Downloads, OSTG, VA Software, SF.net, SourceForge" />
+<title>SourceForge.net Repository - pycrypto Index of /</title>
+<link rel="shortcut icon" href="http://a.fsdn.com/con/img/favicon.ico" />
+<link rel="stylesheet" href="/viewvc-static/styles.css" type="text/css" />
+<style type="text/css">
+#doc3 { max-width: 1000px; margin: 0 auto; }
+#hd .logo {
+background: url("http://a.fsdn.com/sf/images/phoneix/sf_phoneix.png") no-repeat;
+color: transparent;
+display: inline-block;
+height: 36px;
+}
+#hd .search { display: none; }
+#breadcrumbs { margin-bottom: 1em; }
+#fad83 { float: right; }
+#yui-main { min-height: 100px; }
+#ft .yui-u { display: inline-block; margin-right: 2em; }
+</style>
+
+<!-- BEGIN: AdSolution-Tag 4.2: Global-Code [PLACE IN HTML-HEAD-AREA!] -->
+<!-- DoubleClick Random Number -->
+<script language="JavaScript" type="text/javascript">
+dfp_ord=Math.random()*10000000000000000;
+dfp_tile = 1;
+</script>
+<!-- End DoubleClick Random Number -->
+<script type="text/javascript">
+var google_page_url = 'http://sourceforge.net/projects/pycrypto/';
+var sourceforge_project_name = 'pycrypto';
+var sourceforge_project_description = '';
+</script>
+<!-- END: AdSolution-Tag 4.2: Global-Code -->
+<!-- after META tags -->
+<script type="text/javascript">
+var _gaq = _gaq || [];
+_gaq.push(['_setAccount', 'UA-32013-37']);
+_gaq.push(['_setDomainName', '.sourceforge.net']);
+_gaq.push(['_trackPageview']);
+_gaq.push(['t2._setAccount', 'UA-36130941-4']);
+_gaq.push(['t2._setDomainName', '.sourceforge.net']);
+_gaq.push(['t2._trackPageview']);
+(function() {
+var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+var s = document.getElementsByTagName('script')[0];
+s.parentNode.insertBefore(ga, s);
+})();
+</script>
+</head>
+<body class="short-head">
+<!--[if IE 7]><div id="ie7only"><![endif]-->
+<!--[if IE 6]><div id="ie6only"><![endif]-->
+<!--[if IE]><div id="ieonly"><![endif]-->
+<div id="doc3">
+<div id="hd">
+<div class="yui-b">
+<div class="yui-gc">
+<div class="yui-u first">
+<a href="http://sourceforge.net/" class="logo">Find and develop open source software</a>
+</div>
+<div class="yui-u">
+<div class="search">
+<form action="http://sourceforge.net/search/" method="get" name="searchform" id="searchform">
+<input type="hidden" name="type_of_search" value="soft" />
+<input type="text" class="text clear hint" name="words" id="words" value="enter keyword" />
+<span class="yui-button yui-push-button default"><span class="first-child"><button type="submit" value="Search">Search</button></span></span>
+</form>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="bd" class="inner-bd">
+<div id="doc4" class="yui-t6">
+<div id="breadcrumbs">
+
+<a href="http://sourceforge.net/">SourceForge.net</a>
+&gt; <a href="http://sourceforge.net/softwaremap/">Find Software</a>
+&gt; <a href="http://sourceforge.net/projects/pycrypto/">pycrypto</a>
+&gt; SCM Repositories
+
+
+<a href="/viewvc/pycrypto/">
+
+
+&gt; pycrypto
+
+
+</a>
+
+
+
+<a href="/viewvc/pycrypto/gpg/">
+
+
+&gt; gpg
+
+
+</a>
+
+
+
+
+&gt; GPG.py
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+<div id="project_nav_container">
+<small><div>
+
+<a href="/viewvc/pycrypto/gpg/"><img src="/viewvc-static/images/back_small.png" width="16" height="16" alt="Parent Directory" /> Parent Directory</a>
+
+| <a href="/viewvc/pycrypto/gpg/GPG.py?view=log"><img src="/viewvc-static/images/log.png" width="16" height="16" alt="Revision Log" /> Revision Log</a>
+
+
+
+
+</div>
+</small>
+<h1>SCM Repositories - <a href="http://sourceforge.net/projects/pycrypto">pycrypto</a></h1>
+</div>
+<hr class="clear">
+<div class="yui-b">
+<div id="fad83">
+<!-- DoubleClick Ad Tag -->
+<script type="text/javascript">
+//<![CDATA[
+document.write('<script src="http://ad.doubleclick.net/adj/ostg.sourceforge/pg_viewvc_p88_shortrec;pg=viewvc;tile='+dfp_tile+';tpc=pycrypto;ord='+dfp_ord+';sz=1x1?" type="text/javascript"><\/script>');
+dfp_tile++;
+//]]>
+</script>
+<!-- End DoubleClick Ad Tag -->
+</div>
+</div>
+<div id="yui-main">
+<div class="yui-b sfBox">
+<table class="auto">
+
+
+
+<tr>
+<td>Links to HEAD:</td>
+<td>
+
+(<a href="/viewvc/pycrypto/gpg/GPG.py?view=markup">view</a>)
+(<a href="/viewvc/pycrypto/gpg/GPG.py">download</a>)
+(<a href="/viewvc/pycrypto/gpg/GPG.py?content-type=text%2Fplain">as text</a>)
+(<a href="/viewvc/pycrypto/gpg/GPG.py?view=annotate">annotate</a>)
+mime-type: text/x-python
+</td>
+</tr>
+
+
+
+<tr>
+<td>Sticky Tag:</td>
+<td><form method="get" action="/viewvc/pycrypto/gpg/GPG.py" style="display: inline">
+<div style="display: inline">
+<input type="hidden" name="view" value="log"/>
+
+
+<select name="pathrev" onchange="submit()">
+<option value=""></option>
+
+<optgroup label="Branches">
+
+
+<option>vendor</option>
+
+
+
+<option>MAIN</option>
+
+
+</optgroup>
+
+<optgroup label="Non-branch tags">
+
+
+<option>init</option>
+
+
+
+<option>HEAD</option>
+
+
+</optgroup>
+
+</select>
+
+<input type="submit" value="Set" />
+</div>
+</form>
+
+</td>
+</tr>
+</table>
+ 
+
+
+</div>
+</div>
+<hr class="clear">
+<div>
+
+
+
+
+
+
+<div>
+<hr />
+
+<a name="rev1.3"></a>
+<a name="HEAD"></a>
+
+
+Revision <strong>1.3</strong> -
+
+
+(<a href="/viewvc/pycrypto/gpg/GPG.py?revision=1.3&amp;view=markup">view</a>)
+
+
+(<a href="/viewvc/pycrypto/gpg/GPG.py?revision=1.3">download</a>)
+(<a href="/viewvc/pycrypto/gpg/GPG.py?revision=1.3&amp;content-type=text%2Fplain">as text</a>)
+(<a href="/viewvc/pycrypto/gpg/GPG.py?annotate=1.3">annotate</a>)
+
+
+
+- <a href="/viewvc/pycrypto/gpg/GPG.py?r1=1.3&amp;view=log">[select for diffs]</a>
+
+
+
+
+<br />
+
+<em>Sun Nov 23 15:03:15 2003 UTC</em>
+(12 years, 3 months ago)
+by <em>akuchling</em>
+
+
+<br />Branch:
+
+<a href="/viewvc/pycrypto/gpg/GPG.py?view=log&amp;pathrev=MAIN"><strong>MAIN</strong></a>
+
+
+
+<br />CVS Tags:
+
+<a href="/viewvc/pycrypto/gpg/GPG.py?view=log&amp;pathrev=HEAD"><strong>HEAD</strong></a>
+
+
+
+
+
+
+<br />Changes since <strong>1.2: +0 -0 lines</strong>
+
+
+
+
+
+
+
+
+<br />Diff to <a href="/viewvc/pycrypto/gpg/GPG.py?r1=1.2&amp;r2=1.3">previous 1.2</a>
+
+
+
+
+
+
+
+
+
+
+<pre class="vc_log">Updated version of GnuPG interface from Richard Jones.  He writes:
+
+I've taken your GPG.py code and added key import/list and encryption. Most
+importantly (and this distinguishes this code from the relatively useless
+gpgme/pyme) I can control where the keyring is stored.
+</pre>
+</div>
+
+
+
+<div>
+<hr />
+
+<a name="rev1.2"></a>
+
+
+Revision <strong>1.2</strong> -
+
+
+(<a href="/viewvc/pycrypto/gpg/GPG.py?revision=1.2&amp;view=markup">view</a>)
+
+
+(<a href="/viewvc/pycrypto/gpg/GPG.py?revision=1.2">download</a>)
+(<a href="/viewvc/pycrypto/gpg/GPG.py?revision=1.2&amp;content-type=text%2Fplain">as text</a>)
+(<a href="/viewvc/pycrypto/gpg/GPG.py?annotate=1.2">annotate</a>)
+
+
+
+- <a href="/viewvc/pycrypto/gpg/GPG.py?r1=1.2&amp;view=log">[select for diffs]</a>
+
+
+
+
+<br />
+
+<em>Wed Aug 27 01:57:28 2003 UTC</em>
+(12 years, 6 months ago)
+by <em>akuchling</em>
+
+
+<br />Branch:
+
+<a href="/viewvc/pycrypto/gpg/GPG.py?view=log&amp;pathrev=MAIN"><strong>MAIN</strong></a>
+
+
+
+
+
+
+
+<br />Changes since <strong>1.1: +240 -80 lines</strong>
+
+
+
+
+
+
+
+
+<br />Diff to <a href="/viewvc/pycrypto/gpg/GPG.py?r1=1.1&amp;r2=1.2">previous 1.1</a>
+
+
+
+
+
+
+
+
+
+
+<pre class="vc_log">Updated version from Richard Jones
+</pre>
+</div>
+
+
+
+<div>
+<hr />
+
+<a name="rev1.1.1.1"></a>
+<a name="init"></a>
+
+<a name="vendor"></a>
+
+Revision <strong>1.1.1.1</strong> -
+
+
+(<a href="/viewvc/pycrypto/gpg/GPG.py?revision=1.1.1.1&amp;view=markup">view</a>)
+
+
+(<a href="/viewvc/pycrypto/gpg/GPG.py?revision=1.1.1.1">download</a>)
+(<a href="/viewvc/pycrypto/gpg/GPG.py?revision=1.1.1.1&amp;content-type=text%2Fplain">as text</a>)
+(<a href="/viewvc/pycrypto/gpg/GPG.py?annotate=1.1.1.1">annotate</a>)
+
+
+
+- <a href="/viewvc/pycrypto/gpg/GPG.py?r1=1.1.1.1&amp;view=log">[select for diffs]</a>
+
+
+
+
+<em>(vendor branch)</em>
+
+<br />
+
+<em>Mon Apr  8 03:06:37 2002 UTC</em>
+(13 years, 10 months ago)
+by <em>akuchling</em>
+
+
+<br />Branch:
+
+<a href="/viewvc/pycrypto/gpg/GPG.py?view=log&amp;pathrev=vendor"><strong>vendor</strong></a>
+
+
+
+<br />CVS Tags:
+
+<a href="/viewvc/pycrypto/gpg/GPG.py?view=log&amp;pathrev=init"><strong>init</strong></a>
+
+
+
+
+
+
+<br />Changes since <strong>1.1: +0 -0 lines</strong>
+
+
+
+
+
+
+
+
+<br />Diff to <a href="/viewvc/pycrypto/gpg/GPG.py?r1=1.1&amp;r2=1.1.1.1">previous 1.1</a>
+
+
+
+
+
+
+, to <a href="/viewvc/pycrypto/gpg/GPG.py?r1=1.3&amp;r2=1.1.1.1">next main 1.3</a>
+
+
+
+
+
+
+
+<pre class="vc_log">Initial import of a GPG interface module
+</pre>
+</div>
+
+
+
+<div>
+<hr />
+
+<a name="rev1.1"></a>
+
+
+Revision <strong>1.1</strong> -
+
+
+(<a href="/viewvc/pycrypto/gpg/GPG.py?revision=1.1&amp;view=markup">view</a>)
+
+
+(<a href="/viewvc/pycrypto/gpg/GPG.py?revision=1.1">download</a>)
+(<a href="/viewvc/pycrypto/gpg/GPG.py?revision=1.1&amp;content-type=text%2Fplain">as text</a>)
+(<a href="/viewvc/pycrypto/gpg/GPG.py?annotate=1.1">annotate</a>)
+
+
+
+- <a href="/viewvc/pycrypto/gpg/GPG.py?r1=1.1&amp;view=log">[select for diffs]</a>
+
+
+
+
+<br />
+
+<em>Mon Apr  8 03:06:37 2002 UTC</em>
+(13 years, 10 months ago)
+by <em>akuchling</em>
+
+
+<br />Branch:
+
+<a href="/viewvc/pycrypto/gpg/GPG.py?view=log&amp;pathrev=MAIN"><strong>MAIN</strong></a>
+
+
+
+
+<br />Branch point for:
+
+<a href="/viewvc/pycrypto/gpg/GPG.py?view=log&amp;pathrev=vendor"><strong>vendor</strong></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<pre class="vc_log">Initial revision
+</pre>
+</div>
+
+ 
+
+
+
+ <div class="sfBox">
+<hr class="clear"/>
+<a name="diff"></a>
+This form allows you to request diffs between any two revisions of this file.
+For each of the two "sides" of the diff,
+
+select a symbolic revision name using the selection box, or choose
+'Use Text Field' and enter a numeric revision.
+
+<form method="get" action="/viewvc/pycrypto/gpg/GPG.py" id="diff_select">
+<table cellpadding="2" cellspacing="0" class="auto">
+<tr>
+<td>&nbsp;</td>
+<td>
+
+<input type="hidden" name="view" value="diff"/>
+
+Diffs between
+
+<select name="r1">
+<option value="text" selected="selected">Use Text Field</option>
+
+<option value="1.1.1.1:vendor">vendor</option>
+
+<option value="1.1.1.1:init">init</option>
+
+<option value="1.3:MAIN">MAIN</option>
+
+<option value="1.3:HEAD">HEAD</option>
+
+</select>
+<input type="text" size="12" name="tr1"
+value="1.3"
+onchange="document.getElementById('diff_select').r1.selectedIndex=0" />
+
+and
+
+<select name="r2">
+<option value="text" selected="selected">Use Text Field</option>
+
+<option value="1.1.1.1:vendor">vendor</option>
+
+<option value="1.1.1.1:init">init</option>
+
+<option value="1.3:MAIN">MAIN</option>
+
+<option value="1.3:HEAD">HEAD</option>
+
+</select>
+<input type="text" size="12" name="tr2"
+value="1.1"
+onchange="document.getElementById('diff_select').r2.selectedIndex=0" />
+
+</td>
+</tr>
+<tr>
+<td>&nbsp;</td>
+<td>
+Type of Diff should be a
+<select name="diff_format" onchange="submit()">
+<option value="h" selected="selected">Colored Diff</option>
+<option value="l" >Long Colored Diff</option>
+<option value="f" >Full Colored Diff</option>
+<option value="u" >Unidiff</option>
+<option value="c" >Context Diff</option>
+<option value="s" >Side by Side</option>
+</select>
+<input type="submit" value=" Get Diffs " />
+</td>
+</tr>
+</table>
+</form>
+</div>
+
+
+<form method="get" action="/viewvc/pycrypto/gpg/GPG.py">
+<div>
+<hr />
+<a name="logsort"></a>
+<input type="hidden" name="view" value="log"/>
+Sort log by:
+<select name="logsort" onchange="submit()">
+<option value="cvs" >Not sorted</option>
+<option value="date" selected="selected">Commit date</option>
+<option value="rev" >Revision</option>
+</select>
+<input type="submit" value=" Sort " />
+</div>
+</form>
+
+
+<br />
+</div>
+</div>
+</div>
+<div id="ft">
+<div class="yui-b">
+<div class="yui-gb">
+<div class="yui-u first" style="text-align: center;"> <a href="http://p.sf.net/sourceforge/support">SourceForge Help<a/> </div>
+<div class="yui-u" style="text-align: center;"> <strong><a href="/viewvc-static/help_log.html">ViewVC Help</a></strong> </div>
+<div class="yui-u" style="text-align: center;"> <a href="http://viewvc.tigris.org/">Powered by ViewVC 1.1.6</a> </div>
+</div>
+<p class="copyright">Copyright &copy; 2010 <a title="Network which provides and promotes Open Source software downloads, development, discussion and news." href="http://geek.net">Geeknet, Inc.</a> All rights reserved. <a href="http://p.sf.net/sourceforge/terms">Terms of Use</a></p>
+</div>
+</div>
+</div>
+<!--[if IE]></div><![endif]-->
+<!--[if IE 6]></div><![endif]-->
+<!--[if IE 7]></div><![endif]-->
+</body>
+</html>
+
+

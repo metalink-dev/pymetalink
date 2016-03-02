@@ -8,7 +8,7 @@ import shutil
 import zipfile
 
 APP_NAME = 'pymetalink'
-VERSION = '6.1'
+VERSION = '6.2'
 LICENSE = 'GNU GPL'
 DESC = 'A metalink library for Python.'
 AUTHOR_NAME = 'Neil McNab'

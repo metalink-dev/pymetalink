@@ -5,6 +5,21 @@ http://sourceforge.net/projects/pycrypto/
 
 Code for running GnuPG from Python and dealing with the results.
 
+===================================================================
+Distribute and use freely; there are no restrictions on further
+dissemination and usage except those imposed by the laws of your
+country of residence.  This software is provided "as is" without
+warranty of fitness for use or suitability for any purpose, express
+or implied. Use at your own risk or not at all.
+===================================================================
+
+Incorporating the code into commercial products is permitted; you do
+not have to make source available or contribute your changes back
+(though that would be nice).
+
+--amk                                                             (www.amk.ca)
+
+
 Detailed info about the format of data to/from gpg may be obtained from the
 file DETAILS in the gnupg source.
 
@@ -12,6 +27,15 @@ Dependencies
    - GPG must be installed
    - http://www.gnupg.org
    - http://www.gpg4win.org
+   
+Authors:
+
+Andrew Kuchling
+Richard Jones
+Neil McNab
+
+We are not using it, but the most current code appears to be at: https://pythonhosted.org/python-gnupg/
+
 '''
 
 __rcsid__ = '$Id: GPG.py,v 1.3 2003/11/23 15:03:15 akuchling Exp $'
