@@ -301,8 +301,8 @@ class HTTPHandler(urllib2.HTTPHandler):
         return urllib2.HTTPHandler.do_open(self, HTTPConnection, req)
 
 class ConnectHTTPSHandler(urllib2.HTTPSHandler):
-    def do_open(self, http_class, req):
-        return urllib2.HTTPSHandler.do_open(self, HTTPSConnection, req)
+    def do_open(self, http_class, req, *args, **kwargs):
+        return urllib2.HTTPSHandler.do_open(self, HTTPSConnection, req, *args, **kwargs)
 
 def set_proxies():
     # Set proxies
