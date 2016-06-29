@@ -2088,9 +2088,9 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
                 return
     
             try:
-                self.headers.update({"Range": "bytes=%lu-%lu\r\n" % (self.byte_start, self.byte_end - 1)})
+                self.headers.update({"Range": "bytes=%lu-%lu" % (self.byte_start, self.byte_end - 1)})
                 self.host.conn.request("GET", self.url, "", self.headers)
-            except:
+            except (socket.error, socket.herror, socket.gaierror, socket.timeout)::
                 self.error = _("socket exception")
                 self.close()
                 return
