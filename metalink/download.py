@@ -8,23 +8,23 @@
 #
 # Copyright: (C) 2007-2015, Neil McNab
 # License: MIT
-# 
-# Permission is hereby granted, free of charge, to any person obtaining a copy 
-# of this software and associated documentation files (the "Software"), to deal 
-# in the Software without restriction, including without limitation the rights 
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
-# copies of the Software, and to permit persons to whom the Software is 
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included in 
+#
+# The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
 # Description:
@@ -94,7 +94,7 @@ import random
 import uuid
 import ssl
 
-try: 
+try:
     import GPG
 except ImportError:
     try: from . import GPG
@@ -200,7 +200,7 @@ _ = translate()
 def set_uuid(uuidval=None):
     ''' Set uuid to None to clear, returns true on set success '''
     global UUID
-    
+
     if uuidval is None:
         UUID = None
         return True
@@ -215,7 +215,7 @@ def set_uuid(uuidval=None):
 def get_uuid():
     ''' if not set return None'''
     return UUID
-    
+
 def urlopen(url, data = None, metalink_header=False, headers = {}):
     #print "URLOPEN:", url, headers
     url = complete_url(url)
@@ -230,7 +230,7 @@ def urlopen(url, data = None, metalink_header=False, headers = {}):
     if metalink_header:
         req.add_header('Accept', MIME_TYPE + ", */*")
 
-    fp = urllib2.urlopen(req) 
+    fp = urllib2.urlopen(req)
     try:
         if fp.headers['Content-Encoding'] == "gzip":
             return metalink.open_compressed(fp)
@@ -250,7 +250,7 @@ def urlhead(url, metalink_header=False, headers = {}):
         req.add_header('Authorization', "Basic " + base64.encodestring('%s:' % UUID).strip())
     req.add_header('Cache-Control', "no-cache")
     req.add_header('Pragma', "no-cache")
-    req.add_header('Want-Digest', DIGESTS)    
+    req.add_header('Want-Digest', DIGESTS)
     if metalink_header:
         req.add_header('Accept', MIME_TYPE + ", */*")
 
@@ -264,7 +264,7 @@ def urlhead(url, metalink_header=False, headers = {}):
 def digest_parse(digest):
     if digest is None:
         return {}
-        
+
     hashes = digest.split(",")
     digestsums = {}
     for myhash in hashes:
@@ -274,8 +274,8 @@ def digest_parse(digest):
             digestsums['sha-1'] = binascii.hexlify(binascii.a2b_base64(parts[1].strip()))
         else:
             digestsums[parts[0].strip()] = binascii.hexlify(binascii.a2b_base64(parts[1].strip()))
-    return digestsums            
-    
+    return digestsums
+
 
 def get(src, path, checksums = {}, force = False, handlers = {}, segmented = SEGMENTED, headers = {}):
     '''
@@ -297,17 +297,17 @@ def get(src, path, checksums = {}, force = False, handlers = {}, segmented = SEG
     result = download_metalink(src, path, force, handlers, segmented, headers)
     if result != None:
         return result
-            
+
     # assume normal file download here
     # parse out filename portion here
     filename = os.path.basename(src)
-    result = download_file(src, os.path.join(path, filename), 
+    result = download_file(src, os.path.join(path, filename),
             0, checksums, force, handlers, segmented = segmented, headers = headers)
     if result:
         return [result]
     return False
-    
-def download_file(url, local_file, size=0, checksums={}, force = False, 
+
+def download_file(url, local_file, size=0, checksums={}, force = False,
         handlers = {}, segmented = SEGMENTED, chunksums = {}, chunk_size = 0, headers = {}):
     '''
     url {string->URL} locations of the file
@@ -319,7 +319,7 @@ def download_file(url, local_file, size=0, checksums={}, force = False,
     chunksums ?
     chunk_size ?
     returns unicode Returns file path if download is successful.
-        Returns False otherwise (checksum fails).    
+        Returns False otherwise (checksum fails).
     '''
     # convert string filename into something we can use
     #urllist = {}
@@ -335,7 +335,7 @@ def download_file(url, local_file, size=0, checksums={}, force = False,
     fileobj.add_url(url)
 
     return download_file_urls(fileobj, force, handlers, segmented, headers)
-    
+
 def download_file_urls(metalinkfile, force = False, handlers = {}, segmented = SEGMENTED, headers = {}):
     '''
     Download a file.
@@ -344,9 +344,9 @@ def download_file_urls(metalinkfile, force = False, handlers = {}, segmented = S
     Third parameter, optional, progress handler callback
     Fourth parameter, optional, try to use segmented downloading
     Returns file path if download is successful
-    Returns False otherwise (checksum fails)    
+    Returns False otherwise (checksum fails)
     '''
-    
+
     if os.path.exists(metalinkfile.filename) and (not force):
         actsize = os.stat(metalinkfile.filename).st_size
         if len(metalinkfile.hashlist) > 0:
@@ -358,7 +358,7 @@ def download_file_urls(metalinkfile, force = False, handlers = {}, segmented = S
                 return metalinkfile.filename
             else:
                 print(_("Checksum failed, retrying download of %s.") % os.path.basename(metalinkfile.filename))
-                
+
         if metalinkfile.size == actsize:
             if "status" in handlers:
                 handlers["status"](1, actsize, actsize)
@@ -377,13 +377,13 @@ def download_file_urls(metalinkfile, force = False, handlers = {}, segmented = S
         metalinkfile.piecelength = DEFAULT_CHUNK_SIZE
 
     print(_("Downloading to %s.") % metalinkfile.filename)
-        
+
     seg_result = False
     if segmented:
         manager = Segment_Manager(metalinkfile, headers)
         manager.set_callbacks(handlers)
         seg_result = manager.run()
-        
+
         if not seg_result:
             #seg_result = verify_checksum(local_file, checksums)
             print("\n" + _("Could not download all segments of the file, trying one mirror at a time."))
@@ -396,7 +396,7 @@ def download_file_urls(metalinkfile, force = False, handlers = {}, segmented = S
     if manager.get_status():
         return metalinkfile.filename
     return False
-            
+
 class Manager:
     def __init__(self):
         self.cancel_handler = None
@@ -409,14 +409,14 @@ class Manager:
         self.end_bitrate()
 
     def set_time_callback(self, handler):
-        self.time_handler = handler        
-        
+        self.time_handler = handler
+
     def set_cancel_callback(self, handler):
         self.cancel_handler = handler
-        
+
     def set_pause_callback(self, handler):
         self.pause_handler = handler
-        
+
     def set_status_callback(self, handler):
         self.status_handler = handler
 
@@ -440,18 +440,18 @@ class Manager:
                 if wait != None:
                     time.sleep(wait)
                 result = self.cycle()
-            
+
         return self.get_status()
-        
+
     def cycle(self):
         '''
         return True to continue in loop, false to exit
         '''
         pass
-         
+
     def get_status(self):
         return self.status
-    
+
     def close_handler(self):
         return
 
@@ -465,7 +465,7 @@ class Manager:
     def end_bitrate(self):
         self.oldsize = 0
         self.oldtime = None
-        
+
     def get_bitrate(self, bytes):
         '''
         Pass in current byte count
@@ -473,12 +473,12 @@ class Manager:
         if self.oldtime != None and (time.time() - self.oldtime) != 0:
             return ((bytes - self.oldsize) * 8 / 1024)/(time.time() - self.oldtime)
         return 0
-        
+
     def get_time(self, bytes):
         bitrate = self.get_bitrate(bytes)
         if bitrate == 0 or (self.size - bytes) < 0:
             return "??:??"
-        
+
         secondsleft = (self.size - bytes)/(bitrate*1024/8)
         hours = secondsleft / 3600
         minutes = (secondsleft % 3600) / 60
@@ -486,7 +486,7 @@ class Manager:
         if int(hours) > 0:
             return "%.2d:%.2d:%.2d" % (hours, minutes, seconds)
         return "%.2d:%.2d" % (minutes, seconds)
-        
+
 class NormalManager(Manager):
     def __init__(self, metalinkfile, headers = {}):
         Manager.__init__(self)
@@ -507,7 +507,7 @@ class NormalManager(Manager):
         #number = int(random.random() * len(urllist))
         self.start_number = int(random.random() * len(self.urllist))
         self.number = self.start_number
-        
+
     def cycle(self):
         if self.cancel_handler != None and self.cancel_handler():
             return False
@@ -529,10 +529,10 @@ class NormalManager(Manager):
 
             self.number = (self.number + 1) % len(self.urllist)
             self.count += 1
-            
+
             if self.count == len(self.urllist):
                 self.status = False
-            
+
             return self.count < len(self.urllist)
         except KeyboardInterrupt:
             print("Download Interrupted!")
@@ -540,7 +540,7 @@ class NormalManager(Manager):
                 manager.close_handler()
             except: pass
             return False
-    
+
 class URLManager(Manager):
     def __init__(self, remote_file, filename, checksums = {}, headers = {}):
         '''
@@ -556,9 +556,9 @@ class URLManager(Manager):
     ### FIXME need to check contents from previous download here
         self.resume = FileResume(filename + ".temp")
         self.resume.add_block(0)
-    
+
         self.data = ThreadSafeFile(filename, "wb+")
-        
+
         try:
             self.temp = urlopen(remote_file, headers = headers)
         except:
@@ -576,17 +576,17 @@ class URLManager(Manager):
         try:
             self.size = int(myheaders['Content-Length'])
         except (KeyError, TypeError):
-            self.size = 0            
-            
+            self.size = 0
+
         self.streamserver = None
         if PORT != None:
             self.streamserver = StreamServer((HOST, PORT), StreamRequest)
             self.streamserver.set_stream(self.data)
-        
+
             #thread.start_new_thread(self.streamserver.serve, ())
             mythread = threading.Thread(target=self.streamserver.serve)
             mythread.start()
- 
+
     def close_handler(self):
         self.resume.complete()
         try:
@@ -594,17 +594,17 @@ class URLManager(Manager):
                 self.data.close()
             self.temp.close()
         except: pass
-        
+
         if self.status:
             self.status = filecheck(self.filename, self.checksums, self.size)
-            
+
     def cycle(self):
         if self.oldtime == None:
             self.start_bitrate(self.counter * self.block_size)
         if self.cancel_handler != None and self.cancel_handler():
             self.close_handler()
             return False
-        
+
         block = self.temp.read(self.block_size)
         self.data.acquire()
         self.data.write(block)
@@ -614,9 +614,9 @@ class URLManager(Manager):
 
         self.resume.set_block_size(self.counter * self.block_size)
 
-        if self.streamserver != None:        
+        if self.streamserver != None:
             self.streamserver.set_length(self.counter * self.block_size)
-                        
+
         if self.status_handler != None:
             self.status_handler(self.total, 1, self.size)
 
@@ -624,21 +624,21 @@ class URLManager(Manager):
             self.bitrate_handler(self.get_bitrate(self.counter * self.block_size))
 
         if self.time_handler != None:
-            self.time_handler(self.get_time(self.counter * self.block_size))    
-            
+            self.time_handler(self.get_time(self.counter * self.block_size))
+
         if not block:
             self.close_handler()
 
         #print self.get_bitrate(self.counter * self.block_size)
         return bool(block)
-    
+
 def filecheck(local_file, checksums, size, handler = None):
     if verify_checksum(local_file, checksums):
         actsize = 0
         try:
             actsize = os.stat(local_file).st_size
         except: pass
-            
+
         if handler != None:
             tempsize = size
             if size == 0:
@@ -647,14 +647,14 @@ def filecheck(local_file, checksums, size, handler = None):
 
         if (int(actsize) == int(size) or size == 0):
             return True
-    
+
     print("\n" + _("Checksum failed for %s.") % os.path.basename(local_file))
     return False
-    
+
 def parse_metalink(src, headers = {}, nocheck = False, ver=3):
     src = complete_url(src)
     is_metalink = nocheck
-    
+
     # not all servers support HEAD where GET is also supported
     # also a WindowsError is thrown if a local file does not exist
     if src.endswith(".metalink") or src.endswith(".meta4"):
@@ -678,7 +678,7 @@ def parse_metalink(src, headers = {}, nocheck = False, ver=3):
                 for part in parts[1:]:
                     part1, part2 = part.split("=", 1)
                     mydict[part1.strip()] = part2.strip()
-                
+
                 pri = ""
                 try:
                     pri = mydict["pri"]
@@ -711,10 +711,10 @@ def parse_metalink(src, headers = {}, nocheck = False, ver=3):
             return metalink.convert(mobj, ver)
     except KeyError:
         pass
-    
+
     if not is_metalink:
         return False
-        
+
     try:
         datasource = urlopen(src, metalink_header=True, headers = headers)
     except:
@@ -735,13 +735,13 @@ def parse_rss(src, headers = {}):
     rssobj = metalink.RSSAtom()
     rssobj.parsehandle(datasource)
     datasource.close()
-    return rssobj    
-    
+    return rssobj
+
 def download_rss(src, path, force = False, handlers = {}, segmented = SEGMENTED, headers = {}, nocheck = False):
     rssobj = parse_rss(src, headers)
     if not rssobj:
         return False
-        
+
     urllist = rssobj.files
     if len(urllist) == 0:
         print(_("No enclosures to download files from."))
@@ -752,12 +752,12 @@ def download_rss(src, path, force = False, handlers = {}, segmented = SEGMENTED,
         result = download_file(rssitem.url, os.path.join(path, os.path.basename(rssitem.url)), rssitem.size, force=force, handlers=handlers, segmented=segmented)
         if result:
             results.append(result)
-            
+
     if len(results) == 0:
         return False
-    
+
     return results
-    
+
 def download_metalink(src, path, force = False, handlers = {}, segmented = SEGMENTED, headers = {}, nocheck = False):
     '''
     Decode a metalink file, can be local or remote
@@ -774,7 +774,7 @@ def download_metalink(src, path, force = False, handlers = {}, segmented = SEGME
     metalinkobj = parse_metalink(src, myheaders, nocheck)
     if not metalinkobj:
         return None
-        
+
     if is_remote(src):
         myheaders['referer'] = src
 
@@ -803,7 +803,7 @@ def download_metalink(src, path, force = False, handlers = {}, segmented = SEGME
                     results.append(result)
     if len(results) == 0:
         return False
-    
+
     return results
 
 
@@ -852,7 +852,7 @@ def download_jigdo(src, path, force = False, handlers = {}, segmented = SEGMENTE
     checksum = verify_checksum(jigdo.filename, {'md5': md5})
     if not checksum:
         print(_("Checksum failed."))
-    
+
     return results
 
 def convert_jigdo(src, headers = {}):
@@ -861,7 +861,7 @@ def convert_jigdo(src, headers = {}):
     First parameter, file to download, URL or file path to download from
     Returns metalink xml text, False on error
     '''
-    
+
     newsrc = complete_url(src)
     try:
         datasource = urlopen(newsrc, metalink_header=True, headers = headers)
@@ -881,7 +881,7 @@ def convert_jigdo(src, headers = {}):
     if len(urllist) == 0:
         print(_("No Jigdo data files!"))
         return False
-    
+
     return jigdo.generate()
 
 
@@ -900,7 +900,7 @@ def download_file_node(item, path, force = False, handler = None, segmented=SEGM
 
     for node in item.resources:
         urllist.append(node.url)
-        
+
     if len(urllist) == 0:
         print(_("No urls to download file from."))
         return False
@@ -933,7 +933,7 @@ def urlretrieve(url, filename, reporthook = None, headers = {}):
     counter = 0
     temp = urlopen(url, headers = headers)
     myheaders = temp.info()
-    
+
     try:
         size = int(myheaders['Content-Length'])
     except KeyError:
@@ -953,13 +953,13 @@ def urlretrieve(url, filename, reporthook = None, headers = {}):
         counter += 1
 
         resume.set_block_size(counter * block_size)
-                        
+
         if reporthook != None:
             #print counter, block_size, size
             reporthook(counter, block_size, size)
 
     resume.complete()
-            
+
     data.close()
     temp.close()
 
@@ -994,7 +994,7 @@ class FileResume:
         count = 0
         total = 0
         offset = None
-        
+
         for value in self.blocks:
             value = int(value)
             if value == count:
@@ -1023,13 +1023,13 @@ class FileResume:
         '''
         if len(self.blocks) == 0:
             return 0
-        
+
         count = 0
         for value in self.blocks:
             if int(value) != count:
                 return (count + 1) * self.size
             count += 1
-            
+
         return None
 
     def add_block(self, block_id):
@@ -1039,14 +1039,14 @@ class FileResume:
         if str(block_id) not in self.blocks:
             self.blocks.append(str(block_id))
         self._write()
-        
+
     def remove_block(self, block_id):
         '''
         Remove a block from list of completed
         '''
         self.blocks.remove(str(block_id))
         self._write()
-        
+
     def clear_blocks(self):
         '''
         Remove all blocks from completed list
@@ -1135,7 +1135,7 @@ def verify_chunk_checksum(chunkstring, checksums={}):
         else:
             return False
     except KeyError: pass
-    
+
     # No checksum provided, assume OK
     return True
 
@@ -1148,7 +1148,7 @@ def verify_checksum(local_file, checksums={}):
     Returns True if no checksums are provided
     Returns False otherwise
     '''
-    
+
     try:
         return pgp_verify_sig(local_file, checksums["pgp"])
     except (KeyError, AttributeError, ValueError, AssertionError): pass
@@ -1192,7 +1192,7 @@ def verify_checksum(local_file, checksums={}):
             #print "\nERROR: md5 checksum failed for %s." % os.path.basename(local_file)
             return False
     except KeyError: pass
-    
+
     # No checksum provided, assume OK
     return True
 
@@ -1203,7 +1203,7 @@ def pgp_verify_sig(filename, sig):
         for thisfile in files:
             if thisfile[-4:] in PGP_KEY_EXTS:
                 gpg.import_key(open(thisfile).read())
-    
+
     sign = gpg.verify_file_detached(filename, sig)
 
     print("\n-----" + _("BEGIN PGP SIGNATURE INFORMATION") + "-----")
@@ -1222,22 +1222,22 @@ def pgp_verify_sig(filename, sig):
 
     if sign.error != None:
         raise AssertionError(sign.error)
-    
+
     if sign.is_valid():
         return True
-    
+
     return False
 
 def is_remote(name):
     transport = get_transport(name)
-        
+
     if transport != "":
         return True
     return False
 
 def is_local(name):
     transport = get_transport(name)
-        
+
     if transport == "":
         return True
     return False
@@ -1317,7 +1317,7 @@ def sort_prefs(mydict):
 
     newurls.sort()
     newurls.reverse()
-    
+
     result = []
     for url in newurls:
         result.append(url[1])
@@ -1333,11 +1333,11 @@ class ThreadSafeFile(file):
 
     def acquire(self):
         return self.lock.acquire()
-    
+
     def release(self):
         return self.lock.release()
 
-    
+
 class Segment_Manager(Manager):
     def __init__(self, metalinkfile, headers = {}):
         Manager.__init__(self)
@@ -1357,22 +1357,22 @@ class Segment_Manager(Manager):
         self.checksums = metalinkfile.hashlist
         self.localfile = metalinkfile.filename
         self.filter_urls()
-        
+
         self.status = True
-        
+
         # Open the file.
         try:
             self.f = ThreadSafeFile(self.localfile, "rb+")
         except IOError:
             self.f = ThreadSafeFile(self.localfile, "wb+")
-            
+
         self.resume = FileResume(self.localfile + ".temp")
 
         self.streamserver = None
         if PORT != None:
             self.streamserver = StreamServer((HOST, PORT), StreamRequest)
             self.streamserver.set_stream(self.f)
-        
+
             #thread.start_new_thread(self.streamserver.serve, ())
             mythread = threading.Thread(target=self.streamserver.serve)
             mythread.start()
@@ -1383,20 +1383,20 @@ class Segment_Manager(Manager):
             for key in self.chunksums.keys():
                 mylist[key] = self.chunksums[key][index]
         except: pass
-        
+
         return mylist
 
     def get_size(self):
         '''
         Take a best guess at size based on first 3 matching servers
-        
+
         raise socket.error e.g. "Operation timed out"
         '''
         i = 0
         sizes = []
         checksums = []
         urls = list(self.urls)
-        
+
         while (i < len(urls) and (len(sizes) < 3)):
             url = urls[i]
             protocol = get_transport(url)
@@ -1407,7 +1407,7 @@ class Segment_Manager(Manager):
                 checksum_dict = {}
                 while (status == httplib.MOVED_PERMANENTLY or status == httplib.FOUND) and count < MAX_REDIRECTS:
                     http = Http_Host(url)
-                    if http.conn != None: 
+                    if http.conn != None:
                         try:
                             headers = {}
                             headers['Want-Digest'] = DIGESTS
@@ -1429,24 +1429,24 @@ class Segment_Manager(Manager):
 
             elif protocol == "ftp":
                 ftp = Ftp_Host(url)
-                
+
                 try:
                     size = ftp.conn.size(url)
                 except ftplib.error_perm:
                     size = None
-                    
+
                 if size != None:
                     sizes.append(size)
-                
+
             i += 1
-          
+
         if len(self.checksums) == 0 and len(checksums) > 0:
             if len(checksums) == 1:
                 self.checksums = checksums[0]
             if checksums.count(checksums[0]) >= 2:
                 self.checksums = checksums[0]
             if checksums.count(checksums[1]) >= 2:
-                self.checksums = checksums[1]            
+                self.checksums = checksums[1]
 
         if len(sizes) == 0:
             return None
@@ -1456,9 +1456,9 @@ class Segment_Manager(Manager):
             return int(sizes[0])
         if sizes.count(sizes[1]) >= 2:
             return int(sizes[1])
-        
+
         return None
-    
+
     def filter_urls(self):
         #print self.urls
         newurls = {}
@@ -1467,7 +1467,7 @@ class Segment_Manager(Manager):
                 newurls[item] = self.urls[item]
         self.urls = newurls
         return newurls
-            
+
     def run(self, wait=0.1):
         '''
         ?
@@ -1486,7 +1486,7 @@ class Segment_Manager(Manager):
             self.chunk_size = self.size/MAX_CHUNKS
             #print "Set chunk size to %s." % self.chunk_size
         self.resume.update_block_size(self.chunk_size)
-            
+
         return Manager.run(self, wait)
 
     def cycle(self):
@@ -1500,16 +1500,16 @@ class Segment_Manager(Manager):
             index = self.get_chunk_index()
             if index != None and index > 0 and self.streamserver != None:
                 self.streamserver.set_length((index - 1) * self.chunk_size)
-            
+
             if self.oldtime == None:
                 self.start_bitrate(bytes)
-                
+
             # cancel was pressed here
             if self.cancel_handler != None and self.cancel_handler():
                 self.status = False
                 self.close_handler()
                 return False
-            
+
             self.update()
             self.resume.extend_blocks(self.chunk_list())
 
@@ -1517,20 +1517,20 @@ class Segment_Manager(Manager):
                 self.resume.complete()
                 self.close_handler()
                 return False
-            
+
             #crap out and do it the old way
             if len(self.urls) == 0:
                 self.status = False
                 self.close_handler()
                 return False
-            
+
             return True
-        
+
         except KeyboardInterrupt:
             print("Download Interrupted!")
             self.close_handler()
             return False
-            
+
 
     def update(self):
         if self.status_handler != None and self.size != None:
@@ -1538,17 +1538,17 @@ class Segment_Manager(Manager):
             #if self.byte_total() % self.chunk_size:
             #    count += 1
             #self.status_handler(count, self.chunk_size, self.size)
-            self.status_handler(self.byte_total(), 1, self.size)    
+            self.status_handler(self.byte_total(), 1, self.size)
         if self.bitrate_handler != None:
             self.bitrate_handler(self.get_bitrate(self.byte_total()))
         if self.time_handler != None:
             self.time_handler(self.get_time(self.byte_total()))
-            
+
         next = self.next_url()
-        
+
         if next == None:
             return
-        
+
         index = self.get_chunk_index()
         if index != None:
             start = index * self.chunk_size
@@ -1592,9 +1592,9 @@ class Segment_Manager(Manager):
         if (i * self.chunk_size) < self.size:
             self.chunks.append(None)
             return i
-        
+
         return None
-        
+
     def gen_count_array(self):
         temp = {}
         for item in self.sockets:
@@ -1614,7 +1614,7 @@ class Segment_Manager(Manager):
     def next_url(self):
         ''' returns next socket to use or None if none available'''
         self.remove_errors()
-  
+
         if (len(self.sockets) >= (self.host_limit * self.limit_per_host)) or (len(self.sockets) >= (self.limit_per_host * len(self.urls))):
             # We can't create any more sockets, but we can see what's available
             #print "existing sockets"
@@ -1630,7 +1630,7 @@ class Segment_Manager(Manager):
         #number = int(random.random() * len(self.urls))
         urls = start_sort(self.urls)
         number = 0
-    
+
         countvar = 1
         while (countvar <= len(self.urls)):
             try:
@@ -1654,7 +1654,7 @@ class Segment_Manager(Manager):
                         return None
                     self.sockets.append(host)
                     return host
-                    
+
             number = (number + 1) % len(self.urls)
             countvar += 1
 
@@ -1672,7 +1672,7 @@ class Segment_Manager(Manager):
                         self.urls[item.location] = newitem
                     except KeyError: pass
                     self.filter_urls()
-                    
+
                 #print "removed %s" % item.url
                 try:
                     self.urls.pop(item.url)
@@ -1707,7 +1707,7 @@ class Segment_Manager(Manager):
             except (AttributeError): pass
         #print chunks
         return chunks
-    
+
     def close_handler(self):
         if PORT == None:
             self.f.close()
@@ -1739,13 +1739,13 @@ class Host_Base:
         self.error = None
         self.conn = None
         self.active = False
-        
+
         self.url = url
         self.mem = memmap
 
         transport = get_transport(self.url)
         self.protocol = transport
-        
+
     def import_stats(self, segment):
         pass
 
@@ -1770,7 +1770,7 @@ class Ftp_Host(Host_Base):
             except AttributeError:
                 # needed for python < 2.5
                 username = None
-                
+
             if username == None:
                 username = "anonymous"
                 password = "anonymous"
@@ -1797,7 +1797,7 @@ class Ftp_Host(Host_Base):
             self.error = _("unsupported protocol")
             raise AssertionError
             #return
-        
+
     def close(self):
         if self.conn != None:
             try:
@@ -1808,11 +1808,11 @@ class Ftp_Host(Host_Base):
     def reconnect(self):
         self.close()
         self.connect()
-            
+
 class Http_Host(Host_Base):
     def __init__(self, url, memmap=None):
         Host_Base.__init__(self, url, memmap)
-        
+
         urlparts = urlparse.urlsplit(self.url)
         if self.url.endswith(".torrent"):
             self.error = _("unsupported protocol")
@@ -1844,7 +1844,7 @@ class Http_Host(Host_Base):
         else:
             self.error = _("unsupported protocol")
             return
-        
+
     def close(self):
         if self.conn != None:
             self.conn.close()
@@ -1864,7 +1864,7 @@ class Host_Segment:
         self.url = host.url
         self.mem = host.mem
         self.checksums = checksums
-        self.error = None        
+        self.error = None
         self.ttime = 0
         self.response = None
         self.bytes = 0
@@ -1872,7 +1872,7 @@ class Host_Segment:
         self.temp = ""
         self.cancel_handler = None
         self.headers = headers.copy()
-        
+
     def set_cancel_callback(self, handler):
         self.cancel_handler = handler
 
@@ -1880,7 +1880,7 @@ class Host_Segment:
         if self.cancel_handler == None:
             return False
         return self.cancel_handler()
-        
+
     def avg_bitrate(self):
         bits = self.bytes * 8
         return bits/self.ttime
@@ -1888,7 +1888,7 @@ class Host_Segment:
     def checksum(self):
         if self.check_cancel():
             return False
-        
+
         try:
             self.mem.acquire()
             self.mem.seek(self.byte_start, 0)
@@ -1921,7 +1921,7 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
             self.bytes += self.byte_count
             self.close()
             return
-        
+
         # check for supported hosts/urls
         urlparts = urlparse.urlsplit(self.url)
         if self.host.conn == None:
@@ -1929,7 +1929,7 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
             self.error = _("bad socket")
             self.close()
             return
-        
+
         size = None
         retry = True
         count = 0
@@ -1976,12 +1976,12 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
                 self.error = _("socket reconnect attempts failed")
                 self.close()
                 return
-    
+
         if size != None:
             if self.filesize != size:
                 self.error = _("bad file size")
                 return
-        
+
         self.start_time = time.time()
         while True:
             if self.readable():
@@ -1998,7 +1998,7 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
         if self.response == None:
             return False
         return True
-    
+
     def handle_read(self):
         try:
             data = self.response.recv(1024)
@@ -2031,10 +2031,10 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
                 self.mem.flush()
                 self.mem.release()
             except ValueError:
-                self.error = _("bad file handle")            
-        
+                self.error = _("bad file handle")
+
             self.response = None
-            
+
         # this method writes directly to file on each data grab, not working for some reason
 ##        if (self.bytes + len(data)) >= self.byte_count:
 ##            # When using a HTTP proxy there is no shutdown() call
@@ -2051,7 +2051,7 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
 ##            self.mem.seek(self.byte_start + self.bytes, 0)
 ##            self.mem.write(writedata)
 ##            self.mem.flush()
-##            
+##
 ##            self.mem.release()
 ##
 ##            self.response = None
@@ -2060,20 +2060,20 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
 ##
 ##            lock = threading.Lock()
 ##            lock.acquire()
-##            
+##
 ##            self.mem.seek(self.byte_start + self.bytes, 0)
 ##            self.mem.write(writedata)
-##            
+##
 ##            lock.release()
 ##
 ##        self.bytes += len(writedata)
 
-        
+
 class Http_Host_Segment(threading.Thread, Host_Segment):
     def __init__(self, *args):
         threading.Thread.__init__(self)
         Host_Segment.__init__(self, *args)
-        
+
     def run(self):
         #try:
             # Finish early if checksum is OK
@@ -2081,20 +2081,20 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
                 self.bytes += self.byte_count
                 self.close()
                 return
-            
+
             if self.host.conn == None:
                 self.error = _("bad socket")
                 self.close()
                 return
-    
+
             try:
                 self.headers.update({"Range": "bytes=%lu-%lu" % (self.byte_start, self.byte_end - 1)})
                 self.host.conn.request("GET", self.url, "", self.headers)
-            except (socket.error, socket.herror, socket.gaierror, socket.timeout)::
+            except (socket.error, socket.herror, socket.gaierror, socket.timeout):
                 self.error = _("socket exception")
                 self.close()
                 return
-            
+
             self.start_time = time.time()
             while True:
                 if self.readable():
@@ -2122,7 +2122,7 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
             except:
                 self.error = _("response error")
                 return False
-            
+
         if self.response.status == httplib.PARTIAL_CONTENT:
             return True
         elif self.response.status == httplib.MOVED_PERMANENTLY or self.response.status == httplib.FOUND:
@@ -2135,7 +2135,7 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
             self.response = None
             return False
         return False
-    
+
     def handle_read(self):
         try:
             data = self.response.read()
@@ -2169,20 +2169,20 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
         # Check digest headers against expected
         digest = self.response.getheader("Digest", None)
         if digest is not None:
-            digestsums = digest_parse(digest)                    
-            # check digest here, skip if missing, return if mismatch                        
+            digestsums = digest_parse(digest)
+            # check digest here, skip if missing, return if mismatch
             for hashtype in self.checksums.keys():
                 try:
                     digestsums[hashtype]
                 except KeyError:
                     continue
-                    
+
                 if self.checksums[hashtype] != digestsums[hashtype]:
                     return
-            
+
         body = data
         size = len(body)
-        
+
         # write out body to file
         try:
             self.mem.acquire()
@@ -2216,7 +2216,7 @@ class StreamRequest(BaseHTTPServer.BaseHTTPRequestHandler):
                     loc = self.server.fileobj.tell()
                     self.server.fileobj.seek(start, 0)
                     size = self.server.length - start
-                    
+
                     data = self.server.fileobj.read(size)
                     if len(data) > 0:
                         self.wfile.write(data)
@@ -2262,7 +2262,7 @@ class StreamServer(BaseHTTPServer.HTTPServer):
             print("Server Interrupted!")
             self.fileobj.close()
             self.stop()
-        
+
     def set_stream(self, fileobj):
         self.fileobj = fileobj
 
@@ -2275,31 +2275,31 @@ class StreamServer(BaseHTTPServer.HTTPServer):
     # # for testfile in testurls:
         # # files = get(testfile, os.getcwd(), force=True, segmented=False)
         # # print "Downloaded:", files
-        
+
     # # print "=" * 79
-    
+
     # # for testfile in testurls:
         # # files = get(testfile, os.getcwd(), force=True, segmented=True)
         # # print "Downloaded:", files
-        
-    # # print "=" * 79        
-        
+
+    # # print "=" * 79
+
     # proxystr = "http://localhost:8000"
     # proxy.HTTP_PROXY = proxystr
     # proxy.HTTPS_PROXY = proxystr
     # proxy.FTP_PROXY = proxystr
     # proxy.set_proxies()
-    
+
     # # for testfile in testurls:
        # # files = get(testfile, os.getcwd(), force=True, segmented=False)
        # # print "Downloaded:", files
-    
-    # # print "=" * 79    
-    
+
+    # # print "=" * 79
+
     # for testfile in testurls:
        # files = get(testfile, os.getcwd(), force=True, segmented=True)
        # print "Downloaded:", files
-    
+
 ##myserver = StreamServer(("localhost", 8080), StreamRequest)
 ##myserver.set_stream(ThreadSafeFile("C:\\library\\avril\\Avril Lavigne - Complicated.mpg", "rb"))
 ##myserver.set_length(50000000)
