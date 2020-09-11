@@ -454,9 +454,14 @@ class HTTPConnection(httplib.HTTPConnection):
                 userpass.replace('\n','')
                 self.proxy_headers["Proxy-Authorization"] = "Basic " + userpass
                 
-    def _send_request(self, method, url, body, headers):
+    def _send_request(self, method, url, body, headers, encode_chunked=False):
         headers.update(self.proxy_headers)
-        return httplib.HTTPConnection._send_request(self, method, url, body, headers)
+        try:
+           # Python 3.x
+           return httplib.HTTPConnection._send_request(self, method, url, body, headers, encode_chunked)
+        except TypeError:
+           # Python 2.7
+           return httplib.HTTPConnection._send_request(self, method, url, body, headers)
 
 class HTTPSConnection(httplib.HTTPSConnection):
     ######## this works for proxy now!
