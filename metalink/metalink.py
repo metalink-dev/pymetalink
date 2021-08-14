@@ -8,23 +8,23 @@
 #
 # Copyright: (C) 2007-2015, Hampus Wessman, Neil McNab
 # License: MIT
-# 
-# Permission is hereby granted, free of charge, to any person obtaining a copy 
-# of this software and associated documentation files (the "Software"), to deal 
-# in the Software without restriction, including without limitation the rights 
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell 
-# copies of the Software, and to permit persons to whom the Software is 
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
 # furnished to do so, subject to the following conditions:
-# 
-# The above copyright notice and this permission notice shall be included in 
+#
+# The above copyright notice and this permission notice shall be included in
 # all copies or substantial portions of the Software.
-# 
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE 
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN 
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 #
 # Description:
@@ -34,6 +34,7 @@
 ########################################################################
 
 import sys
+
 if sys.version_info < (3,):
     import StringIO
     import urllib2
@@ -56,8 +57,10 @@ import xml.parsers.expat
 import gzip
 
 # handle missing module in jython
-try: import bz2
-except ImportError: pass
+try:
+    import bz2
+except ImportError:
+    pass
 
 import base64
 import binascii
@@ -70,19 +73,22 @@ RFC822 = "%a, %d %b %Y %H:%M:%S +0000"
 
 XMLSEP = "/"
 
-HASHMAP = { "sha256": "sha-256", 
-            "sha1": "sha-1",
-            "sha512": "sha-512",
-            "sha224": "sha-224",
-            "sha384": "sha-384",
-            "pgp": "application/pgp-signature",
-            }
+HASHMAP = {
+    "sha256": "sha-256",
+    "sha1": "sha-1",
+    "sha512": "sha-512",
+    "sha224": "sha-224",
+    "sha384": "sha-384",
+    "pgp": "application/pgp-signature",
+}
+
 
 def hashlookup(text):
     try:
         return HASHMAP[text]
     except KeyError:
         return text
+
 
 def get_first(x):
     try:
@@ -92,7 +98,15 @@ def get_first(x):
 
 
 class Resource:
-    def __init__(self, url, type="default", location="", preference="", maxconnections="", attrs = {}):
+    def __init__(
+        self,
+        url,
+        type="default",
+        location="",
+        preference="",
+        maxconnections="",
+        attrs={},
+    ):
         self.errors = []
         self.url = url
         self.location = location
@@ -112,33 +126,298 @@ class Resource:
 
         for attr in attrs:
             setattr(self, attr, attrs[attr])
-            
+
     def generate(self):
-        details = ''
-        text = ''
+        details = ""
+        text = ""
         if self.location.strip() != "":
-            details += ' location="'+self.location.lower()+'"'
-        if self.preference.strip() != "": details += ' preference="'+self.preference+'"'
-        if self.maxconnections.strip() != ""and self.maxconnections.strip() != "-" : details += ' maxconnections="'+self.maxconnections+'"'
-        text += '        <url type="'+self.type+'"'+details+'>'+self.url+'</url>\n'
+            details += ' location="' + self.location.lower() + '"'
+        if self.preference.strip() != "":
+            details += ' preference="' + self.preference + '"'
+        if self.maxconnections.strip() != "" and self.maxconnections.strip() != "-":
+            details += ' maxconnections="' + self.maxconnections + '"'
+        text += (
+            '        <url type="'
+            + self.type
+            + '"'
+            + details
+            + ">"
+            + self.url
+            + "</url>\n"
+        )
         return text
-            
+
     def validate(self):
         valid = True
         if self.url.strip() == "":
             self.errors.append("Empty URLs are not allowed!")
             valid = False
-        allowed_types = ["ftp", "ftps", "http", "https", "rsync", "bittorrent", "magnet", "ed2k"]
+        allowed_types = [
+            "ftp",
+            "ftps",
+            "http",
+            "https",
+            "rsync",
+            "bittorrent",
+            "magnet",
+            "ed2k",
+        ]
         if not self.type in allowed_types:
-            self.errors.append("Invalid URL: " + self.url + '.')
+            self.errors.append("Invalid URL: " + self.url + ".")
             valid = False
-        elif self.type in ['http', 'https', 'ftp', 'ftps', 'bittorrent']:
-            m = re.search(r'\w+://.+\..+/.*', self.url)
+        elif self.type in ["http", "https", "ftp", "ftps", "bittorrent"]:
+            m = re.search(r"\w+://.+\..+/.*", self.url)
             if m == None:
-                self.errors.append("Invalid URL: " + self.url + '.')
+                self.errors.append("Invalid URL: " + self.url + ".")
                 valid = False
         if self.location.strip() != "":
-            iso_locations = ["AF", "AX", "AL", "DZ", "AS", "AD", "AO", "AI", "AQ", "AG", "AR", "AM", "AW", "AU", "AT", "AZ", "BS", "BH", "BD", "BB", "BY", "BE", "BZ", "BJ", "BM", "BT", "BO", "BA", "BW", "BV", "BR", "IO", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "KY", "CF", "TD", "CL", "CN", "CX", "CC", "CO", "KM", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "GQ", "ER", "EE", "ET", "FK", "FO", "FJ", "FI", "FR", "GF", "PF", "TF", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GD", "GP", "GU", "GT", "GG", "GN", "GW", "GY", "HT", "HM", "VA", "HN", "HK", "HU", "IS", "IN", "ID", "IR", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KP", "KR", "KW", "KG", "LA", "LV", "LB", "LS", "LR", "LY", "LI", "LT", "LU", "MO", "MK", "MG", "MW", "MY", "MV", "ML", "MT", "MH", "MQ", "MR", "MU", "YT", "MX", "FM", "MD", "MC", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "AN", "NC", "NZ", "NI", "NE", "NG", "NU", "NF", "MP", "NO", "OM", "PK", "PW", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RE", "RO", "RU", "RW", "SH", "KN", "LC", "PM", "VC", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "GS", "ES", "LK", "SD", "SR", "SJ", "SZ", "SE", "CH", "SY", "TW", "TJ", "TZ", "TH", "TL", "TG", "TK", "TO", "TT", "TN", "TR", "TM", "TC", "TV", "UG", "UA", "AE", "GB", "US", "UM", "UY", "UZ", "VU", "VE", "VN", "VG", "VI", "WF", "EH", "YE", "ZM", "ZW", "UK"]
+            iso_locations = [
+                "AF",
+                "AX",
+                "AL",
+                "DZ",
+                "AS",
+                "AD",
+                "AO",
+                "AI",
+                "AQ",
+                "AG",
+                "AR",
+                "AM",
+                "AW",
+                "AU",
+                "AT",
+                "AZ",
+                "BS",
+                "BH",
+                "BD",
+                "BB",
+                "BY",
+                "BE",
+                "BZ",
+                "BJ",
+                "BM",
+                "BT",
+                "BO",
+                "BA",
+                "BW",
+                "BV",
+                "BR",
+                "IO",
+                "BN",
+                "BG",
+                "BF",
+                "BI",
+                "KH",
+                "CM",
+                "CA",
+                "CV",
+                "KY",
+                "CF",
+                "TD",
+                "CL",
+                "CN",
+                "CX",
+                "CC",
+                "CO",
+                "KM",
+                "CG",
+                "CD",
+                "CK",
+                "CR",
+                "CI",
+                "HR",
+                "CU",
+                "CY",
+                "CZ",
+                "DK",
+                "DJ",
+                "DM",
+                "DO",
+                "EC",
+                "EG",
+                "SV",
+                "GQ",
+                "ER",
+                "EE",
+                "ET",
+                "FK",
+                "FO",
+                "FJ",
+                "FI",
+                "FR",
+                "GF",
+                "PF",
+                "TF",
+                "GA",
+                "GM",
+                "GE",
+                "DE",
+                "GH",
+                "GI",
+                "GR",
+                "GL",
+                "GD",
+                "GP",
+                "GU",
+                "GT",
+                "GG",
+                "GN",
+                "GW",
+                "GY",
+                "HT",
+                "HM",
+                "VA",
+                "HN",
+                "HK",
+                "HU",
+                "IS",
+                "IN",
+                "ID",
+                "IR",
+                "IQ",
+                "IE",
+                "IM",
+                "IL",
+                "IT",
+                "JM",
+                "JP",
+                "JE",
+                "JO",
+                "KZ",
+                "KE",
+                "KI",
+                "KP",
+                "KR",
+                "KW",
+                "KG",
+                "LA",
+                "LV",
+                "LB",
+                "LS",
+                "LR",
+                "LY",
+                "LI",
+                "LT",
+                "LU",
+                "MO",
+                "MK",
+                "MG",
+                "MW",
+                "MY",
+                "MV",
+                "ML",
+                "MT",
+                "MH",
+                "MQ",
+                "MR",
+                "MU",
+                "YT",
+                "MX",
+                "FM",
+                "MD",
+                "MC",
+                "MN",
+                "ME",
+                "MS",
+                "MA",
+                "MZ",
+                "MM",
+                "NA",
+                "NR",
+                "NP",
+                "NL",
+                "AN",
+                "NC",
+                "NZ",
+                "NI",
+                "NE",
+                "NG",
+                "NU",
+                "NF",
+                "MP",
+                "NO",
+                "OM",
+                "PK",
+                "PW",
+                "PS",
+                "PA",
+                "PG",
+                "PY",
+                "PE",
+                "PH",
+                "PN",
+                "PL",
+                "PT",
+                "PR",
+                "QA",
+                "RE",
+                "RO",
+                "RU",
+                "RW",
+                "SH",
+                "KN",
+                "LC",
+                "PM",
+                "VC",
+                "WS",
+                "SM",
+                "ST",
+                "SA",
+                "SN",
+                "RS",
+                "SC",
+                "SL",
+                "SG",
+                "SK",
+                "SI",
+                "SB",
+                "SO",
+                "ZA",
+                "GS",
+                "ES",
+                "LK",
+                "SD",
+                "SR",
+                "SJ",
+                "SZ",
+                "SE",
+                "CH",
+                "SY",
+                "TW",
+                "TJ",
+                "TZ",
+                "TH",
+                "TL",
+                "TG",
+                "TK",
+                "TO",
+                "TT",
+                "TN",
+                "TR",
+                "TM",
+                "TC",
+                "TV",
+                "UG",
+                "UA",
+                "AE",
+                "GB",
+                "US",
+                "UM",
+                "UY",
+                "UZ",
+                "VU",
+                "VE",
+                "VN",
+                "VG",
+                "VI",
+                "WF",
+                "EH",
+                "YE",
+                "ZM",
+                "ZW",
+                "UK",
+            ]
             if not self.location.upper() in iso_locations:
                 self.errors.append(self.location + " is not a valid country code.")
                 valid = False
@@ -146,7 +425,11 @@ class Resource:
             try:
                 pref = int(self.preference)
                 if pref < 0 or pref > 100:
-                    self.errors.append("Preference must be between 0 and 100, not " + self.preference + '.')
+                    self.errors.append(
+                        "Preference must be between 0 and 100, not "
+                        + self.preference
+                        + "."
+                    )
                     valid = False
             except:
                 self.errors.append("Preference must be a number, between 0 and 100.")
@@ -155,18 +438,31 @@ class Resource:
             try:
                 conns = int(self.maxconnections)
                 if conns < 1:
-                    self.errors.append("Max connections must be at least 1, not " + self.maxconnections + '.')
+                    self.errors.append(
+                        "Max connections must be at least 1, not "
+                        + self.maxconnections
+                        + "."
+                    )
                     valid = False
                 elif conns > 20:
-                    self.errors.append("You probably don't want max connections to be as high as " + self.maxconnections + '!')
+                    self.errors.append(
+                        "You probably don't want max connections to be as high as "
+                        + self.maxconnections
+                        + "!"
+                    )
                     valid = False
             except:
-                self.errors.append("Max connections must be a positive integer, not " + self.maxconnections + ".")
+                self.errors.append(
+                    "Max connections must be a positive integer, not "
+                    + self.maxconnections
+                    + "."
+                )
                 valid = False
         return valid
-        
+
+
 class Resource4:
-    def __init__(self, url, type="", location="", priority="", attrs = {}):
+    def __init__(self, url, type="", location="", priority="", attrs={}):
         self.errors = []
         self.url = url
         self.location = location
@@ -175,23 +471,32 @@ class Resource4:
         else:
             self.type = type
         self.priority = str(priority)
-        
+
         for attr in attrs:
             setattr(self, attr, attrs[attr])
-            
+
     def generate(self):
-        details = ''
+        details = ""
         text = ""
         if self.location.strip() != "":
-            details += ' location="'+self.location.lower()+'"'
-        if self.priority.strip() != "": details += ' priority="'+self.priority+'"'
+            details += ' location="' + self.location.lower() + '"'
+        if self.priority.strip() != "":
+            details += ' priority="' + self.priority + '"'
         if self.type != "":
-            text += '      <metaurl type="' + self.type + '"'+details+'>'+self.url+'</metaurl>\n'
+            text += (
+                '      <metaurl type="'
+                + self.type
+                + '"'
+                + details
+                + ">"
+                + self.url
+                + "</metaurl>\n"
+            )
         else:
-            text += '      <url'+details+'>'+self.url+'</url>\n'
-            
+            text += "      <url" + details + ">" + self.url + "</url>\n"
+
         return text
-        
+
     def validate(self):
         valid = True
         if self.url.strip() == "":
@@ -199,15 +504,261 @@ class Resource4:
             valid = False
         allowed_types = ["torrent"]
         if not self.type in allowed_types and self.type.strip() != "":
-            self.errors.append("Invalid URL: " + self.url + '.')
+            self.errors.append("Invalid URL: " + self.url + ".")
             valid = False
         elif self.type in allowed_types:
-            m = re.search(r'\w+://.+\..+/.*', self.url)
+            m = re.search(r"\w+://.+\..+/.*", self.url)
             if m == None:
-                self.errors.append("Invalid URL: " + self.url + '.')
+                self.errors.append("Invalid URL: " + self.url + ".")
                 valid = False
         if self.location.strip() != "":
-            iso_locations = ["AF", "AX", "AL", "DZ", "AS", "AD", "AO", "AI", "AQ", "AG", "AR", "AM", "AW", "AU", "AT", "AZ", "BS", "BH", "BD", "BB", "BY", "BE", "BZ", "BJ", "BM", "BT", "BO", "BA", "BW", "BV", "BR", "IO", "BN", "BG", "BF", "BI", "KH", "CM", "CA", "CV", "KY", "CF", "TD", "CL", "CN", "CX", "CC", "CO", "KM", "CG", "CD", "CK", "CR", "CI", "HR", "CU", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "GQ", "ER", "EE", "ET", "FK", "FO", "FJ", "FI", "FR", "GF", "PF", "TF", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GD", "GP", "GU", "GT", "GG", "GN", "GW", "GY", "HT", "HM", "VA", "HN", "HK", "HU", "IS", "IN", "ID", "IR", "IQ", "IE", "IM", "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KP", "KR", "KW", "KG", "LA", "LV", "LB", "LS", "LR", "LY", "LI", "LT", "LU", "MO", "MK", "MG", "MW", "MY", "MV", "ML", "MT", "MH", "MQ", "MR", "MU", "YT", "MX", "FM", "MD", "MC", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "AN", "NC", "NZ", "NI", "NE", "NG", "NU", "NF", "MP", "NO", "OM", "PK", "PW", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA", "RE", "RO", "RU", "RW", "SH", "KN", "LC", "PM", "VC", "WS", "SM", "ST", "SA", "SN", "RS", "SC", "SL", "SG", "SK", "SI", "SB", "SO", "ZA", "GS", "ES", "LK", "SD", "SR", "SJ", "SZ", "SE", "CH", "SY", "TW", "TJ", "TZ", "TH", "TL", "TG", "TK", "TO", "TT", "TN", "TR", "TM", "TC", "TV", "UG", "UA", "AE", "GB", "US", "UM", "UY", "UZ", "VU", "VE", "VN", "VG", "VI", "WF", "EH", "YE", "ZM", "ZW", "UK"]
+            iso_locations = [
+                "AF",
+                "AX",
+                "AL",
+                "DZ",
+                "AS",
+                "AD",
+                "AO",
+                "AI",
+                "AQ",
+                "AG",
+                "AR",
+                "AM",
+                "AW",
+                "AU",
+                "AT",
+                "AZ",
+                "BS",
+                "BH",
+                "BD",
+                "BB",
+                "BY",
+                "BE",
+                "BZ",
+                "BJ",
+                "BM",
+                "BT",
+                "BO",
+                "BA",
+                "BW",
+                "BV",
+                "BR",
+                "IO",
+                "BN",
+                "BG",
+                "BF",
+                "BI",
+                "KH",
+                "CM",
+                "CA",
+                "CV",
+                "KY",
+                "CF",
+                "TD",
+                "CL",
+                "CN",
+                "CX",
+                "CC",
+                "CO",
+                "KM",
+                "CG",
+                "CD",
+                "CK",
+                "CR",
+                "CI",
+                "HR",
+                "CU",
+                "CY",
+                "CZ",
+                "DK",
+                "DJ",
+                "DM",
+                "DO",
+                "EC",
+                "EG",
+                "SV",
+                "GQ",
+                "ER",
+                "EE",
+                "ET",
+                "FK",
+                "FO",
+                "FJ",
+                "FI",
+                "FR",
+                "GF",
+                "PF",
+                "TF",
+                "GA",
+                "GM",
+                "GE",
+                "DE",
+                "GH",
+                "GI",
+                "GR",
+                "GL",
+                "GD",
+                "GP",
+                "GU",
+                "GT",
+                "GG",
+                "GN",
+                "GW",
+                "GY",
+                "HT",
+                "HM",
+                "VA",
+                "HN",
+                "HK",
+                "HU",
+                "IS",
+                "IN",
+                "ID",
+                "IR",
+                "IQ",
+                "IE",
+                "IM",
+                "IL",
+                "IT",
+                "JM",
+                "JP",
+                "JE",
+                "JO",
+                "KZ",
+                "KE",
+                "KI",
+                "KP",
+                "KR",
+                "KW",
+                "KG",
+                "LA",
+                "LV",
+                "LB",
+                "LS",
+                "LR",
+                "LY",
+                "LI",
+                "LT",
+                "LU",
+                "MO",
+                "MK",
+                "MG",
+                "MW",
+                "MY",
+                "MV",
+                "ML",
+                "MT",
+                "MH",
+                "MQ",
+                "MR",
+                "MU",
+                "YT",
+                "MX",
+                "FM",
+                "MD",
+                "MC",
+                "MN",
+                "ME",
+                "MS",
+                "MA",
+                "MZ",
+                "MM",
+                "NA",
+                "NR",
+                "NP",
+                "NL",
+                "AN",
+                "NC",
+                "NZ",
+                "NI",
+                "NE",
+                "NG",
+                "NU",
+                "NF",
+                "MP",
+                "NO",
+                "OM",
+                "PK",
+                "PW",
+                "PS",
+                "PA",
+                "PG",
+                "PY",
+                "PE",
+                "PH",
+                "PN",
+                "PL",
+                "PT",
+                "PR",
+                "QA",
+                "RE",
+                "RO",
+                "RU",
+                "RW",
+                "SH",
+                "KN",
+                "LC",
+                "PM",
+                "VC",
+                "WS",
+                "SM",
+                "ST",
+                "SA",
+                "SN",
+                "RS",
+                "SC",
+                "SL",
+                "SG",
+                "SK",
+                "SI",
+                "SB",
+                "SO",
+                "ZA",
+                "GS",
+                "ES",
+                "LK",
+                "SD",
+                "SR",
+                "SJ",
+                "SZ",
+                "SE",
+                "CH",
+                "SY",
+                "TW",
+                "TJ",
+                "TZ",
+                "TH",
+                "TL",
+                "TG",
+                "TK",
+                "TO",
+                "TT",
+                "TN",
+                "TR",
+                "TM",
+                "TC",
+                "TV",
+                "UG",
+                "UA",
+                "AE",
+                "GB",
+                "US",
+                "UM",
+                "UY",
+                "UZ",
+                "VU",
+                "VE",
+                "VN",
+                "VG",
+                "VI",
+                "WF",
+                "EH",
+                "YE",
+                "ZM",
+                "ZW",
+                "UK",
+            ]
             if not self.location.upper() in iso_locations:
                 self.errors.append(self.location + " is not a valid country code.")
                 valid = False
@@ -215,17 +766,21 @@ class Resource4:
             try:
                 pref = int(self.priority)
                 if pref < 1 or pref > 100:
-                    self.errors.append("Priority must be between 1 and 100, not " + self.priority + '.')
+                    self.errors.append(
+                        "Priority must be between 1 and 100, not " + self.priority + "."
+                    )
                     valid = False
             except:
                 self.errors.append("Priority must be a number, between 1 and 100.")
                 valid = False
         return valid
 
+
 class MetalinkFileBase:
-    '''
+    """
     This should not be called directly, it is a base class.
-    '''
+    """
+
     def __init__(self, filename, attrs, do_ed2k, do_magnet):
         filename = filename.replace("\\", "/")
         filename = filename.lstrip("/.")
@@ -246,7 +801,7 @@ class MetalinkFileBase:
         self.magnet = ""
         self.do_ed2k = do_ed2k
         self.do_magnet = do_magnet
-        
+
         for attr in attrs:
             setattr(self, attr, attrs[attr])
 
@@ -278,33 +833,48 @@ class MetalinkFileBase:
 
     def get_size(self):
         return self.size
-    
+
     def clear_res(self):
         self.resources = []
-    
+
     def add_res(self, res):
         self.resources.append(res)
-        
+
     def add_url(self, *args):
-        '''
+        """
         Override this in your subclass
-        '''
+        """
         pass
 
-    def scan_file(self, filename, use_chunks=True, max_chunks=255, chunk_size=256, progresslistener=None):
+    def scan_file(
+        self,
+        filename,
+        use_chunks=True,
+        max_chunks=255,
+        chunk_size=256,
+        progresslistener=None,
+    ):
         print("\nScanning file...")
         # Filename and size
         self.filename = os.path.basename(filename)
         self.size = int(os.stat(filename).st_size)
         # Calculate piece length
         if use_chunks:
-            minlength = chunk_size*1024
+            minlength = chunk_size * 1024
             self.piecelength = 1024
-            while self.size / self.piecelength > max_chunks or self.piecelength < minlength:
+            while (
+                self.size / self.piecelength > max_chunks
+                or self.piecelength < minlength
+            ):
                 self.piecelength *= 2
-            print("Using piecelength", self.piecelength, "(" + str(self.piecelength / 1024) + " KiB)")
+            print(
+                "Using piecelength",
+                self.piecelength,
+                "(" + str(self.piecelength / 1024) + " KiB)",
+            )
             numpieces = self.size / self.piecelength
-            if numpieces < 2: use_chunks = False
+            if numpieces < 2:
+                use_chunks = False
         # Hashes
         fp = open(filename, "rb")
 
@@ -312,8 +882,8 @@ class MetalinkFileBase:
         sha1hash = hashlib.sha1()
         sha256hash = hashlib.sha256()
         piecehash = hashlib.sha1()
-        
-        #piecenum = 0
+
+        # piecenum = 0
         length = 0
         self.pieces = []
         self.piecetype = "sha1"
@@ -323,7 +893,8 @@ class MetalinkFileBase:
         progress = 0
         while True:
             data = fp.read(4096)
-            if data == b"": break
+            if data == b"":
+                break
             # Progress updating
             if progresslistener:
                 reads_left -= 1
@@ -335,9 +906,12 @@ class MetalinkFileBase:
                         print("Canceling scan!")
                         return False
             # Process the data
-            if md5hash != None: md5hash.update(data)
-            if sha1hash != None: sha1hash.update(data)
-            if sha256hash != None: sha256hash.update(data)
+            if md5hash != None:
+                md5hash.update(data)
+            if sha1hash != None:
+                sha1hash.update(data)
+            if sha256hash != None:
+                sha256hash.update(data)
             if use_chunks:
                 left = len(data)
                 while left > 0:
@@ -358,10 +932,10 @@ class MetalinkFileBase:
                         length = 0
         if use_chunks:
             if length > 0:
-                print("Done with piece hash "+ str(len(self.pieces)))
+                print("Done with piece hash " + str(len(self.pieces)))
                 self.pieces.append(piecehash.hexdigest())
                 piecehash = hashlib.sha1()
-            print("Total number of pieces: "+ str(len(self.pieces)))
+            print("Total number of pieces: " + str(len(self.pieces)))
         fp.close()
         self.hashlist["md5"] = md5hash.hexdigest()
         self.hashlist["sha1"] = sha1hash.hexdigest()
@@ -370,29 +944,38 @@ class MetalinkFileBase:
 
         # automatically add an ed2k url here
         ed2khash = ed2k_hash(filename)
-        
+
         if self.do_ed2k:
             self.ed2k = compute_ed2k(filename, ed2khash)
             if self.ed2k != "":
                 self.add_url(self.ed2k)
 
         if self.do_magnet:
-            self.magnet = compute_magnet(filename, self.size, self.hashlist["md5"], self.hashlist["sha1"], ed2khash)
+            self.magnet = compute_magnet(
+                filename,
+                self.size,
+                self.hashlist["md5"],
+                self.hashlist["sha1"],
+                ed2khash,
+            )
             if self.magnet != "":
                 self.add_url(self.magnet)
 
-        self.hashlist['pgp'] = read_sig(filename)
-            
-        if len(self.pieces) < 2: self.pieces = []
+        self.hashlist["pgp"] = read_sig(filename)
+
+        if len(self.pieces) < 2:
+            self.pieces = []
         # Convert to strings
-        #self.size = str(self.size)
-        #self.piecelength = str(self.piecelength)
+        # self.size = str(self.size)
+        # self.piecelength = str(self.piecelength)
         print("done")
-        if progresslistener: progresslistener.Update(100)
+        if progresslistener:
+            progresslistener.Update(100)
         return True
 
+
 class MetalinkFile4(MetalinkFileBase):
-    def __init__(self, filename, attrs = {}, do_ed2k=True, do_magnet=False):
+    def __init__(self, filename, attrs={}, do_ed2k=True, do_magnet=False):
         self.description = ""
         self.identity = ""
         self.license_name = ""
@@ -404,28 +987,29 @@ class MetalinkFile4(MetalinkFileBase):
         MetalinkFileBase.__init__(self, filename, attrs, do_ed2k, do_magnet)
 
     def compare_checksums(self, checksums):
-        for key in ("sha-512","sha-384","sha-256","sha-1","md5"):
+        for key in ("sha-512", "sha-384", "sha-256", "sha-1", "md5"):
             try:
                 if self.hashlist[key].lower() == checksums[key].lower():
                     return True
-            except KeyError: pass
+            except KeyError:
+                pass
         return False
-        
+
     def add_url(self, url, type="", location="", priority="", attrs={}):
         self.resources.append(Resource4(url, type, location, priority, attrs))
-    
+
     def validate(self):
         valid = True
         if len(self.resources) == 0:
             self.errors.append("You need to add at least one URL!")
             valid = False
         if self.hashlist["md5"].strip() != "":
-            m = re.search(r'[^0-9a-fA-F]', self.hashlist["md5"])
+            m = re.search(r"[^0-9a-fA-F]", self.hashlist["md5"])
             if len(self.hashlist["md5"]) != 32 or m != None:
-                self.errors.append("Invalid md5 hash.")                    
+                self.errors.append("Invalid md5 hash.")
                 valid = False
         if self.hashlist["sha-1"].strip() != "":
-            m = re.search(r'[^0-9a-fA-F]', self.hashlist["sha-1"])
+            m = re.search(r"[^0-9a-fA-F]", self.hashlist["sha-1"])
             if len(self.hashlist["sha-1"]) != 40 or m != None:
                 self.errors.append("Invalid sha-1 hash.")
                 valid = False
@@ -433,10 +1017,14 @@ class MetalinkFile4(MetalinkFileBase):
             try:
                 size = int(self.size)
                 if size < 0:
-                    self.errors.append("File size must be at least 0, not " + str(self.size) + '.')
+                    self.errors.append(
+                        "File size must be at least 0, not " + str(self.size) + "."
+                    )
                     valid = False
             except:
-                self.errors.append("File size must be an integer, not " + str(self.size) + ".")
+                self.errors.append(
+                    "File size must be an integer, not " + str(self.size) + "."
+                )
                 valid = False
         return valid
 
@@ -444,7 +1032,7 @@ class MetalinkFile4(MetalinkFileBase):
         if self.filename.strip() != "":
             text = '  <file name="' + self.filename + '">\n'
         else:
-            text = '  <file>\n'
+            text = "  <file>\n"
         # Publisher info
         if self.publisher_name.strip() != "" or self.publisher_url.strip() != "":
             lictext = ""
@@ -452,76 +1040,94 @@ class MetalinkFile4(MetalinkFileBase):
                 lictext += ' name="' + self.publisher_name + '"'
             if self.publisher_url.strip() != "":
                 lictext += ' url="' + self.publisher_url + '"'
-            text += '      <publisher%s></publisher>\n' % lictext
+            text += "      <publisher%s></publisher>\n" % lictext
         # License info
         if self.license_name.strip() != "" or self.license_url.strip() != "":
-            #text += '  <license>\n'
+            # text += '  <license>\n'
             lictext = ""
             if self.license_name.strip() != "":
                 lictext += ' name="' + self.license_name + '"'
             if self.license_url.strip() != "":
                 lictext += ' url="' + self.license_url + '"'
-            text += '      <license%s></license>\n' % lictext
+            text += "      <license%s></license>\n" % lictext
         # Release info
         if self.identity.strip() != "":
-            text += '      <identity>'+self.identity+'</identity>\n'
+            text += "      <identity>" + self.identity + "</identity>\n"
         if self.version.strip() != "":
-            text += '      <version>'+self.version+'</version>\n'
+            text += "      <version>" + self.version + "</version>\n"
         if self.description.strip() != "":
-            text += '      <description>'+self.description+'</description>\n'
+            text += "      <description>" + self.description + "</description>\n"
         # File info
         if self.size > 0:
-            text += '      <size>'+str(self.size)+'</size>\n'
+            text += "      <size>" + str(self.size) + "</size>\n"
         if self.language.strip() != "":
-            text += '      <language>'+self.language+'</language>\n'
+            text += "      <language>" + self.language + "</language>\n"
         if self.os.strip() != "":
-            text += '      <os>'+self.os+'</os>\n'
+            text += "      <os>" + self.os + "</os>\n"
         # Verification
         for key in self.hashlist.keys():
-            if key == 'application/pgp-signature' and self.hashlist[key] != "":
-                text += '      <signature mediatype="%s">' % key + self.hashlist[key] + '</signature>\n'
+            if key == "application/pgp-signature" and self.hashlist[key] != "":
+                text += (
+                    '      <signature mediatype="%s">' % key
+                    + self.hashlist[key]
+                    + "</signature>\n"
+                )
             elif self.hashlist[key] != "":
-                text += '      <hash type="%s">' % hashlookup(key) + self.hashlist[key].lower() + '</hash>\n'
+                text += (
+                    '      <hash type="%s">' % hashlookup(key)
+                    + self.hashlist[key].lower()
+                    + "</hash>\n"
+                )
         if len(self.pieces) > 1:
-            text += '      <pieces type="'+hashlookup(self.piecetype)+'" length="'+str(self.piecelength)+'">\n'
+            text += (
+                '      <pieces type="'
+                + hashlookup(self.piecetype)
+                + '" length="'
+                + str(self.piecelength)
+                + '">\n'
+            )
             for idstr in range(len(self.pieces)):
-                text += '        <hash>'+self.pieces[idstr]+'</hash>\n'
-            text += '      </pieces>\n'
+                text += "        <hash>" + self.pieces[idstr] + "</hash>\n"
+            text += "      </pieces>\n"
         # File list
         for res in self.resources:
             text += res.generate()
-        text += '  </file>\n'
+        text += "  </file>\n"
         return text
-        
+
+
 class MetalinkFile(MetalinkFileBase):
-    def __init__(self, filename, attrs = {}, do_ed2k=True, do_magnet=False):
+    def __init__(self, filename, attrs={}, do_ed2k=True, do_magnet=False):
         self.maxconnections = ""
         self.upgrade = ""
         MetalinkFileBase.__init__(self, filename, attrs, do_ed2k, do_magnet)
 
     def compare_checksums(self, checksums):
-        for key in ("sha512","sha384","sha256","sha1","md5"):
+        for key in ("sha512", "sha384", "sha256", "sha1", "md5"):
             try:
                 if self.hashlist[key].lower() == checksums[key].lower():
                     return True
-            except KeyError: pass
+            except KeyError:
+                pass
         return False
-        
-    def add_url(self, url, type="default", location="", preference="", conns="", attrs={}):
+
+    def add_url(
+        self, url, type="default", location="", preference="", conns="", attrs={}
+    ):
         self.resources.append(Resource(url, type, location, preference, conns, attrs))
-    
+
     def validate(self):
         valid = True
         if len(self.resources) == 0:
             self.errors.append("You need to add at least one URL!")
             valid = False
         if self.hashlist["md5"].strip() != "":
-            m = re.search(r'[^0-9a-fA-F]', self.hashlist["md5"])
+            m = re.search(r"[^0-9a-fA-F]", self.hashlist["md5"])
             if len(self.hashlist["md5"]) != 32 or m != None:
-                self.errors.append("Invalid md5 hash.")                    
+                self.errors.append("Invalid md5 hash.")
                 valid = False
         if self.hashlist["sha1"].strip() != "":
-            m = re.search(r'[^0-9a-fA-F]', self.hashlist["sha1"])
+            m = re.search(r"[^0-9a-fA-F]", self.hashlist["sha1"])
             if len(self.hashlist["sha1"]) != 40 or m != None:
                 self.errors.append("Invalid sha-1 hash.")
                 valid = False
@@ -529,22 +1135,38 @@ class MetalinkFile(MetalinkFileBase):
             try:
                 size = int(self.size)
                 if size < 0:
-                    self.errors.append("File size must be at least 0, not " + str(self.size) + '.')
+                    self.errors.append(
+                        "File size must be at least 0, not " + str(self.size) + "."
+                    )
                     valid = False
             except:
-                self.errors.append("File size must be an integer, not " + str(self.size) + ".")
+                self.errors.append(
+                    "File size must be an integer, not " + str(self.size) + "."
+                )
                 valid = False
         if self.maxconnections.strip() != "" and self.maxconnections.strip() != "-":
             try:
                 conns = int(self.maxconnections)
                 if conns < 1:
-                    self.errors.append("Max connections must be at least 1, not " + self.maxconnections + '.')
+                    self.errors.append(
+                        "Max connections must be at least 1, not "
+                        + self.maxconnections
+                        + "."
+                    )
                     valid = False
                 elif conns > 20:
-                    self.errors.append("You probably don't want max connections to be as high as " + self.maxconnections + '!')
+                    self.errors.append(
+                        "You probably don't want max connections to be as high as "
+                        + self.maxconnections
+                        + "!"
+                    )
                     valid = False
             except:
-                self.errors.append("Max connections must be a positive integer, not " + self.maxconnections + ".")
+                self.errors.append(
+                    "Max connections must be a positive integer, not "
+                    + self.maxconnections
+                    + "."
+                )
                 valid = False
         return valid
 
@@ -552,43 +1174,64 @@ class MetalinkFile(MetalinkFileBase):
         if self.filename.strip() != "":
             text = '    <file name="' + self.filename + '">\n'
         else:
-            text = '    <file>\n'
+            text = "    <file>\n"
         # File info
         if self.size > 0:
-            text += '      <size>'+str(self.size)+'</size>\n'
+            text += "      <size>" + str(self.size) + "</size>\n"
         if self.language.strip() != "":
-            text += '      <language>'+self.language+'</language>\n'
+            text += "      <language>" + self.language + "</language>\n"
         if self.os.strip() != "":
-            text += '      <os>'+self.os+'</os>\n'
+            text += "      <os>" + self.os + "</os>\n"
         if self.upgrade.strip() != "":
-            text += '  <upgrade>'+self.upgrade+'</upgrade>\n'
+            text += "  <upgrade>" + self.upgrade + "</upgrade>\n"
         # Verification
-#        if self.hashlist["md5"].strip() != "" or self.hashlist["sha1"].strip() != "":
+        #        if self.hashlist["md5"].strip() != "" or self.hashlist["sha1"].strip() != "":
         if len(self.hashlist) > 0 or len(self.pieces) > 0:
-            text += '      <verification>\n'
+            text += "      <verification>\n"
             for key in self.hashlist.keys():
-                if key == 'pgp' and self.hashlist[key] != "":
-                    text += '      <signature type="%s">' % key + self.hashlist[key] + '</signature>\n'
+                if key == "pgp" and self.hashlist[key] != "":
+                    text += (
+                        '      <signature type="%s">' % key
+                        + self.hashlist[key]
+                        + "</signature>\n"
+                    )
                 elif self.hashlist[key] != "":
-                    text += '      <hash type="%s">' % key + self.hashlist[key].lower() + '</hash>\n'
+                    text += (
+                        '      <hash type="%s">' % key
+                        + self.hashlist[key].lower()
+                        + "</hash>\n"
+                    )
             if len(self.pieces) > 1:
-                text += '        <pieces type="'+self.piecetype+'" length="'+str(self.piecelength)+'">\n'
+                text += (
+                    '        <pieces type="'
+                    + self.piecetype
+                    + '" length="'
+                    + str(self.piecelength)
+                    + '">\n'
+                )
                 for idstr in range(len(self.pieces)):
-                    text += '          <hash piece="'+str(idstr)+'">'+self.pieces[idstr]+'</hash>\n'
-                text += '        </pieces>\n'
-            text += '      </verification>\n'
+                    text += (
+                        '          <hash piece="'
+                        + str(idstr)
+                        + '">'
+                        + self.pieces[idstr]
+                        + "</hash>\n"
+                    )
+                text += "        </pieces>\n"
+            text += "      </verification>\n"
         # File list
         if self.maxconnections.strip() != "" and self.maxconnections.strip() != "-":
-            maxconns = ' maxconnections="'+self.maxconnections+'"'
+            maxconns = ' maxconnections="' + self.maxconnections + '"'
         else:
             maxconns = ""
-        text += '      <resources'+maxconns+'>\n'
+        text += "      <resources" + maxconns + ">\n"
         for res in self.resources:
             text += res.generate()
 
-        text += '      </resources>\n'
-        text += '    </file>\n'
+        text += "      </resources>\n"
+        text += "    </file>\n"
         return text
+
 
 class XMLTag:
     def __init__(self, name, attrs={}):
@@ -598,10 +1241,12 @@ class XMLTag:
     def get_attr(self, name):
         return self.attrs[name]
 
+
 class MetalinkBase:
-    '''
+    """
     This is a base class and should not be used directly
-    '''
+    """
+
     def __init__(self):
         self.errors = []
         self.files = []
@@ -616,15 +1261,15 @@ class MetalinkBase:
         self.p.StartElementHandler = self.start_element
         self.p.EndElementHandler = self.end_element
         self.p.CharacterDataHandler = self.char_data
-        
+
     def start_element(self, name, attrs):
         pass
-        
+
     def end_element(self, name):
         pass
-            
+
     def char_data(self, data):
-        self.data += data #.strip()
+        self.data += data  # .strip()
 
     def parsefile(self, filename):
         handle = open(filename, "rb")
@@ -655,16 +1300,25 @@ class MetalinkBase:
         else:
             chars = url.find(":")
             typestr = url[:chars]
-        allowed_types = ["ftp", "ftps", "http", "https", "rsync", "bittorrent", "magnet", "ed2k"]
+        allowed_types = [
+            "ftp",
+            "ftps",
+            "http",
+            "https",
+            "rsync",
+            "bittorrent",
+            "magnet",
+            "ed2k",
+        ]
         if not typestr in allowed_types:
             return False
-        elif typestr in ['http', 'https', 'ftp', 'ftps', 'bittorrent']:
-            m = re.search(r'\w+://.+\..+/.*', url)
+        elif typestr in ["http", "https", "ftp", "ftps", "bittorrent"]:
+            m = re.search(r"\w+://.+\..+/.*", url)
             if m == None:
                 return False
         return True
 
-    
+
 class Metalink(MetalinkBase):
     def __init__(self):
         self.ver = 3
@@ -682,62 +1336,71 @@ class Metalink(MetalinkBase):
         self.refreshdate = ""
         self.XMLNS = "http://www.metalinker.org/"
         MetalinkBase.__init__(self)
-        
+
     def generate(self):
         text = '<?xml version="1.0" encoding="utf-8"?>\n'
         origin = ""
         if self.origin.strip() != "":
-            origin = 'origin="'+self.origin+'" '
+            origin = 'origin="' + self.origin + '" '
         pubdate = ""
         if self.pubdate.strip() != "":
-            pubdate = 'pubdate="'+self.pubdate+'" '
+            pubdate = 'pubdate="' + self.pubdate + '" '
         typetext = ""
         if self.type.strip() != "":
-            typetext = 'type="'+self.type+'" '
+            typetext = 'type="' + self.type + '" '
         gentext = ""
         if self.generator.strip() != "":
-            gentext = 'generator="'+self.generator+'" '
-        text += '<metalink version="3.0" '+ origin + pubdate + typetext + gentext + 'xmlns="' + self.XMLNS + '">\n'
+            gentext = 'generator="' + self.generator + '" '
+        text += (
+            '<metalink version="3.0" '
+            + origin
+            + pubdate
+            + typetext
+            + gentext
+            + 'xmlns="'
+            + self.XMLNS
+            + '">\n'
+        )
         text += self.generate_info()
-        text += '  <files>\n'
+        text += "  <files>\n"
         for fileobj in self.files:
             text += fileobj.generate_file()
-        text += '  </files>\n'
-        text += '</metalink>'
+        text += "  </files>\n"
+        text += "</metalink>"
         try:
-            return text.encode('utf-8')
+            return text.encode("utf-8")
         except:
-            return text.decode('latin1').encode('utf-8')
-    
+            return text.decode("latin1").encode("utf-8")
+
     def generate_info(self):
         text = ""
         # Publisher info
         if self.publisher_name.strip() != "" or self.publisher_url.strip() != "":
-            text += '  <publisher>\n'
+            text += "  <publisher>\n"
             if self.publisher_name.strip() != "":
-                text += '    <name>' + self.publisher_name + '</name>\n'
+                text += "    <name>" + self.publisher_name + "</name>\n"
             if self.publisher_url.strip() != "":
-                text += '    <url>' + self.publisher_url + '</url>\n'
-            text += '  </publisher>\n'
+                text += "    <url>" + self.publisher_url + "</url>\n"
+            text += "  </publisher>\n"
         # License info
         if self.license_name.strip() != "" or self.license_url.strip() != "":
-            text += '  <license>\n'
+            text += "  <license>\n"
             if self.license_name.strip() != "":
-                text += '    <name>' + self.license_name + '</name>\n'
+                text += "    <name>" + self.license_name + "</name>\n"
             if self.license_url.strip() != "":
-                text += '    <url>' + self.license_url + '</url>\n'
-            text += '  </license>\n'
+                text += "    <url>" + self.license_url + "</url>\n"
+            text += "  </license>\n"
         # Release info
         if self.identity.strip() != "":
-            text += '  <identity>'+self.identity+'</identity>\n'
+            text += "  <identity>" + self.identity + "</identity>\n"
         if self.version.strip() != "":
-            text += '  <version>'+self.version+'</version>\n'
+            text += "  <version>" + self.version + "</version>\n"
         if self.copyright.strip() != "":
-            text += '  <copyright>'+self.copyright+'</copyright>\n'
+            text += "  <copyright>" + self.copyright + "</copyright>\n"
         if self.description.strip() != "":
-            text += '  <description>'+self.description+'</description>\n'
+            text += "  <description>" + self.description + "</description>\n"
         return text
-            
+
     # 3 handler functions
     def start_element(self, name, attrs):
         self.data = ""
@@ -748,13 +1411,14 @@ class Metalink(MetalinkBase):
         if name == "file":
             fileobj = MetalinkFile(attrs["name"], attrs)
             self.files.append(fileobj)
-            
+
         if name == "metalink":
             for attrname in ("origin", "type", "pubdate", "refreshdate"):
                 try:
                     setattr(self, attrname, attrs[attrname])
-                except KeyError: pass
-            
+                except KeyError:
+                    pass
+
     def end_element(self, name):
         xmlns, name = name.rsplit(XMLSEP, 1)
         if xmlns != self.XMLNS and xmlns != "":
@@ -774,12 +1438,12 @@ class Metalink(MetalinkBase):
             elif name == "hash" and self.parent[-1].name == "verification":
                 hashtype = tag.attrs["type"]
                 fileobj = self.files[-1]
-                #setattr(fileobj, "hash_" + hashtype, self.data)
+                # setattr(fileobj, "hash_" + hashtype, self.data)
                 fileobj.hashlist[hashtype] = self.data.strip()
             elif name == "signature" and self.parent[-1].name == "verification":
                 hashtype = tag.attrs["type"]
                 fileobj = self.files[-1]
-                #setattr(fileobj, "hash_" + hashtype, self.data)
+                # setattr(fileobj, "hash_" + hashtype, self.data)
                 fileobj.hashlist[hashtype] = self.data
             elif name == "pieces":
                 fileobj = self.files[-1]
@@ -798,10 +1462,12 @@ class Metalink(MetalinkBase):
             if name == "resources":
                 fileobj = self.files[-1]
                 try:
-                    fileobj.maxconnections = tag.attrs['maxconnections']
-                except KeyError: pass
-        except IndexError: pass
-            
+                    fileobj.maxconnections = tag.attrs["maxconnections"]
+                except KeyError:
+                    pass
+        except IndexError:
+            pass
+
     def validate(self, *args):
         valid = True
 
@@ -814,25 +1480,26 @@ class Metalink(MetalinkBase):
 
         if self.publisher_url.strip() != "":
             if not self.validate_url(self.publisher_url):
-                self.errors.append("Invalid URL: " + self.publisher_url + '.')
+                self.errors.append("Invalid URL: " + self.publisher_url + ".")
                 valid = False
         if self.license_url.strip() != "":
             if not self.validate_url(self.license_url):
-                self.errors.append("Invalid URL: " + self.license_url + '.')
+                self.errors.append("Invalid URL: " + self.license_url + ".")
                 valid = False
-                
+
         for fileobj in self.files:
             result = fileobj.validate()
             valid = valid and result
             self.errors.extend(fileobj.errors)
         return valid
-    
+
+
 class Metalink4(MetalinkBase):
     def __init__(self):
         self.ver = 4
-        self.dynamic=""
-        self.published=""
-        self.updated=""
+        self.dynamic = ""
+        self.published = ""
+        self.updated = ""
         self.XMLNS = "urn:ietf:params:xml:ns:metalink"
         MetalinkBase.__init__(self)
 
@@ -841,33 +1508,33 @@ class Metalink4(MetalinkBase):
         text += '<metalink xmlns="' + self.XMLNS + '">\n'
 
         if self.generator.strip() != "":
-            text += '<generator>'+self.generator+'</generator>\n'
+            text += "<generator>" + self.generator + "</generator>\n"
 
         if self.published.strip() != "":
-            text += '<published>'+self.published+'</published>\n'
+            text += "<published>" + self.published + "</published>\n"
         if self.updated.strip() != "":
-            text += '<updated>'+self.updated+'</updated>\n'
+            text += "<updated>" + self.updated + "</updated>\n"
 
-        attr = 'dynamic="false"'        
+        attr = 'dynamic="false"'
         if self.dynamic.lower() == "true":
             attr = 'dynamic="true"'
 
         if self.origin.strip() != "":
-            text += '<origin ' + attr + '>'+self.origin+'</origin>\n'
-       
+            text += "<origin " + attr + ">" + self.origin + "</origin>\n"
+
         for fileobj in self.files:
             text += fileobj.generate_file()
-        text += '</metalink>'
+        text += "</metalink>"
         try:
-            return text.encode('utf-8')
+            return text.encode("utf-8")
         except:
-            return text.decode('latin1').encode('utf-8')
-        
+            return text.decode("latin1").encode("utf-8")
+
     # handler functions
     def start_element(self, name, attrs):
         if name.startswith("http://www.metalinker.org"):
             raise AssertionError("Not a valid Metalink 4 (RFC) file.")
-            
+
         self.data = ""
         xmlns, name = name.rsplit(XMLSEP, 1)
         if xmlns != self.XMLNS:
@@ -876,7 +1543,7 @@ class Metalink4(MetalinkBase):
         if name == "file":
             fileobj = MetalinkFile4(attrs["name"], attrs)
             self.files.append(fileobj)
-        
+
     def end_element(self, name):
         xmlns, name = name.rsplit(XMLSEP, 1)
         if xmlns != self.XMLNS:
@@ -895,19 +1562,21 @@ class Metalink4(MetalinkBase):
                 fileobj = self.files[-1]
                 try:
                     setattr(fileobj, name + "_name", tag.attrs["name"])
-                except KeyError: pass
+                except KeyError:
+                    pass
                 try:
                     setattr(fileobj, name + "_url", tag.attrs["url"])
-                except KeyError: pass
+                except KeyError:
+                    pass
             elif name == "hash" and self.parent[-1].name == "file":
                 hashtype = tag.attrs["type"]
                 fileobj = self.files[-1]
-                #setattr(fileobj, "hash_" + hashtype, self.data)
+                # setattr(fileobj, "hash_" + hashtype, self.data)
                 fileobj.hashlist[hashtype] = self.data.strip()
             elif name == "signature":
                 hashtype = tag.attrs["mediatype"]
                 fileobj = self.files[-1]
-                #setattr(fileobj, "hash_" + hashtype, self.data)
+                # setattr(fileobj, "hash_" + hashtype, self.data)
                 fileobj.hashlist[hashtype] = self.data
             elif name == "pieces":
                 fileobj = self.files[-1]
@@ -923,20 +1592,20 @@ class Metalink4(MetalinkBase):
                 fileobj = self.files[-1]
                 if self.data.strip() != "":
                     setattr(fileobj, name, int(self.data.strip()))
-        except IndexError: pass
-            
-   
+        except IndexError:
+            pass
+
     def validate(self, *args):
         valid = True
 
         if self.published.strip() != "":
-            try:  
+            try:
                 rfc3339_parsedate(self.published)
             except:
                 self.errors.append("Invalid published date: " + str(self.published))
                 valid = False
         if self.updated.strip() != "":
-            try:  
+            try:
                 rfc3339_parsedate(self.updated)
             except:
                 self.errors.append("Invalid updated date: " + str(self.updated))
@@ -948,7 +1617,9 @@ class Metalink4(MetalinkBase):
             self.errors.extend(fileobj.errors)
         return valid
 
+
 ############### RSS/Atom ###################
+
 
 class RSSAtomItem:
     def __init__(self):
@@ -956,11 +1627,12 @@ class RSSAtomItem:
         self.title = None
         self.size = -1
 
-class RSSAtom():
+
+class RSSAtom:
     def __init__(self):
         self.files = []
         self.title = ""
-        
+
         self.p = xml.parsers.expat.ParserCreate()
         self.p.buffer_text = True
         self.parent = []
@@ -968,46 +1640,47 @@ class RSSAtom():
         self.p.StartElementHandler = self.start_element
         self.p.EndElementHandler = self.end_element
         self.p.CharacterDataHandler = self.char_data
-            
+
     def char_data(self, data):
-        self.data += data #.strip()
+        self.data += data  # .strip()
 
     def parsehandle(self, handle):
         return self.p.ParseFile(handle)
-        
+
     # handler functions
     def start_element(self, name, attrs):
         self.data = ""
         self.parent.append(XMLTag(name, attrs))
-        if name in ('item', 'entry'):
+        if name in ("item", "entry"):
             self.files.append(RSSAtomItem())
-        
+
     def end_element(self, name):
         tag = self.parent.pop()
 
         if name == "link":
-            if tag.attrs.has_key("rel") and tag.attrs["rel"] == 'enclosure':
+            if tag.attrs.has_key("rel") and tag.attrs["rel"] == "enclosure":
                 fileobj = self.files[-1]
                 if tag.attrs.has_key("href"):
                     fileobj.url = tag.attrs["href"]
                 if tag.attrs.has_key("length"):
                     fileobj.size = int(tag.attrs["length"])
-                    
+
         if name == "enclosure":
             fileobj = self.files[-1]
             if tag.attrs.has_key("url"):
                 fileobj.url = tag.attrs["url"]
             if tag.attrs.has_key("length"):
                 fileobj.size = int(tag.attrs["length"])
-                
-        if name == "title" and self.parent[-1].name in ("entry","item"):
+
+        if name == "title" and self.parent[-1].name in ("entry", "item"):
             fileobj = self.files[-1]
             fileobj.title = self.data
         elif name == "title":
-            self.title = self.data    
-        
-        
+            self.title = self.data
+
+
 ############### Jigdo ######################
+
 
 class DecompressFile(gzip.GzipFile):
     def __init__(self, fp):
@@ -1027,6 +1700,7 @@ class DecompressFile(gzip.GzipFile):
         self.seek(reset)
         info["Content-Length"] = newsize
         return info
+
 
 class URLInfo(StringIO.StringIO):
     def __init__(self, fp):
@@ -1049,65 +1723,68 @@ class URLInfo(StringIO.StringIO):
         info["Content-Length"] = newsize
         return info
 
+
 def open_compressed(fp):
     compressedfp = URLInfo(fp)
     newfp = DecompressFile(compressedfp)
 
     try:
-    	newfp.info()
-    	return newfp
+        newfp.info()
+        return newfp
     except IOError:
         compressedfp.seek(0)
         return compressedfp
-        
+
+
 class TemplateDecompress:
     def __init__(self, filename=None):
         self.handle = None
         self.buffer = ""
         if filename != None:
             self.open(filename)
-        
+
     def open(self, filename):
         self.handle = open(filename, "rb")
         # read text comments first, then switch to binary data
         data = self.handle.readline()
         while data.strip() != "":
             data = self.handle.readline()
-            
+
         return self.handle
-        
+
     def read(self, size):
         while len(self.buffer) < size:
             self.buffer += self.get_chunk()
-            
+
         buff = self.buffer[:size]
         self.buffer = self.buffer[size:]
         return buff
-    
+
     def get_chunk(self):
         typestr = self.handle.read(4)
-        #print "type:", type
+        # print "type:", type
         length = int(binascii.hexlify(self.handle.read(6)[::-1]), 16)
-        value = self.handle.read(length-10)
-        
+        value = self.handle.read(length - 10)
+
         if typestr == "BZIP":
             uncompressed = int(binascii.hexlify(value[:6][::-1]), 16)
             data = value[6:]
             data = bz2.decompress(data)
-            assert(len(data) == uncompressed)
+            assert len(data) == uncompressed
             return data
         elif typestr == "DATA":
             uncompressed = int(binascii.hexlify(value[:6][::-1]), 16)
             data = value[6:]
             data = zlib.decompress(data)
-            assert(len(data) == uncompressed)
+            assert len(data) == uncompressed
             return data
         else:
             print("Unexpected Jigdo template type %s." % type)
         return ""
-    
+
     def close(self):
         return self.handle.close()
+
 
 class Jigdo(Metalink):
     def __init__(self):
@@ -1151,7 +1828,7 @@ class Jigdo(Metalink):
                 line = fp.readline()
             serverdict[item[0]] = temp
             fp.close()
-        
+
         for item in configobj.items("Image"):
             if item[0].lower() == "template":
                 self.template = item[1]
@@ -1163,7 +1840,7 @@ class Jigdo(Metalink):
                 self.identity = item[1]
             if item[0].lower() == "info":
                 self.description = item[1]
-                
+
         for item in configobj.items("Parts"):
             base64hash = item[0]
             binaryhash = self.base64hash2bin(base64hash)
@@ -1205,26 +1882,26 @@ class Jigdo(Metalink):
         readhandle = open(os.path.basename(self.template), "rb")
         readhandle.seek(-6, 2)
         desclen = int(binascii.hexlify(readhandle.read(6)[::-1]), 16)
-        readhandle.seek(-(desclen-10), 2)
+        readhandle.seek(-(desclen - 10), 2)
         value = readhandle.read()
-        
+
         # index DESC section into list
         chunks = []
-        count= 0 
+        count = 0
         while len(value) > 6:
             subtype = ord(value[0])
-            #print "subtype: %x" % subtype
+            # print "subtype: %x" % subtype
             sublength = int(binascii.hexlify(value[1:7][::-1]), 16)
-            #print "sublength:", sublength
+            # print "sublength:", sublength
             value = value[7:]
             if subtype == 6:
-                #rsync = value[:8]
+                # rsync = value[:8]
                 md5 = value[8:24]
                 value = value[24:]
                 chunks.append([6, sublength, binascii.hexlify(md5)])
             elif subtype == 5:
                 filemd5 = value[:16]
-                #blocklen = int(binascii.hexlify(value[16:20][::-1]), 16)
+                # blocklen = int(binascii.hexlify(value[16:20][::-1]), 16)
                 value = value[20:]
             elif subtype == 2:
                 chunks.append([2, sublength])
@@ -1232,29 +1909,29 @@ class Jigdo(Metalink):
             else:
                 print("Unknown DESC subtype %s." % subtype)
                 raise
-        
+
         readhandle.close()
-        
+
         handle = open(self.filename, "wb")
-        
+
         templatedata = TemplateDecompress(os.path.basename(self.template))
-            
+
         for chunk in chunks:
             chunktype = chunk[0]
             chunklen = chunk[1]
             if chunktype == 6:
                 # read data from external files, errors if hash not found
-                fileobj = self.files[self.get_file_by_hash('md5', chunk[2])]
+                fileobj = self.files[self.get_file_by_hash("md5", chunk[2])]
                 if chunklen != os.stat(fileobj.filename).st_size:
                     print("Warning: File size mismatch for %s." % fileobj.filename)
-                
+
                 tempfile = open(fileobj.filename, "rb")
-                filedata = tempfile.read(1024*1024)
+                filedata = tempfile.read(1024 * 1024)
                 while filedata:
                     handle.write(filedata)
-                    filedata = tempfile.read(1024*1024)
+                    filedata = tempfile.read(1024 * 1024)
                 tempfile.close()
-                
+
             if chunktype == 2:
                 # read from template file here
                 handle.write(templatedata.read(chunklen))
@@ -1263,20 +1940,22 @@ class Jigdo(Metalink):
         handle.close()
         return binascii.hexlify(filemd5)
 
+
 class ParseINI(dict):
-    '''
+    """
     Similiar to what is available in ConfigParser, but case sensitive
-    '''
+    """
+
     def __init__(self):
         pass
 
     def readfp(self, fp):
         line = fp.readline()
         section = None
-        #print "Jigdo file contents"
-        #print "-" * 79
+        # print "Jigdo file contents"
+        # print "-" * 79
         while line:
-            #print line
+            # print line
             if not line.startswith("#") and line.strip() != "":
                 if line.startswith("["):
                     section = line[1:-2]
@@ -1285,78 +1964,118 @@ class ParseINI(dict):
                     parts = line.split("=", 1)
                     self[section].append((parts[0], parts[1].strip()))
             line = fp.readline()
-        #sys.exit()
+        # sys.exit()
+
     def items(self, section):
         try:
             return self[section]
         except KeyError:
             return []
 
+
 def convert_4to3(metalinkobj4):
     metalinkobj3 = Metalink()
-    
-    for attr in ('generator', 'origin'):
+
+    for attr in ("generator", "origin"):
         setattr(metalinkobj3, attr, getattr(metalinkobj4, attr))
     if metalinkobj4.dynamic.lower() == "true":
-        metalinkobj3.type = 'dynamic'
-        
+        metalinkobj3.type = "dynamic"
+
     if metalinkobj4.published != "":
-        metalinkobj3.pubdate = time.strftime(RFC822, rfc3339_parsedate(metalinkobj4.published))
+        metalinkobj3.pubdate = time.strftime(
+            RFC822, rfc3339_parsedate(metalinkobj4.published)
+        )
     if metalinkobj4.updated != "":
-        metalinkobj3.refreshdate = time.strftime(RFC822, rfc3339_parsedate(metalinkobj4.updated))
-        
+        metalinkobj3.refreshdate = time.strftime(
+            RFC822, rfc3339_parsedate(metalinkobj4.updated)
+        )
+
     for fileobj4 in metalinkobj4.files:
         fileobj3 = MetalinkFile(fileobj4.filename)
         # copy common attributes
-        for attr in ('filename', 'pieces', 'piecelength', 'language', 'os', 'size'):
+        for attr in ("filename", "pieces", "piecelength", "language", "os", "size"):
             setattr(fileobj3, attr, getattr(fileobj4, attr))
         setattr(fileobj3, "piecetype", getattr(fileobj4, "piecetype").replace("-", ""))
-        for attr in ('description', 'version', 'identity', 'license_url', 'license_name', 'publisher_url', 'publisher_name'):
+        for attr in (
+            "description",
+            "version",
+            "identity",
+            "license_url",
+            "license_name",
+            "publisher_url",
+            "publisher_name",
+        ):
             setattr(metalinkobj3, attr, getattr(fileobj4, attr))
         # copy hashlist, change key names
         for key in fileobj4.hashlist.keys():
             fileobj3.hashlist[key.replace("-", "")] = fileobj4.hashlist[key]
         for res4 in fileobj4.resources:
             if res4.priority != "":
-                fileobj3.add_url(res4.url, "", res4.location, str(101-int(res4.priority)))
+                fileobj3.add_url(
+                    res4.url, "", res4.location, str(101 - int(res4.priority))
+                )
             else:
                 fileobj3.add_url(res4.url, "", res4.location)
         metalinkobj3.files.append(fileobj3)
     return metalinkobj3
 
+
 def convert_3to4(metalinkobj3):
     metalinkobj4 = Metalink4()
     # copy common attributes
-    for attr in ('origin', 'generator'):
+    for attr in ("origin", "generator"):
         setattr(metalinkobj4, attr, getattr(metalinkobj3, attr))
-    if getattr(metalinkobj3, 'type') == 'dynamic':
-        setattr(metalinkobj4, 'dynamic', "true")
+    if getattr(metalinkobj3, "type") == "dynamic":
+        setattr(metalinkobj4, "dynamic", "true")
     else:
-        setattr(metalinkobj4, 'dynamic', "false")
+        setattr(metalinkobj4, "dynamic", "false")
 
     if metalinkobj3.pubdate != "":
-        metalinkobj4.published = time.strftime(RFC3339, rfc822.parsedate(metalinkobj3.pubdate))
+        metalinkobj4.published = time.strftime(
+            RFC3339, rfc822.parsedate(metalinkobj3.pubdate)
+        )
     if metalinkobj3.refreshdate != "":
-        metalinkobj4.updated = time.strftime(RFC3339, rfc822.parsedate(metalinkobj3.refreshdate))
-        
+        metalinkobj4.updated = time.strftime(
+            RFC3339, rfc822.parsedate(metalinkobj3.refreshdate)
+        )
+
     for fileobj3 in metalinkobj3.files:
         fileobj4 = MetalinkFile4(fileobj3.filename)
         # copy common attributes
-        for attr in ('filename', 'pieces', 'piecelength', 'piecetype', 'language', 'os', 'size'):
+        for attr in (
+            "filename",
+            "pieces",
+            "piecelength",
+            "piecetype",
+            "language",
+            "os",
+            "size",
+        ):
             setattr(fileobj4, attr, getattr(fileobj3, attr))
-        for attr in ('description', 'identity', 'version', 'license_url', 'license_name', 'publisher_url', 'publisher_name'):
+        for attr in (
+            "description",
+            "identity",
+            "version",
+            "license_url",
+            "license_name",
+            "publisher_url",
+            "publisher_name",
+        ):
             setattr(fileobj4, attr, getattr(metalinkobj3, attr))
         # copy hashlist, change key names
         for key in fileobj3.hashlist.keys():
             fileobj4.hashlist[hashlookup(key)] = fileobj3.hashlist[key]
         for res3 in fileobj3.resources:
             if res3.preference != "":
-                fileobj4.add_url(res3.url, "", res3.location, str(101-int(res3.preference)))
+                fileobj4.add_url(
+                    res3.url, "", res3.location, str(101 - int(res3.preference))
+                )
             else:
                 fileobj4.add_url(res3.url, "", res3.location)
         metalinkobj4.files.append(fileobj4)
     return metalinkobj4
-    
+
+
 def convert(metalinkobj, ver=4):
     ver = int(ver)
     if metalinkobj.ver == ver:
@@ -1368,9 +2087,10 @@ def convert(metalinkobj, ver=4):
     else:
         raise AssertionError("Cannot do conversion %s to %s!" % (metalinkobj.ver, ver))
 
+
 def rfc3339_parsedate(datestr):
     offset = "+00:00"
-    if datestr.endswith("Z"):   
+    if datestr.endswith("Z"):
         datestr = datestr[:-1]
     else:
         offset = datestr[-6:]
@@ -1383,11 +2103,12 @@ def rfc3339_parsedate(datestr):
     unixtime += offset
     return time.gmtime(unixtime)
 
+
 def __convert_offset(offsetstr):
-    '''
+    """
     Convert string offset of the form "-08:00" to an int of seconds for
     use with UNIX epoch time.
-    '''
+    """
     offsetstr = offsetstr.replace(":", "")
     operator = offsetstr[0]
     hour = offsetstr[1:3]
@@ -1399,6 +2120,7 @@ def __convert_offset(offsetstr):
         offsetsecs *= -1
     return offsetsecs
 
+
 def parsefile(filename, ver=3):
     xml = Metalink4()
     try:
@@ -1408,7 +2130,8 @@ def parsefile(filename, ver=3):
         xml.parsefile(filename)
     xml = convert(xml, ver)
     return xml
-    
+
+
 def parsehandle(handle, ver=3):
     text = handle.read()
     xml = Metalink4()
@@ -1422,18 +2145,19 @@ def parsehandle(handle, ver=3):
 
 
 def read_sig(filename):
-    '''
+    """
     Checks for signatures for the file.
-    '''
+    """
     sig = read_asc_sig(filename)
     if sig != "":
         return sig
     return read_bin_sig(filename)
 
+
 def read_bin_sig(filename):
-    '''
+    """
     Converts a binary signature to ASCII
-    '''
+    """
     header = "-----BEGIN PGP SIGNATURE-----\n\n"
     footer = "-----END PGP SIGNATURE-----\n"
     filename = filename + ".sig"
@@ -1442,13 +2166,14 @@ def read_bin_sig(filename):
         text = binascii.b2a_base64(handle.read())
         handle.close()
         text = header + text + footer
-        return text    
+        return text
     return ""
 
+
 def read_asc_sig(filename):
-    '''
+    """
     Reads a detached ASCII PGP signature from a file.
-    '''
+    """
     filename = filename + ".asc"
     if os.access(filename, os.R_OK):
         handle = open(filename, "rb")
@@ -1459,9 +2184,9 @@ def read_asc_sig(filename):
 
 
 def compute_ed2k(filename, size=None, ed2khash=None):
-    '''
+    """
     Generates an ed2k link for a file on the local filesystem.
-    '''
+    """
     if size == None:
         size = os.path.getsize(filename)
     if ed2khash == None:
@@ -1469,7 +2194,8 @@ def compute_ed2k(filename, size=None, ed2khash=None):
 
     return "ed2k://|file|%s|%s|%s|/" % (os.path.basename(filename), size, ed2khash)
 
-def ed2k_hash(filename):    
+
+def ed2k_hash(filename):
     blocksize = 9728000
     size = os.path.getsize(filename)
 
@@ -1477,65 +2203,73 @@ def ed2k_hash(filename):
     data = handle.read(blocksize)
     hashes = b""
     md4 = None
-    
+
     while data:
-        md4 = hashlib.new('md4')
+        md4 = hashlib.new("md4")
         md4.update(data)
         hashes += md4.digest()
         data = handle.read(blocksize)
 
     # handle file size of zero
     if md4 == None:
-        md4 = hashlib.new('md4')
+        md4 = hashlib.new("md4")
     outputhash = md4.hexdigest()
 
     if size % blocksize == 0:
-        md4 = hashlib.new('md4')
+        md4 = hashlib.new("md4")
         md4.update("")
         hashes += md4.hexdigest()
 
     if size >= blocksize:
-        md4 = hashlib.new('md4')
+        md4 = hashlib.new("md4")
         md4.update(hashes)
         outputhash = md4.hexdigest()
-        
+
     return outputhash
 
+
 def file_hash(filename, hashtype):
-    '''
+    """
     returns checksum as a hex string
-    '''
+    """
     hashfunc = getattr(hashlib, hashtype)
     hashobj = hashfunc()
     return filehash(filename, hashobj)
 
+
 def filehash(thisfile, filesha):
-    '''
+    """
     First parameter, filename
     Returns sum as a string of hex digits
-    '''
+    """
     try:
         filehandle = open(thisfile, "rb")
     except:
         return ""
 
-    chunksize = 1024*1024
+    chunksize = 1024 * 1024
     data = filehandle.read(chunksize)
-    while(data != ""):
+    while data != "":
         filesha.update(data)
         data = filehandle.read(chunksize)
 
     filehandle.close()
     return filesha.hexdigest()
 
-def compute_magnet(filename, size = None, md5 = None, sha1 = None, ed2khash = None):
+
+def compute_magnet(filename, size=None, md5=None, sha1=None, ed2khash=None):
     if size == None:
         size = os.path.getsize(filename)
     if ed2khash == None:
         ed2khash = ed2k_hash(filename)
     if md5 == None:
-        md5 = file_hash(filename, 'md5')
+        md5 = file_hash(filename, "md5")
     if sha1 == None:
-        sha1 = file_hash(filename, 'sha1')
-    return "magnet:?dn=%s&amp;xl=%s&amp;xt=urn:sha1:%s&amp;xt=urn:md5:%s&amp;xt=urn:ed2k:%s" % (os.path.basename(filename), size, base64.b32encode(binascii.unhexlify(sha1)), md5.upper(), ed2khash.upper())
-
+        sha1 = file_hash(filename, "sha1")
+    return "magnet:?dn=%s&amp;xl=%s&amp;xt=urn:sha1:%s&amp;xt=urn:md5:%s&amp;xt=urn:ed2k:%s" % (
+        os.path.basename(filename),
+        size,
+        base64.b32encode(binascii.unhexlify(sha1)),
+        md5.upper(),
+        ed2khash.upper(),
+    )
