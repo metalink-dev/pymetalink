@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "pymetalink"
+version = "6.3"
+description = "A metalink library for Python"
+authors = ["Neil McNab <nabber00@gmail.com>"]
+license = "MIT"
+packages = [{ include = "metalink" }]
+repository = "https://github.com/metalink-dev/pymetalink"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+
+[tool.poetry.dev-dependencies]
+pytest = "^5.2"
+black = "^20.8b1"
+
+[tool.poetry.scripts]
+pymetalink = 'metalink.console:run'
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
