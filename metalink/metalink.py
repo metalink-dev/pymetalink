@@ -36,25 +36,25 @@
 import sys
 
 if sys.version_info < (3,):
+    import rfc822
     import StringIO
     import urllib2
-    import rfc822
 else:
     import io as StringIO
     import urllib.request as urllib2
     import email as rfc822
 
-import os
-import os.path
-import hashlib
-import re
-import math
-import time
 import calendar
-import xml.parsers.expat
 
 # for jigdo only
 import gzip
+import hashlib
+import math
+import os
+import os.path
+import re
+import time
+import xml.parsers.expat
 
 # handle missing module in jython
 try:
@@ -1658,7 +1658,7 @@ class RSSAtom:
         tag = self.parent.pop()
 
         if name == "link":
-            if "rel" in tag.attrs and tag.attrs["rel"] == 'enclosure':
+            if "rel" in tag.attrs and tag.attrs["rel"] == "enclosure":
                 fileobj = self.files[-1]
                 if "href" in tag.attrs:
                     fileobj.url = tag.attrs["href"]

@@ -47,13 +47,12 @@ if sys.version_info < (3,):
 else:
     import io as StringIO
 
-
+import base64
+import gettext
+import locale
 import os
 import os.path
 import subprocess
-import gettext
-import locale
-import base64
 
 try:
     import win32process
