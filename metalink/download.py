@@ -56,47 +56,48 @@
 import sys
 
 if sys.version_info < (3,):
-    import httplib
-    import urlparse
-    import urllib2
     import BaseHTTPServer
+    import httplib
+    import urllib2
+    import urlparse
 #    import HTMLParser
 else:
     import http.client as httplib
+    import http.server as BaseHTTPServer
+    import io
     import urllib.parse as urlparse
 
     #    import html.parser as HTMLParser
     import urllib.request as urllib2
-    import http.server as BaseHTTPServer
-    import io
 
     file = io.FileIO
 #    import urllib.error as ??
 #    from . import metalink
 
-import metalink
-
 # import logging
+import base64
+import binascii
+import copy
+import ftplib
+import gettext
 
 # import utils
 import hashlib
-import os
 import locale
+import os
+import random
+import socket
+import ssl
 import threading
 
 # import thread
 import time
-import copy
-import socket
-import ftplib
+import uuid
+
+import metalink
 
 # import logging
-import base64
-import gettext
-import binascii
-import random
-import uuid
-import ssl
+
 
 try:
     import GPG

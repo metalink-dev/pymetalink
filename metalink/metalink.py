@@ -36,25 +36,25 @@
 import sys
 
 if sys.version_info < (3,):
+    import rfc822
     import StringIO
     import urllib2
-    import rfc822
 else:
     import io as StringIO
     import urllib.request as urllib2
     import email as rfc822
 
-import os
-import os.path
-import hashlib
-import re
-import math
-import time
 import calendar
-import xml.parsers.expat
 
 # for jigdo only
 import gzip
+import hashlib
+import math
+import os
+import os.path
+import re
+import time
+import xml.parsers.expat
 
 # handle missing module in jython
 try:
@@ -1553,7 +1553,7 @@ class Metalink4(MetalinkBase):
         try:
             if name in ("generator", "origin", "published", "updated"):
                 setattr(self, name, self.data.strip())
-                if name == "origin" and tag.attrs.has_key("dynamic"):
+                if name == "origin" and "dynamic" in tag.attrs:
                     self.dynamic = tag.attrs["dynamic"]
             elif name in ("url", "metaurl"):
                 fileobj = self.files[-1]
@@ -1658,18 +1658,18 @@ class RSSAtom:
         tag = self.parent.pop()
 
         if name == "link":
-            if tag.attrs.has_key("rel") and tag.attrs["rel"] == "enclosure":
+            if "rel" in tag.attrs and tag.attrs["rel"] == "enclosure":
                 fileobj = self.files[-1]
-                if tag.attrs.has_key("href"):
+                if "href" in tag.attrs:
                     fileobj.url = tag.attrs["href"]
-                if tag.attrs.has_key("length"):
+                if "length" in tag.attrs:
                     fileobj.size = int(tag.attrs["length"])
 
         if name == "enclosure":
             fileobj = self.files[-1]
-            if tag.attrs.has_key("url"):
+            if "url" in tag.attrs:
                 fileobj.url = tag.attrs["url"]
-            if tag.attrs.has_key("length"):
+            if "length" in tag.attrs:
                 fileobj.size = int(tag.attrs["length"])
 
         if name == "title" and self.parent[-1].name in ("entry", "item"):

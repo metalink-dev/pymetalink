@@ -54,15 +54,15 @@
 import sys
 
 if sys.version_info < (3,):
-    import httplib
-    import urlparse
     import HTMLParser
+    import httplib
     import urllib2
+    import urlparse
 else:
+    import html.parser as HTMLParser
     import http.client as httplib
     import urllib.parse as urlparse
     import urllib.request as urllib2
-    import html.parser as HTMLParser
 
     unicode = str
     import urllib.request
@@ -70,14 +70,14 @@ else:
     urllib.ftpwrapper = urllib.request.ftpwrapper
     urllib.FancyURLopener = urllib.request.FancyURLopener
 
-import os
+import base64
 import ftplib
-import urllib
+import gettext
+import locale
+import os
 import socket
 import ssl
-import base64
-import locale
-import gettext
+import urllib
 
 # Configure proxies (user and password optional)
 # HTTP_PROXY = http://user:password@myproxy:port
