@@ -1553,7 +1553,7 @@ class Metalink4(MetalinkBase):
         try:
             if name in ("generator", "origin", "published", "updated"):
                 setattr(self, name, self.data.strip())
-                if name == "origin" and tag.attrs.has_key("dynamic"):
+                if name == "origin" and "dynamic" in tag.attrs:
                     self.dynamic = tag.attrs["dynamic"]
             elif name in ("url", "metaurl"):
                 fileobj = self.files[-1]
@@ -1658,18 +1658,18 @@ class RSSAtom:
         tag = self.parent.pop()
 
         if name == "link":
-            if tag.attrs.has_key("rel") and tag.attrs["rel"] == "enclosure":
+            if "rel" in tag.attrs and tag.attrs["rel"] == 'enclosure':
                 fileobj = self.files[-1]
-                if tag.attrs.has_key("href"):
+                if "href" in tag.attrs:
                     fileobj.url = tag.attrs["href"]
-                if tag.attrs.has_key("length"):
+                if "length" in tag.attrs:
                     fileobj.size = int(tag.attrs["length"])
 
         if name == "enclosure":
             fileobj = self.files[-1]
-            if tag.attrs.has_key("url"):
+            if "url" in tag.attrs:
                 fileobj.url = tag.attrs["url"]
-            if tag.attrs.has_key("length"):
+            if "length" in tag.attrs:
                 fileobj.size = int(tag.attrs["length"])
 
         if name == "title" and self.parent[-1].name in ("entry", "item"):

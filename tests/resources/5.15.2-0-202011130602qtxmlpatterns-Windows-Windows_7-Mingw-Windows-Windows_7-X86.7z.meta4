@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metalink xmlns="urn:ietf:params:xml:ns:metalink">
+  <generator>MirrorBrain/2.19.0</generator>
+  <origin dynamic="true">https://download.qt.io/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z.meta4</origin>
+  <published>2021-10-31T09:23:26Z</published>
+  <publisher>
+    <name>Qt Project</name>
+    <url>https://download.qt.io</url>
+  </publisher>
+
+  <file name="5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z">
+    <size>1441205</size>
+
+    <!-- <mtime>1605782388</mtime> -->
+
+    <!-- internal id: 45058 -->
+    <hash type="md5">1d70a4cba338d7d2be8f5aa881270654</hash>
+    <hash type="sha-1">732d73173f2c2b67a289454df9c2b01f821dab90</hash>
+    <hash type="sha-256">2a20c02a79b6547ee9380abd7cae19ca381c1b7c8758258e812f1187462cf5d1</hash>
+    <pieces length="262144" type="sha-1">
+      <hash>5e1e0a40e8b1412434b97e53d74adf6ec058e960</hash>
+      <hash>8ab5d07b99041b06f7cfad2906c4ed72f9a5b99a</hash>
+      <hash>999562983b373267a17601cd7c695c8cb10ec9a5</hash>
+      <hash>65d31de3aec2926fb3badcb868f74e606b9507f9</hash>
+      <hash>5c7594df32810139042f375e1261ac9d9d9050e1</hash>
+      <hash>557857194179183fc8fa6f633acd251b464203d1</hash>
+    </pieces>
+
+
+    <!-- Found 16 mirrors: 0 in the same network prefix, 0 in the same autonomous system,
+         2 handling this country, 7 in the same region, 7 elsewhere -->
+
+    <!-- Mirrors in the same network (85.149.0.0/16): -->
+
+    <!-- Mirrors in the same AS (5390): -->
+
+    <!-- Mirrors which handle this country (NL): -->
+    <url location="nl" priority="1">https://ftp1.nluug.nl/languages/qt/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+    <url location="nl" priority="2">http://ftp2.nluug.nl/languages/qt/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+
+    <!-- Mirrors in the same continent (EU): -->
+    <url location="de" priority="3">http://qt-mirror.dannhauer.de/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+    <url location="de" priority="4">http://ftp.fau.de/qtproject/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+    <url location="dk" priority="5">http://mirrors.dotsrc.org/qtproject/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+    <url location="gb" priority="6">http://mirrors.ukfast.co.uk/sites/qt.io/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+    <url location="se" priority="7">http://ftp.acc.umu.se/mirror/qt.io/qtproject/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+    <url location="fi" priority="8">http://www.nic.funet.fi/pub/mirrors/download.qt-project.org/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+    <url location="fi" priority="9">http://master.qt.io/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+
+    <!-- Mirrors in the rest of the world: -->
+    <url location="ke" priority="10">http://qtproject.mirror.liquidtelecom.com/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+    <url location="us" priority="11">http://qt.mirror.constant.com/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+    <url location="ca" priority="12">http://mirror.csclub.uwaterloo.ca/qtproject/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+    <url location="cn" priority="13">http://mirrors.sjtug.sjtu.edu.cn/qt/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+    <url location="us" priority="14">http://mirrors.ocf.berkeley.edu/qt/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+    <url location="jp" priority="15">http://ftp.jaist.ac.jp/pub/qtproject/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+    <url location="jp" priority="16">http://ftp.yz.yamagata-u.ac.jp/pub/qtproject/online/qtsdkrepository/windows_x86/desktop/qt5_5152/qt.qt5.5152.win32_mingw81/5.15.2-0-202011130602qtxmlpatterns-Windows-Windows_7-Mingw-Windows-Windows_7-X86.7z</url>
+  </file>
+</metalink>
