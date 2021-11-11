@@ -1,0 +1,19 @@
+name: main
+
+on:
+  push:
+    branches: [$default-branch]
+  pull_request: {}
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - run: pip install poetry==1.1.11
+      - run: poetry install
+      - run: poetry run black --check .
+      - run: poetry run pytest tests/test_metalink4.py 
