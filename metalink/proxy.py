@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 ########################################################################
 #
 # Project: pyMetalink
@@ -53,30 +52,21 @@
 
 import sys
 
-if sys.version_info < (3,):
-    import HTMLParser
-    import httplib
-    import urllib2
-    import urlparse
-else:
-    import html.parser as HTMLParser
-    import http.client as httplib
-    import urllib.parse as urlparse
-    import urllib.request as urllib2
+import http.client as httplib
+import urllib.parse as urlparse
+import urllib.request as urllib2
 
-    unicode = str
-    import urllib.request
+unicode = str
+import urllib.request
 
-    urllib.ftpwrapper = urllib.request.ftpwrapper
-    urllib.FancyURLopener = urllib.request.FancyURLopener
+urllib.ftpwrapper = urllib.request.ftpwrapper
+urllib.FancyURLopener = urllib.request.FancyURLopener
 
 import base64
 import ftplib
 import gettext
 import locale
 import os
-import socket
-import ssl
 import urllib
 
 # Configure proxies (user and password optional)
@@ -107,7 +97,7 @@ def translate():
         localedir = os.path.join("/".join(["%s" % k for k in temp[:-1]]), "locale")
 
     # print base, localedir
-    localelang = locale.getdefaultlocale()[0]
+    localelang = locale.getlocale()[0]
     if localelang == None:
         localelang = "LC_ALL"
     t = gettext.translation(base, localedir, [localelang], None, "en")
@@ -144,7 +134,7 @@ def reg_query(keyname, value=None):
     if value == None:
         tempresult = os.popen2('reg.exe query "%s"' % keyname)
     else:
-        tempresult = os.popen2('reg.exe query "%s" /v "%s"' % (keyname, value))
+        tempresult = os.popen2(f'reg.exe query "{keyname}" /v "{value}"')
     stdout = tempresult[1]
     stdout = stdout.readlines()
 
@@ -157,7 +147,7 @@ def reg_query(keyname, value=None):
         else:
             tempresult = os.popen2(
                 os.environ["WINDIR"]
-                + '\\system32\\reg.exe query "%s" /v "%s"' % (keyname, value)
+                + f'\\system32\\reg.exe query "{keyname}" /v "{value}"'
             )
         stdout = tempresult[1]
         stdout = stdout.readlines()
@@ -165,7 +155,7 @@ def reg_query(keyname, value=None):
     # For Windows XP, this was changed in Vista!
     if len(stdout) > 0 and stdout[1].startswith("! REG.EXE"):
         blanklines += 2
-        if value == None:
+        if value is None:
             blanklines += 2
 
     stdout = stdout[blanklines:]
@@ -181,7 +171,7 @@ def get_key_value(key, value):
     Returns the uninstall command as a string
     """
     # does not handle non-paths yet
-    result = u""
+    result = ""
 
     try:
         keyid = win32api.RegOpenKeyEx(win32con.HKEY_CURRENT_USER, key)
@@ -190,19 +180,19 @@ def get_key_value(key, value):
         result = unicode(tempvalue[0])
     except NameError:
         # alternate method if win32api is not available, probably only works on Windows NT variants
-        stdout = reg_query(u"HKCU\\" + key, value)
+        stdout = reg_query("HKCU\\" + key, value)
 
         try:
             # XP vs. Vista
-            if stdout[1].find(u"\t") != -1:
-                lines = stdout[1].split(u"\t")
+            if stdout[1].find("\t") != -1:
+                lines = stdout[1].split("\t")
                 index = 2
             else:
-                lines = stdout[1].split(u"    ")
+                lines = stdout[1].split("    ")
                 index = 3
             result = lines[index].strip()
         except IndexError:
-            result = u""
+            result = ""
     except:
         pass
 
@@ -297,7 +287,7 @@ class ftpwrapper(urllib.ftpwrapper):
                 conn = self.ftp.ntransfercmd(cmd)
             except ftplib.error_perm as reason:
                 if str(reason)[:3] != "550":
-                    raise IOError(("ftp error", reason), sys.exc_info()[2])
+                    raise OSError(("ftp error", reason), sys.exc_info()[2])
 
         self.busy = 1
         # Pass back both a suitably decorated object and a retrieval length
@@ -365,8 +355,8 @@ def getproxies():
 
 
 class FancyURLopener(urllib.FancyURLopener):
-    def open(self, fullurl, data=None):
-        return urllib2.urlopen(fullurl, data)
+    def open(self, full_url, data=None):
+        return urllib2.urlopen(full_url, data)
 
 
 class FTP(ftplib.FTP):

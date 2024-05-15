@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 From sourceforge pycrypto project:
 http://sourceforge.net/projects/pycrypto/
@@ -42,10 +41,7 @@ __rcsid__ = "$Id: GPG.py,v 1.3 2003/11/23 15:03:15 akuchling Exp $"
 
 import sys
 
-if sys.version_info < (3,):
-    import StringIO
-else:
-    import io as StringIO
+import io as StringIO
 
 import base64
 import gettext
@@ -78,7 +74,7 @@ def translate():
 
     # print base, localedir, locale.getdefaultlocale()
     localelang = locale.getdefaultlocale()[0]
-    if localelang == None:
+    if localelang is None:
         localelang = "LC_ALL"
     t = gettext.translation(base, localedir, [localelang], None, "en")
     try:
@@ -178,7 +174,7 @@ class Signature:
 
     def is_valid(self):
         """
-        returns boolean result of signature valididity
+        returns boolean result of signature validity
         """
         return self.valid
 
@@ -188,9 +184,21 @@ class ImportResult:
     Used to hold information about a key import result
     """
 
-    counts = """count no_user_id imported imported_rsa unchanged
-            n_uids n_subk n_sigs n_revoc sec_read sec_imported
-            sec_dups not_imported""".split()
+    counts = [
+        "count",
+        "imported",
+        "imported_rsa",
+        "n_revoc",
+        "n_sigs",
+        "n_subk",
+        "n_uids",
+        "no_user_id",
+        "not_imported"
+        "sec_dups",
+        "sec_imported",
+        "sec_read",
+        "unchanged",
+    ]
 
     def __init__(self):
         self.imported = []
@@ -528,7 +536,7 @@ class GPGSubprocess:
     # ENCRYPTING DATA
     #
     def encrypt_file(self, file, recipients):
-        '''Encrypt the message read from the file-like object "file"'''
+        """Encrypt the message read from the file-like object 'file'"""
         args = ["--encrypt --armor"]
         for recipient in recipients:
             args.append("--recipient %s" % recipient)
@@ -537,26 +545,26 @@ class GPGSubprocess:
         return result
 
     def encrypt(self, data, recipients):
-        '''Encrypt the message contained in the string "data"'''
-        fileobj = StringIO.StringIO(data)
-        return self.encrypt_file(fileobj, recipients)
+        """Encrypt the message contained in the string 'data'"""
+        file_obj = StringIO.StringIO(data)
+        return self.encrypt_file(file_obj, recipients)
 
     # Not yet implemented, because I don't need these methods
     # The methods certainly don't have all the parameters they'd need.
     def sign(self, data):
-        '''Sign the contents of the string "data"'''
+        """Sign the contents of the string 'data'"""
         pass
 
     def sign_file(self, file):
-        '''Sign the contents of the file-like object "file"'''
+        """Sign the contents of the file-like object 'file'"""
         pass
 
     def decrypt_file(self, file):
-        '''Decrypt the message read from the file-like object "file"'''
+        """Decrypt the message read from the file-like object 'file'"""
         pass
 
     def decrypt(self, data):
-        '''Decrypt the message contained in the string "data"'''
+        """Decrypt the message contained in the string 'data'"""
         pass
 
 
@@ -574,7 +582,7 @@ def decode(filename):
     """
     Decodes data elements from a given PGP file name.
     """
-    if filename == None:
+    if filename is None:
         return []
     if filename.endswith(".asc"):
         return decode_asc(filename)
