@@ -182,7 +182,7 @@ def translate():
             base = os.path.basename(__file__)[:-3]
             localedir = os.path.join(os.path.dirname(__file__), "locale")
         except NameError:
-            if sys.executable is None:
+            if sys.executable is not None:
                 base = os.path.basename(sys.executable)[:-4]
                 localedir = os.path.join(os.path.dirname(sys.executable), "locale")
     else:
@@ -447,6 +447,7 @@ def download_file_urls(
 
     print(_("Downloading to %s.") % metalinkfile.filename)
 
+    manager = None
     seg_result = False
     if segmented:
         manager = Segment_Manager(metalinkfile, headers)
@@ -461,15 +462,11 @@ def download_file_urls(
                     "Could not download all segments of the file, trying one mirror at a time."
                 )
             )
-    else:
-        manager = None
 
     if (not segmented) or (not seg_result):
         manager = NormalManager(metalinkfile, headers)
         manager.set_callbacks(handlers)
         manager.run()
-    else:
-        manager = None
 
     if manager is not None:
         if manager.get_status():
