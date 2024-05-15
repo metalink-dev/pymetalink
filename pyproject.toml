@@ -12,9 +12,9 @@ repository = "https://github.com/metalink-dev/pymetalink"
 python = "^3.8"
 
 [tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
-black = "^20.8b1"
-twine = "^3.6.0"
+pytest = "^7.0.0"
+black = "^24.4.2"
+twine = "^4.0.0"
 
 [tool.poetry.scripts]
 pymetalink = 'metalink.console:main'
