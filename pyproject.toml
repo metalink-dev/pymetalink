@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pymetalink"
-version = "6.3"
+version = "6.5"
 description = "A metalink library for Python"
 authors = ["Neil McNab <nabber00@gmail.com>", "Bram Neijt <bram@neijt.nl>"]
 license = "MIT"

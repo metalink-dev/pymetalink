@@ -37,11 +37,23 @@ files = metalink.download.get("file.metalink", os.getcwd())
 
 CHANGELOG:
 
-Version 6.3 (unreleased)
+Version 6.5 (unreleased)
 -----------
 - Updated coding conventions to support Python 3.8+
 - Added some specific error code handling
 - Adjusted GitHub Workflows to test against Python versions 3.8, 3.9, 3.10, 3.11, and 3.12
+
+Version 6.4
+-----------
+- Release to test GitHub CI-based publishing workflow
+
+Version 6.3
+-----------
+- Fixed a typo in download.py 
+- Fixed an error with the `_send_request()` function on newer versions of Python
+- Adopted `poetry` as the package build engine
+- Formatting now uses `black`
+- Fixed a Python 2.x compatibility issue
 
 Version 6.2
 -----------
