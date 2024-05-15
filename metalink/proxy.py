@@ -5,7 +5,7 @@
 # URL: https://github.com/metalink-dev/pymetalink
 # E-mail: nabber00@gmail.com
 #
-# Copyright: (C) 2011, Neil McNab
+# Copyright: (C) 2007-2024, Hampus Wessman, Neil McNab, and other contributors
 # License: MIT
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
