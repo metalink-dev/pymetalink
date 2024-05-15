@@ -144,7 +144,7 @@ LANG = []
 OS = None
 COUNTRY = None
 
-lang = locale.getdefaultlocale()[0]
+lang = locale.getlocale()[0]
 if lang is None:
     lang = "LC_ALL"
 lang = lang.replace("_", "-").lower()
@@ -191,10 +191,10 @@ def translate():
         localedir = os.path.join("/".join(["%s" % k for k in temp[:-1]]), "locale")
 
     # print base, localedir
-    localelang = locale.getdefaultlocale()[0]
-    if localelang == None:
-        localelang = "LC_ALL"
-    t = gettext.translation(base, localedir, [localelang], None, "en")
+    locale_lang = locale.getlocale()[0]
+    if locale_lang is None:
+        locale_lang = "LC_ALL"
+    t = gettext.translation(base, localedir, [locale_lang], None, "en")
     try:
         return t.ugettext
     # python3
@@ -554,7 +554,7 @@ class Manager:
         """
         Pass in current byte count
         """
-        if self.oldtime != None and (time.time() - self.oldtime) != 0:
+        if self.oldtime is not None and (time.time() - self.oldtime) != 0:
             return ((bytes - self.oldsize) * 8 / 1024) / (time.time() - self.oldtime)
         return 0
 
@@ -668,7 +668,7 @@ class URLManager(Manager):
             self.size = 0
 
         self.streamserver = None
-        if PORT != None:
+        if PORT is not None:
             self.streamserver = StreamServer((HOST, PORT), StreamRequest)
             self.streamserver.set_stream(self.data)
 
@@ -689,7 +689,7 @@ class URLManager(Manager):
             self.status = filecheck(self.filename, self.checksums, self.size)
 
     def cycle(self):
-        if self.oldtime == None:
+        if self.oldtime is None:
             self.start_bitrate(self.counter * self.block_size)
         if self.cancel_handler is not None and self.cancel_handler():
             self.close_handler()
@@ -945,7 +945,7 @@ def download_metalink(
         ostag = filenode.os
         langtag = filenode.language
 
-        if OS == None or len(ostag) == 0 or ostag[0].lower() == OS.lower():
+        if OS is None or len(ostag) == 0 or ostag[0].lower() == OS.lower():
             if "any" in LANG or len(langtag) == 0 or langtag.lower() in LANG:
                 result = download_file_node(
                     filenode, path, force, handlers, segmented, my_headers

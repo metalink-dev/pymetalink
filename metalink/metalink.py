@@ -504,7 +504,7 @@ class Resource4:
             valid = False
         elif self.type in allowed_types:
             m = re.search(r"\w+://.+\..+/.*", self.url)
-            if m == None:
+            if m is None:
                 self.errors.append("Invalid URL: " + self.url + ".")
                 valid = False
         if self.location.strip() != "":
@@ -901,11 +901,11 @@ class MetalinkFileBase:
                         print("Canceling scan!")
                         return False
             # Process the data
-            if md5hash != None:
+            if md5hash is not None:
                 md5hash.update(data)
-            if sha1hash != None:
+            if sha1hash is not None:
                 sha1hash.update(data)
-            if sha256hash != None:
+            if sha256hash is not None:
                 sha256hash.update(data)
             if use_chunks:
                 left = len(data)
@@ -934,7 +934,7 @@ class MetalinkFileBase:
         fp.close()
         self.hashlist["md5"] = md5hash.hexdigest()
         self.hashlist["sha1"] = sha1hash.hexdigest()
-        if sha256hash != None:
+        if sha256hash is not None:
             self.hashlist["sha256"] = sha256hash.hexdigest()
 
         # automatically add an ed2k url here
@@ -1000,12 +1000,12 @@ class MetalinkFile4(MetalinkFileBase):
             valid = False
         if self.hashlist["md5"].strip() != "":
             m = re.search(r"[^0-9a-fA-F]", self.hashlist["md5"])
-            if len(self.hashlist["md5"]) != 32 or m != None:
+            if len(self.hashlist["md5"]) != 32 or m is not None:
                 self.errors.append("Invalid md5 hash.")
                 valid = False
         if self.hashlist["sha-1"].strip() != "":
             m = re.search(r"[^0-9a-fA-F]", self.hashlist["sha-1"])
-            if len(self.hashlist["sha-1"]) != 40 or m != None:
+            if len(self.hashlist["sha-1"]) != 40 or m is not None:
                 self.errors.append("Invalid sha-1 hash.")
                 valid = False
         if str(self.size).strip() != "":
@@ -1118,12 +1118,12 @@ class MetalinkFile(MetalinkFileBase):
             valid = False
         if self.hashlist["md5"].strip() != "":
             m = re.search(r"[^0-9a-fA-F]", self.hashlist["md5"])
-            if len(self.hashlist["md5"]) != 32 or m != None:
+            if len(self.hashlist["md5"]) != 32 or m is not None:
                 self.errors.append("Invalid md5 hash.")
                 valid = False
         if self.hashlist["sha1"].strip() != "":
             m = re.search(r"[^0-9a-fA-F]", self.hashlist["sha1"])
-            if len(self.hashlist["sha1"]) != 40 or m != None:
+            if len(self.hashlist["sha1"]) != 40 or m is not None:
                 self.errors.append("Invalid sha-1 hash.")
                 valid = False
         if str(self.size).strip() != "":
@@ -1309,7 +1309,7 @@ class MetalinkBase:
             return False
         elif typestr in ["http", "https", "ftp", "ftps", "bittorrent"]:
             m = re.search(r"\w+://.+\..+/.*", url)
-            if m == None:
+            if m is None:
                 return False
         return True
 
@@ -1852,7 +1852,7 @@ class Jigdo(Metalink):
                 local = parts[1]
 
             index = self.get_file_by_hash("md5", hexhash)
-            if index == None:
+            if index is None:
                 myfile = MetalinkFile(local)
                 myfile.add_checksum("md5", hexhash)
                 self.files.append(myfile)
@@ -2182,9 +2182,9 @@ def compute_ed2k(filename, size=None, ed2khash=None):
     """
     Generates an ed2k link for a file on the local filesystem.
     """
-    if size == None:
+    if size is None:
         size = os.path.getsize(filename)
-    if ed2khash == None:
+    if ed2khash is None:
         ed2khash = ed2k_hash(filename)
 
     return f"ed2k://|file|{os.path.basename(filename)}|{size}|{ed2khash}|/"
@@ -2206,7 +2206,7 @@ def ed2k_hash(filename):
         data = handle.read(blocksize)
 
     # handle file size of zero
-    if md4 == None:
+    if md4 is None:
         md4 = hashlib.new("md4")
     outputhash = md4.hexdigest()
 

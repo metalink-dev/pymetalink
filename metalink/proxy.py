@@ -88,7 +88,7 @@ def translate():
             base = os.path.basename(__file__)[:-3]
             localedir = os.path.join(os.path.dirname(__file__), "locale")
         except NameError:
-            if sys.executable != None:
+            if sys.executable is not None:
                 base = os.path.basename(sys.executable)[:-4]
                 localedir = os.path.join(os.path.dirname(sys.executable), "locale")
     else:
@@ -97,10 +97,10 @@ def translate():
         localedir = os.path.join("/".join(["%s" % k for k in temp[:-1]]), "locale")
 
     # print base, localedir
-    localelang = locale.getlocale()[0]
-    if localelang == None:
-        localelang = "LC_ALL"
-    t = gettext.translation(base, localedir, [localelang], None, "en")
+    locale_lang = locale.getlocale()[0]
+    if locale_lang is None:
+        locale_lang = "LC_ALL"
+    t = gettext.translation(base, localedir, [locale_lang], None, "en")
     try:
         return t.ugettext
     # python3
@@ -131,7 +131,7 @@ def reg_query(keyname, value=None):
 
     blanklines = 1
 
-    if value == None:
+    if value is None:
         tempresult = os.popen2('reg.exe query "%s"' % keyname)
     else:
         tempresult = os.popen2(f'reg.exe query "{keyname}" /v "{value}"')
@@ -140,7 +140,7 @@ def reg_query(keyname, value=None):
 
     # handle case when reg.exe isn't in path
     if len(stdout) == 0:
-        if value == None:
+        if value is None:
             tempresult = os.popen2(
                 os.environ["WINDIR"] + '\\system32\\reg.exe query "%s"' % keyname
             )
@@ -381,9 +381,9 @@ class FTP(ftplib.FTP):
             else:
                 host = url[1]
 
-            if url.port != None:
+            if url.port is not None:
                 port = url.port
-            if url.username != None:
+            if url.username is not None:
                 self.headers["Proxy-authorization"] = (
                     "Basic "
                     + base64.encodestring(url.username + ":" + url.password)

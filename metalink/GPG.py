@@ -72,11 +72,10 @@ def translate():
         base = temp[-1]
         localedir = os.path.join("/".join(["%s" % k for k in temp[:-1]]), "locale")
 
-    # print base, localedir, locale.getdefaultlocale()
-    localelang = locale.getdefaultlocale()[0]
-    if localelang is None:
-        localelang = "LC_ALL"
-    t = gettext.translation(base, localedir, [localelang], None, "en")
+    locale_lang = locale.getlocale()[0]
+    if locale_lang is None:
+        locale_lang = "LC_ALL"
+    t = gettext.translation(base, localedir, [locale_lang], None, "en")
     try:
         return t.ugettext
     # python3
