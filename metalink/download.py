@@ -59,21 +59,16 @@ import http.server as BaseHTTPServer
 import io
 import urllib.parse as urlparse
 
-#    import html.parser as HTMLParser
 import urllib.request as urllib2
 
 file = io.FileIO
-#    import urllib.error as ??
-#    from . import metalink
 
-# import logging
 import base64
 import binascii
 import copy
 import ftplib
 import gettext
 
-# import utils
 import hashlib
 import locale
 import os
@@ -82,14 +77,10 @@ import socket
 import ssl
 import threading
 
-# import thread
 import time
 import uuid
 
 import metalink
-
-# import logging
-
 
 try:
     import GPG
@@ -111,17 +102,20 @@ except ImportError:
 
 try:
     import win32api
-except:
+except ImportError:
     pass
 
 try:
     import win32con
-except:
+except ImportError:
     pass
 
-SSL_ANYTHING = ssl.SSLContext(ssl.PROTOCOL_SSLv23)
+
+# Deprecated since Python version 3.6
+# OpenSSL has deprecated all version specific protocols.
+SSL_ANYTHING = ssl.SSLContext(ssl.PROTOCOL_TLS)  # previously, ssl.PROTOCOL_SSLv23
 SSL_DEFAULT = ssl.create_default_context()
-SSL_HIGH = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
+SSL_HIGH = ssl.SSLContext(ssl.PROTOCOL_TLS)  # previously, ssl.PROTOCOL_TLSv1_2
 SSL_HIGH.verify_mode = ssl.CERT_REQUIRED
 SSL_HIGH.verify_flags = ssl.VERIFY_CRL_CHECK_CHAIN
 SSL_HIGH.set_ciphers(
