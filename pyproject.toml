@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pymetalink"
-version = "6.5"
+version = "0"
 description = "A metalink library for Python"
 authors = ["Neil McNab <nabber00@gmail.com>", "Bram Neijt <bram@neijt.nl>"]
 license = "MIT"
@@ -19,6 +19,9 @@ twine = "^4.0.0"
 [tool.poetry.scripts]
 pymetalink = 'metalink.console:main'
 
+[tool.poetry-version-plugin]
+source = "git-tag"
+
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.2.0"]
 build-backend = "poetry.core.masonry.api"
