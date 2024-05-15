@@ -26,7 +26,7 @@ Dependencies
    - GPG must be installed
    - http://www.gnupg.org
    - http://www.gpg4win.org
-   
+
 Authors:
 
 Andrew Kuchling
@@ -193,7 +193,7 @@ class ImportResult:
         "n_subk",
         "n_uids",
         "no_user_id",
-        "not_imported"
+        "not_imported",
         "sec_dups",
         "sec_imported",
         "sec_read",

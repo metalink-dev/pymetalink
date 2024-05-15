@@ -299,7 +299,13 @@ def digest_parse(digest):
 
 
 def get(
-    src, path, checksums=None, force=False, handlers=None, segmented=SEGMENTED, headers=None
+    src,
+    path,
+    checksums=None,
+    force=False,
+    handlers=None,
+    segmented=SEGMENTED,
+    headers=None,
 ):
     """
     Download a file, decodes metalinks.
@@ -844,7 +850,13 @@ def parse_rss(src, headers={}):
 
 
 def download_rss(
-    src, path, force=False, handlers=None, segmented=SEGMENTED, headers=None, nocheck=False
+    src,
+    path,
+    force=False,
+    handlers=None,
+    segmented=SEGMENTED,
+    headers=None,
+    nocheck=False,
 ):
     if handlers is None:
         handlers = {}
@@ -880,7 +892,13 @@ def download_rss(
 
 
 def download_metalink(
-    src, path, force=False, handlers=None, segmented=SEGMENTED, headers=None, nocheck=False
+    src,
+    path,
+    force=False,
+    handlers=None,
+    segmented=SEGMENTED,
+    headers=None,
+    nocheck=False,
 ):
     """
     Decode a metalink file, can be local or remote
@@ -948,7 +966,7 @@ def download_jigdo(
     First parameter, file to download, URL or file path to download from
     Second parameter, file path to save to
     Third parameter, optional, force a new download even if a valid copy already exists
-    Fouth parameter, optional, progress handler callback
+    Fourth parameter, optional, progress handler callback
     Returns list of file paths if download(s) is successful
     Returns False otherwise (checksum fails)
     """
@@ -989,7 +1007,9 @@ def download_jigdo(
     results = []
     results.extend(template)
     for file_node in urllist:
-        result = download_file_node(file_node, path, force, handlers, segmented, headers)
+        result = download_file_node(
+            file_node, path, force, handlers, segmented, headers
+        )
         if result:
             results.append(result)
     if len(results) == 0:
@@ -1744,7 +1764,12 @@ class Segment_Manager(Manager):
 
             if next_url.protocol == "http" or next_url.protocol == "https":
                 segment = Http_Host_Segment(
-                    next_url, start, end, self.size, self.get_chunksum(index), self.headers
+                    next_url,
+                    start,
+                    end,
+                    self.size,
+                    self.get_chunksum(index),
+                    self.headers,
                 )
                 segment.set_cancel_callback(self.cancel_handler)
                 self.chunks[index] = segment
@@ -1844,7 +1869,13 @@ class Segment_Manager(Manager):
                 if protocol == "ftp":
                     try:
                         host = Ftp_Host(urls[number], self.f)
-                    except (socket.gaierror, socket.timeout, ftplib.error_temp, ftplib.error_perm, OSError):
+                    except (
+                        socket.gaierror,
+                        socket.timeout,
+                        ftplib.error_temp,
+                        ftplib.error_perm,
+                        OSError,
+                    ):
                         self.urls.pop(urls[number])
                         return None
                     self.sockets.append(host)
