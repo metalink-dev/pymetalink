@@ -27,6 +27,7 @@ python = "^3.8"
 [tool.poetry.dev-dependencies]
 pytest = "^7.0.0"
 black = "^24.4.2"
+pre-commit = "^3.6.0"
 
 [tool.poetry.scripts]
 pymetalink = 'metalink.console:main'

@@ -29,4 +29,4 @@ jobs:
           python -m poetry run black --check .
       - name: Run tests
         run: |
-          python -m poetry run pytest tests/test_metalink4.py 
+          python -m poetry run pytest tests/test_metalink4.py

@@ -49,7 +49,7 @@ Version 6.4
 
 Version 6.3
 -----------
-- Fixed a typo in download.py 
+- Fixed a typo in download.py
 - Fixed an error with the `_send_request()` function on newer versions of Python
 - Adopted `poetry` as the package build engine
 - Formatting now uses `black`
@@ -218,4 +218,3 @@ TODO
 - download priority based on speed
 - use maxconnections
 - dump FTP data chunks directly to file instead of holding in memory
-
