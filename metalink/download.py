@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 ########################################################################
 #
 # Project: pyMetalink
@@ -55,22 +54,15 @@
 ########################################################################
 import sys
 
-if sys.version_info < (3,):
-    import BaseHTTPServer
-    import httplib
-    import urllib2
-    import urlparse
-#    import HTMLParser
-else:
-    import http.client as httplib
-    import http.server as BaseHTTPServer
-    import io
-    import urllib.parse as urlparse
+import http.client as httplib
+import http.server as BaseHTTPServer
+import io
+import urllib.parse as urlparse
 
-    #    import html.parser as HTMLParser
-    import urllib.request as urllib2
+#    import html.parser as HTMLParser
+import urllib.request as urllib2
 
-    file = io.FileIO
+file = io.FileIO
 #    import urllib.error as ??
 #    from . import metalink
 
@@ -118,12 +110,12 @@ except ImportError:
 # except ImportError: pass
 
 try:
-    import win32api
+    pass
 except:
     pass
 
 try:
-    import win32con
+    pass
 except:
     pass
 
@@ -1201,13 +1193,13 @@ class FileResume:
 
     def _read(self):
         try:
-            filehandle = open(self.filename, "r")
+            filehandle = open(self.filename)
             resumestr = filehandle.readline()
             (size, blocks) = resumestr.split(":")
             self.blocks = blocks.split(",")
             self.size = int(size)
             filehandle.close()
-        except (IOError, ValueError):
+        except (OSError, ValueError):
             self.blocks = []
             self.size = 0
 
@@ -1518,7 +1510,7 @@ class Segment_Manager(Manager):
         # Open the file.
         try:
             self.f = ThreadSafeFile(self.localfile, "rb+")
-        except IOError:
+        except OSError:
             self.f = ThreadSafeFile(self.localfile, "wb+")
 
         self.resume = FileResume(self.localfile + ".temp")
@@ -1823,7 +1815,7 @@ class Segment_Manager(Manager):
                         socket.timeout,
                         ftplib.error_temp,
                         ftplib.error_perm,
-                        socket.error,
+                        OSError,
                     ):
                         # print "FTP connect failed %s" % self.urls[number]
                         self.urls.pop(urls[number])
@@ -1874,7 +1866,7 @@ class Segment_Manager(Manager):
             try:
                 if item.error == None:
                     total += item.bytes
-            except (AttributeError):
+            except AttributeError:
                 pass
             count += 1
         return total
@@ -1886,7 +1878,7 @@ class Segment_Manager(Manager):
             try:
                 if self.chunks[i].bytes == self.chunk_size:
                     chunks.append(i)
-            except (AttributeError):
+            except AttributeError:
                 pass
         # print chunks
         return chunks
@@ -2131,7 +2123,7 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
                 (self.response, size) = self.host.conn.ntransfercmd(
                     "RETR " + urlparts.path, self.byte_start, self.byte_end
                 )
-            except (ftplib.error_perm) as error:
+            except ftplib.error_perm as error:
                 self.error = error.message
                 self.close()
                 return
@@ -2147,7 +2139,7 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
                 self.error = _("AttributeError")
                 self.close()
                 return
-            except (socket.error) as error:
+            except OSError:
                 # print "reconnect", self.host.url
                 try:
                     self.host.reconnect()
@@ -2155,14 +2147,14 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
                     pass
                 retry = True
                 count += 1
-            except (ftplib.error_temp) as error:
+            except ftplib.error_temp as error:
                 # this is not an error condition, most likely transfer TCP connection was closed
                 # count += 1
                 # self.error = "error temp", error.message
                 self.temp = error.message
                 self.close()
                 return
-            except (ftplib.error_reply) as error:
+            except ftplib.error_reply:
                 # this is likely just an extra chatty FTP server, ignore for now
                 pass
 
@@ -2288,7 +2280,7 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
                 {"Range": "bytes=%lu-%lu" % (self.byte_start, self.byte_end - 1)}
             )
             self.host.conn.request("GET", self.url, "", self.headers)
-        except (socket.error, socket.herror, socket.gaierror, socket.timeout):
+        except (OSError, socket.herror, socket.gaierror, socket.timeout):
             self.error = _("socket exception")
             self.close()
             return
@@ -2349,7 +2341,7 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
             self.error = _("incomplete read")
             self.response = None
             return
-        except socket.error:
+        except OSError:
             self.error = _("socket error")
             self.response = None
             return

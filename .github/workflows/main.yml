@@ -16,4 +16,4 @@ jobs:
       - run: pip install poetry==1.1.11
       - run: poetry install
       - run: poetry run black --check .
-      - run: poetry run pytest tests/test_metalink4.py 
+      - run: poetry run pytest tests/test_metalink4.py

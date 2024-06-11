@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 From sourceforge pycrypto project:
 http://sourceforge.net/projects/pycrypto/
@@ -27,7 +26,7 @@ Dependencies
    - GPG must be installed
    - http://www.gnupg.org
    - http://www.gpg4win.org
-   
+
 Authors:
 
 Andrew Kuchling
@@ -42,10 +41,7 @@ __rcsid__ = "$Id: GPG.py,v 1.3 2003/11/23 15:03:15 akuchling Exp $"
 
 import sys
 
-if sys.version_info < (3,):
-    import StringIO
-else:
-    import io as StringIO
+import io as StringIO
 
 import base64
 import gettext

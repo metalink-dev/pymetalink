@@ -82,7 +82,7 @@ class ProgressBar:
 
         bytes = ""
         if self.show_bytes:
-            bytes = " %.2f/%.2f MB" % (current_bytes, total_bytes)
+            bytes = f" {current_bytes:.2f}/{total_bytes:.2f} MB"
 
         bitinfo = ""
         if self.bitrate != None and self.show_bitrate:
@@ -145,7 +145,6 @@ class ProgressBar:
         sys.stdout.write(output)
 
     def line_reset(self):
-
         sys.stdout.write("\b" * 80)
         if os.name != "nt":
             sys.stdout.write("\n")

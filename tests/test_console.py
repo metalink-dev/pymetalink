@@ -41,7 +41,6 @@
 
 import os
 import hashlib
-import time
 import shutil
 import pytest
 

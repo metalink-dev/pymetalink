@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 ########################################################################
 #
 # Project: pyMetalink
@@ -33,16 +32,10 @@
 #
 ########################################################################
 
-import sys
 
-if sys.version_info < (3,):
-    import rfc822
-    import StringIO
-    import urllib2
-else:
-    import io as StringIO
-    import urllib.request as urllib2
-    import email as rfc822
+import io as StringIO
+import urllib.request as urllib2
+import email as rfc822
 
 import calendar
 
@@ -162,7 +155,7 @@ class Resource:
             "magnet",
             "ed2k",
         ]
-        if not self.type in allowed_types:
+        if self.type not in allowed_types:
             self.errors.append("Invalid URL: " + self.url + ".")
             valid = False
         elif self.type in ["http", "https", "ftp", "ftps", "bittorrent"]:
@@ -418,7 +411,7 @@ class Resource:
                 "ZW",
                 "UK",
             ]
-            if not self.location.upper() in iso_locations:
+            if self.location.upper() not in iso_locations:
                 self.errors.append(self.location + " is not a valid country code.")
                 valid = False
         if self.preference != "":
@@ -503,7 +496,7 @@ class Resource4:
             self.errors.append("Empty URLs are not allowed!")
             valid = False
         allowed_types = ["torrent"]
-        if not self.type in allowed_types and self.type.strip() != "":
+        if self.type not in allowed_types and self.type.strip() != "":
             self.errors.append("Invalid URL: " + self.url + ".")
             valid = False
         elif self.type in allowed_types:
@@ -759,7 +752,7 @@ class Resource4:
                 "ZW",
                 "UK",
             ]
-            if not self.location.upper() in iso_locations:
+            if self.location.upper() not in iso_locations:
                 self.errors.append(self.location + " is not a valid country code.")
                 valid = False
         if self.priority != "":
@@ -1310,7 +1303,7 @@ class MetalinkBase:
             "magnet",
             "ed2k",
         ]
-        if not typestr in allowed_types:
+        if typestr not in allowed_types:
             return False
         elif typestr in ["http", "https", "ftp", "ftps", "bittorrent"]:
             m = re.search(r"\w+://.+\..+/.*", url)
@@ -1731,7 +1724,7 @@ def open_compressed(fp):
     try:
         newfp.info()
         return newfp
-    except IOError:
+    except OSError:
         compressedfp.seek(0)
         return compressedfp
 
@@ -2085,7 +2078,7 @@ def convert(metalinkobj, ver=4):
     elif metalinkobj.ver == 4 and ver == 3:
         return convert_4to3(metalinkobj)
     else:
-        raise AssertionError("Cannot do conversion %s to %s!" % (metalinkobj.ver, ver))
+        raise AssertionError(f"Cannot do conversion {metalinkobj.ver} to {ver}!")
 
 
 def rfc3339_parsedate(datestr):
@@ -2192,7 +2185,7 @@ def compute_ed2k(filename, size=None, ed2khash=None):
     if ed2khash == None:
         ed2khash = ed2k_hash(filename)
 
-    return "ed2k://|file|%s|%s|%s|/" % (os.path.basename(filename), size, ed2khash)
+    return f"ed2k://|file|{os.path.basename(filename)}|{size}|{ed2khash}|/"
 
 
 def ed2k_hash(filename):
@@ -2266,7 +2259,7 @@ def compute_magnet(filename, size=None, md5=None, sha1=None, ed2khash=None):
         md5 = file_hash(filename, "md5")
     if sha1 == None:
         sha1 = file_hash(filename, "sha1")
-    return "magnet:?dn=%s&amp;xl=%s&amp;xt=urn:sha1:%s&amp;xt=urn:md5:%s&amp;xt=urn:ed2k:%s" % (
+    return "magnet:?dn={}&amp;xl={}&amp;xt=urn:sha1:{}&amp;xt=urn:md5:{}&amp;xt=urn:ed2k:{}".format(
         os.path.basename(filename),
         size,
         base64.b32encode(binascii.unhexlify(sha1)),
