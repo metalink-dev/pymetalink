@@ -719,7 +719,7 @@ def decode_tag(results, binary_data):
         results["type"] = "Signature Packet"
         sig_version = ord(binary_data[0])
         if sig_version == 3:
-            mat_length = ord(binary_data[1])
+            ord(binary_data[1])
             sig_type = ord(binary_data[2])
             print("sig type:", sig_type)
             create_time = binary_data[3:7]
@@ -734,8 +734,8 @@ def decode_tag(results, binary_data):
             print("sig start:", print_hex(signed_hash))
             signature = binary_data[19:]
             # print len(signature)
-            r = signature[:20]
-            s = signature[20:]
+            signature[:20]
+            signature[20:]
             print("r:", print_hex(signature[:20]))
             print("s:", print_hex(signature[20:]))
     elif results["content_tag"] == 6:
