@@ -85,14 +85,14 @@ class ProgressBar:
             bytes = f" {current_bytes:.2f}/{total_bytes:.2f} MB"
 
         bitinfo = ""
-        if self.bitrate != None and self.show_bitrate:
+        if self.bitrate is not None and self.show_bitrate:
             if self.bitrate > 1000:
                 bitinfo = " %.2f Mbps" % (float(self.bitrate) / float(1000))
             else:
                 bitinfo = " %.0f kbps" % self.bitrate
 
         timeinfo = ""
-        if self.time != None and self.time != "" and self.show_time:
+        if self.time is not None and self.time != "" and self.show_time:
             timeinfo += " " + self.time
 
         length = (

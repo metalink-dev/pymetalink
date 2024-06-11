@@ -147,7 +147,7 @@ OS = None
 COUNTRY = None
 
 lang = locale.getdefaultlocale()[0]
-if lang == None:
+if lang is None:
     lang = "LC_ALL"
 lang = lang.replace("_", "-").lower()
 LANG = [lang]
@@ -184,7 +184,7 @@ def translate():
             base = os.path.basename(__file__)[:-3]
             localedir = os.path.join(os.path.dirname(__file__), "locale")
         except NameError:
-            if sys.executable != None:
+            if sys.executable is not None:
                 base = os.path.basename(sys.executable)[:-4]
                 localedir = os.path.join(os.path.dirname(sys.executable), "locale")
     else:
@@ -194,7 +194,7 @@ def translate():
 
     # print base, localedir
     localelang = locale.getdefaultlocale()[0]
-    if localelang == None:
+    if localelang is None:
         localelang = "LC_ALL"
     t = gettext.translation(base, localedir, [localelang], None, "en")
     try:
@@ -320,7 +320,7 @@ def get(
     # assume metalink if ends with .metalink
 
     result = download_metalink(src, path, force, handlers, segmented, headers)
-    if result != None:
+    if result is not None:
         return result
 
     # assume normal file download here
@@ -494,11 +494,11 @@ class Manager:
         """
         result = self.status
         while result:
-            if self.pause_handler != None and self.pause_handler():
+            if self.pause_handler is not None and self.pause_handler():
                 self.end_bitrate()
                 time.sleep(1)
             else:
-                if wait != None:
+                if wait is not None:
                     time.sleep(wait)
                 result = self.cycle()
 
@@ -531,7 +531,7 @@ class Manager:
         """
         Pass in current byte count
         """
-        if self.oldtime != None and (time.time() - self.oldtime) != 0:
+        if self.oldtime is not None and (time.time() - self.oldtime) != 0:
             return ((bytes - self.oldsize) * 8 / 1024) / (time.time() - self.oldtime)
         return 0
 
@@ -571,7 +571,7 @@ class NormalManager(Manager):
         self.number = self.start_number
 
     def cycle(self):
-        if self.cancel_handler != None and self.cancel_handler():
+        if self.cancel_handler is not None and self.cancel_handler():
             return False
         try:
             self.status = True
@@ -645,7 +645,7 @@ class URLManager(Manager):
             self.size = 0
 
         self.streamserver = None
-        if PORT != None:
+        if PORT is not None:
             self.streamserver = StreamServer((HOST, PORT), StreamRequest)
             self.streamserver.set_stream(self.data)
 
@@ -656,7 +656,7 @@ class URLManager(Manager):
     def close_handler(self):
         self.resume.complete()
         try:
-            if PORT == None:
+            if PORT is None:
                 self.data.close()
             self.temp.close()
         except:
@@ -666,9 +666,9 @@ class URLManager(Manager):
             self.status = filecheck(self.filename, self.checksums, self.size)
 
     def cycle(self):
-        if self.oldtime == None:
+        if self.oldtime is None:
             self.start_bitrate(self.counter * self.block_size)
-        if self.cancel_handler != None and self.cancel_handler():
+        if self.cancel_handler is not None and self.cancel_handler():
             self.close_handler()
             return False
 
@@ -681,16 +681,16 @@ class URLManager(Manager):
 
         self.resume.set_block_size(self.counter * self.block_size)
 
-        if self.streamserver != None:
+        if self.streamserver is not None:
             self.streamserver.set_length(self.counter * self.block_size)
 
-        if self.status_handler != None:
+        if self.status_handler is not None:
             self.status_handler(self.total, 1, self.size)
 
-        if self.bitrate_handler != None:
+        if self.bitrate_handler is not None:
             self.bitrate_handler(self.get_bitrate(self.counter * self.block_size))
 
-        if self.time_handler != None:
+        if self.time_handler is not None:
             self.time_handler(self.get_time(self.counter * self.block_size))
 
         if not block:
@@ -708,7 +708,7 @@ def filecheck(local_file, checksums, size, handler=None):
         except:
             pass
 
-        if handler != None:
+        if handler is not None:
             tempsize = size
             if size == 0:
                 tempsize = actsize
@@ -897,7 +897,7 @@ def download_metalink(
         ostag = filenode.os
         langtag = filenode.language
 
-        if OS == None or len(ostag) == 0 or ostag[0].lower() == OS.lower():
+        if OS is None or len(ostag) == 0 or ostag[0].lower() == OS.lower():
             if "any" in LANG or len(langtag) == 0 or langtag.lower() in LANG:
                 result = download_file_node(
                     filenode, path, force, handlers, segmented, myheaders
@@ -1072,7 +1072,7 @@ def urlretrieve(url, filename, reporthook=None, headers={}):
 
         resume.set_block_size(counter * block_size)
 
-        if reporthook != None:
+        if reporthook is not None:
             # print counter, block_size, size
             reporthook(counter, block_size, size)
 
@@ -1117,17 +1117,17 @@ class FileResume:
         for value in self.blocks:
             value = int(value)
             if value == count:
-                if offset == None:
+                if offset is None:
                     offset = count
                 total += self.size
-            elif offset != None:
+            elif offset is not None:
                 start = (offset * self.size) / size
                 newblocks.extend(map(str, range(start, start + (total / size))))
                 total = 0
                 offset = None
             count += 1
 
-        if offset != None:
+        if offset is not None:
             start = int((offset * self.size) / size)
             # print(str, start, total, size)
             # print(range(start, int(start + (total / size))))
@@ -1340,7 +1340,7 @@ def pgp_verify_sig(filename, sig):
     sign = gpg.verify_file_detached(filename, sig)
 
     print("\n-----" + _("BEGIN PGP SIGNATURE INFORMATION") + "-----")
-    if sign.error != None:
+    if sign.error is not None:
         print(sign.error)
     else:
         # print sig.creation_date
@@ -1359,7 +1359,7 @@ def pgp_verify_sig(filename, sig):
         print("" + _("uid") + ":", sign.username)
     print("-----" + _("END PGP SIGNATURE INFORMATION") + "-----\n")
 
-    if sign.error != None:
+    if sign.error is not None:
         raise AssertionError(sign.error)
 
     if sign.is_valid():
@@ -1442,7 +1442,7 @@ def path_join(first, second):
 def start_sort(urldict):
     urls = copy.deepcopy(urldict)
     localurls = {}
-    if COUNTRY != None:
+    if COUNTRY is not None:
         for url in list(urls):
             if COUNTRY.lower() == urls[url].location.lower():
                 localurls[url] = urls[url]
@@ -1516,7 +1516,7 @@ class Segment_Manager(Manager):
         self.resume = FileResume(self.localfile + ".temp")
 
         self.streamserver = None
-        if PORT != None:
+        if PORT is not None:
             self.streamserver = StreamServer((HOST, PORT), StreamRequest)
             self.streamserver.set_stream(self.f)
 
@@ -1557,7 +1557,7 @@ class Segment_Manager(Manager):
                     status == httplib.MOVED_PERMANENTLY or status == httplib.FOUND
                 ) and count < MAX_REDIRECTS:
                     http = Http_Host(url)
-                    if http.conn != None:
+                    if http.conn is not None:
                         try:
                             headers = {}
                             headers["Want-Digest"] = DIGESTS
@@ -1575,7 +1575,7 @@ class Segment_Manager(Manager):
                         http.close()
                     count += 1
 
-                if (status == httplib.OK) and (size != None):
+                if (status == httplib.OK) and (size is not None):
                     sizes.append(size)
                     if len(checksum_dict) > 0:
                         checksums.append(checksum_dict)
@@ -1588,7 +1588,7 @@ class Segment_Manager(Manager):
                 except ftplib.error_perm:
                     size = None
 
-                if size != None:
+                if size is not None:
                     sizes.append(size)
 
             i += 1
@@ -1628,7 +1628,7 @@ class Segment_Manager(Manager):
         # try:
         if self.size == "" or self.size == 0:
             self.size = self.get_size()
-            if self.size == None:
+            if self.size is None:
                 # crap out and do it the old way
                 self.close_handler()
                 self.status = False
@@ -1651,14 +1651,14 @@ class Segment_Manager(Manager):
             bytes = self.byte_total()
 
             index = self.get_chunk_index()
-            if index != None and index > 0 and self.streamserver != None:
+            if index is not None and index > 0 and self.streamserver is not None:
                 self.streamserver.set_length((index - 1) * self.chunk_size)
 
-            if self.oldtime == None:
+            if self.oldtime is None:
                 self.start_bitrate(bytes)
 
             # cancel was pressed here
-            if self.cancel_handler != None and self.cancel_handler():
+            if self.cancel_handler is not None and self.cancel_handler():
                 self.status = False
                 self.close_handler()
                 return False
@@ -1685,24 +1685,24 @@ class Segment_Manager(Manager):
             return False
 
     def update(self):
-        if self.status_handler != None and self.size != None:
+        if self.status_handler is not None and self.size is not None:
             # count = int(self.byte_total()/self.chunk_size)
             # if self.byte_total() % self.chunk_size:
             #    count += 1
             # self.status_handler(count, self.chunk_size, self.size)
             self.status_handler(self.byte_total(), 1, self.size)
-        if self.bitrate_handler != None:
+        if self.bitrate_handler is not None:
             self.bitrate_handler(self.get_bitrate(self.byte_total()))
-        if self.time_handler != None:
+        if self.time_handler is not None:
             self.time_handler(self.get_time(self.byte_total()))
 
         next = self.next_url()
 
-        if next == None:
+        if next is None:
             return
 
         index = self.get_chunk_index()
-        if index != None:
+        if index is not None:
             start = index * self.chunk_size
             end = start + self.chunk_size
             if end > self.size:
@@ -1728,7 +1728,7 @@ class Segment_Manager(Manager):
         segment = self.chunks[index]
         if str(index) in self.resume.blocks:
             segment.end()
-            if segment.error == None:
+            if segment.error is None:
                 segment.bytes = segment.byte_count
             else:
                 self.resume.remove_block(index)
@@ -1738,7 +1738,7 @@ class Segment_Manager(Manager):
     def get_chunk_index(self):
         i = -1
         for i in range(len(self.chunks)):
-            if self.chunks[i] == None or self.chunks[i].error != None:
+            if self.chunks[i] is None or self.chunks[i].error is not None:
                 return i
             # weed out dead segments that have temp errors and reassign
             if not self.chunks[i].isAlive() and self.chunks[i].bytes == 0:
@@ -1830,7 +1830,7 @@ class Segment_Manager(Manager):
 
     def remove_errors(self):
         for item in self.chunks:
-            if item != None and item.error != None:
+            if item is not None and item.error is not None:
                 # print item.error
                 if (
                     item.error == httplib.MOVED_PERMANENTLY
@@ -1864,7 +1864,7 @@ class Segment_Manager(Manager):
         count = 0
         for item in self.chunks:
             try:
-                if item.error == None:
+                if item.error is None:
                     total += item.bytes
             except AttributeError:
                 pass
@@ -1884,7 +1884,7 @@ class Segment_Manager(Manager):
         return chunks
 
     def close_handler(self):
-        if PORT == None:
+        if PORT is None:
             self.f.close()
         for host in self.sockets:
             host.close()
@@ -1950,14 +1950,14 @@ class Ftp_Host(Host_Base):
                 # needed for python < 2.5
                 username = None
 
-            if username == None:
+            if username is None:
                 username = "anonymous"
                 password = "anonymous"
             try:
                 port = urlparts.port
             except:
                 port = ftplib.FTP_PORT
-            if port == None:
+            if port is None:
                 port = ftplib.FTP_PORT
 
             self.conn = proxy.FTP()
@@ -1979,7 +1979,7 @@ class Ftp_Host(Host_Base):
             # return
 
     def close(self):
-        if self.conn != None:
+        if self.conn is not None:
             try:
                 self.conn.quit()
             except:
@@ -2003,7 +2003,7 @@ class Http_Host(Host_Base):
                 port = urlparts.port
             except:
                 port = httplib.HTTP_PORT
-            if port == None:
+            if port is None:
                 port = httplib.HTTP_PORT
             try:
                 self.conn = proxy.HTTPConnection(urlparts[1], port)
@@ -2015,7 +2015,7 @@ class Http_Host(Host_Base):
                 port = urlparts.port
             except:
                 port = httplib.HTTPS_PORT
-            if port == None:
+            if port is None:
                 port = httplib.HTTPS_PORT
             try:
                 self.conn = proxy.HTTPSConnection(urlparts[1], port)
@@ -2027,7 +2027,7 @@ class Http_Host(Host_Base):
             return
 
     def close(self):
-        if self.conn != None:
+        if self.conn is not None:
             self.conn.close()
 
 
@@ -2060,7 +2060,7 @@ class Host_Segment:
         self.cancel_handler = handler
 
     def check_cancel(self):
-        if self.cancel_handler == None:
+        if self.cancel_handler is None:
             return False
         return self.cancel_handler()
 
@@ -2083,13 +2083,13 @@ class Host_Segment:
         return verify_chunk_checksum(chunkstring, self.checksums)
 
     def close(self):
-        if self.error != None:
+        if self.error is not None:
             self.host.close()
 
         self.host.set_active(False)
 
     def end(self):
-        if self.error == None and not self.checksum():
+        if self.error is None and not self.checksum():
             self.error = _("Chunk checksum failed")
         self.close()
 
@@ -2108,7 +2108,7 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
 
         # check for supported hosts/urls
         urlparts = urlparse.urlsplit(self.url)
-        if self.host.conn == None:
+        if self.host.conn is None:
             # print "bad socket"
             self.error = _("bad socket")
             self.close()
@@ -2163,7 +2163,7 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
                 self.close()
                 return
 
-        if size != None:
+        if size is not None:
             if self.filesize != size:
                 self.error = _("bad file size")
                 return
@@ -2181,7 +2181,7 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
         if self.check_cancel():
             return False
 
-        if self.response == None:
+        if self.response is None:
             return False
         return True
 
@@ -2270,7 +2270,7 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
             self.close()
             return
 
-        if self.host.conn == None:
+        if self.host.conn is None:
             self.error = _("bad socket")
             self.close()
             return
@@ -2301,7 +2301,7 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
         if self.check_cancel():
             return False
 
-        if self.response == None:
+        if self.response is None:
             try:
                 self.response = self.host.conn.getresponse()
             except socket.timeout:
@@ -2404,7 +2404,7 @@ class StreamRequest(BaseHTTPServer.BaseHTTPRequestHandler):
 
         start = 0
         while True:
-            if self.server.fileobj != None and (self.server.length - start) > 0:
+            if self.server.fileobj is not None and (self.server.length - start) > 0:
                 try:
                     self.server.fileobj.acquire()
                     loc = self.server.fileobj.tell()
