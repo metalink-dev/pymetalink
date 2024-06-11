@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 ########################################################################
 #
 # Project: pyMetalink
@@ -33,7 +32,6 @@
 #
 ########################################################################
 
-import sys
 
 import io as StringIO
 import urllib.request as urllib2
@@ -160,7 +158,7 @@ class Resource:
             "magnet",
             "ed2k",
         ]
-        if not self.type in allowed_types:
+        if self.type not in allowed_types:
             self.errors.append("Invalid URL: " + self.url + ".")
             valid = False
         elif self.type in ["http", "https", "ftp", "ftps", "bittorrent"]:
@@ -416,7 +414,7 @@ class Resource:
                 "ZW",
                 "UK",
             ]
-            if not self.location.upper() in iso_locations:
+            if self.location.upper() not in iso_locations:
                 self.errors.append(self.location + " is not a valid country code.")
                 valid = False
         if self.preference != "":
@@ -501,7 +499,7 @@ class Resource4:
             self.errors.append("Empty URLs are not allowed!")
             valid = False
         allowed_types = ["torrent"]
-        if not self.type in allowed_types and self.type.strip() != "":
+        if self.type not in allowed_types and self.type.strip() != "":
             self.errors.append("Invalid URL: " + self.url + ".")
             valid = False
         elif self.type in allowed_types:
@@ -757,7 +755,7 @@ class Resource4:
                 "ZW",
                 "UK",
             ]
-            if not self.location.upper() in iso_locations:
+            if self.location.upper() not in iso_locations:
                 self.errors.append(self.location + " is not a valid country code.")
                 valid = False
         if self.priority != "":
@@ -1308,7 +1306,7 @@ class MetalinkBase:
             "magnet",
             "ed2k",
         ]
-        if not typestr in allowed_types:
+        if typestr not in allowed_types:
             return False
         elif typestr in ["http", "https", "ftp", "ftps", "bittorrent"]:
             m = re.search(r"\w+://.+\..+/.*", url)

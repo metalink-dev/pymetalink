@@ -143,7 +143,6 @@ class ProgressBar:
         sys.stdout.write(output)
 
     def line_reset(self):
-
         sys.stdout.write("\b" * 80)
         if os.name != "nt":
             sys.stdout.write("\n")

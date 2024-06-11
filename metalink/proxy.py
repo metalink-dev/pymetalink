@@ -69,7 +69,6 @@ import gettext
 import locale
 import os
 
-
 # Configure proxies (user and password optional)
 # HTTP_PROXY = http://user:password@myproxy:port
 HTTP_PROXY = ""
@@ -181,19 +180,19 @@ def get_key_value(key, value):
         result = unicode(tempvalue[0])
     except NameError:
         # alternate method if win32api is not available, probably only works on Windows NT variants
-        stdout = reg_query(u"HKCU\\" + key, value)
+        stdout = reg_query("HKCU\\" + key, value)
 
         try:
             # XP vs. Vista
-            if stdout[1].find(u"\t") != -1:
-                lines = stdout[1].split(u"\t")
+            if stdout[1].find("\t") != -1:
+                lines = stdout[1].split("\t")
                 index = 2
             else:
-                lines = stdout[1].split(u"    ")
+                lines = stdout[1].split("    ")
                 index = 3
             result = lines[index].strip()
         except IndexError:
-            result = u""
+            result = ""
     except:
         pass
 

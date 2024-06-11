@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 """
 From sourceforge pycrypto project:
 http://sourceforge.net/projects/pycrypto/
@@ -27,7 +26,7 @@ Dependencies
    - GPG must be installed
    - http://www.gnupg.org
    - http://www.gpg4win.org
-   
+
 Authors:
 
 Andrew Kuchling
@@ -41,6 +40,7 @@ We are not using it, but the most current code appears to be at: https://pythonh
 __rcsid__ = "$Id: GPG.py,v 1.3 2003/11/23 15:03:15 akuchling Exp $"
 
 import sys
+
 import io as StringIO
 
 import base64

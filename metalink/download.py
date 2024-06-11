@@ -1222,7 +1222,7 @@ class FileResume:
             self.blocks = blocks.split(",")
             self.size = int(size)
             filehandle.close()
-        except (IOError, ValueError):
+        except (OSError, ValueError):
             self.blocks = []
             self.size = 0
 
@@ -1508,7 +1508,7 @@ class Segment_Manager(Manager):
         # Open the file.
         try:
             self.f = ThreadSafeFile(self.localfile, "rb+")
-        except IOError:
+        except OSError:
             self.f = ThreadSafeFile(self.localfile, "wb+")
 
         self.resume = FileResume(self.localfile + ".temp")
@@ -2275,7 +2275,7 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
                 {"Range": "bytes=%lu-%lu" % (self.byte_start, self.byte_end - 1)}
             )
             self.host.conn.request("GET", self.url, "", self.headers)
-        except (socket.error, socket.herror, socket.gaierror, socket.timeout):
+        except (OSError, socket.herror, socket.gaierror, socket.timeout):
             self.error = _("socket exception")
             self.close()
             return
@@ -2335,7 +2335,7 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
             self.error = _("incomplete read")
             self.response = None
             return
-        except socket.error:
+        except OSError:
             self.error = _("socket error")
             self.response = None
             return
