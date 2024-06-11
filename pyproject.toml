@@ -1,11 +1,15 @@
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
 [tool.poetry]
 name = "pymetalink"
-version = "6.3"
+version = "0"
 description = "A metalink library for Python"
 authors = ["Neil McNab <nabber00@gmail.com>", "Bram Neijt <bram@neijt.nl>"]
 license = "MIT"
 readme = "README.md"
-packages = [{ include = "metalink" }]
+packages = [{include = "metalink"}]
 repository = "https://github.com/metalink-dev/pymetalink"
 
 [tool.poetry.dependencies]
@@ -13,12 +17,35 @@ python = "^3.8"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
-black = "^20.8b1"
-twine = "^3.6.0"
+pre-commit = "^3.6.0"
+ruff = "^0.4.0"
 
 [tool.poetry.scripts]
 pymetalink = 'metalink.console:main'
 
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+[tool.poetry-version-plugin]
+source = "git-tag"
+
+[tool.ruff]
+exclude = [
+  ".eggs",
+  ".git",
+  ".pyenv",
+  ".ruff_cache",
+  "build",
+  "dist",
+  "venv"
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]
+ignore = []
+fixable = ["ALL"]
+unfixable = []
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
