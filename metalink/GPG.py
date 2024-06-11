@@ -41,11 +41,7 @@ We are not using it, but the most current code appears to be at: https://pythonh
 __rcsid__ = "$Id: GPG.py,v 1.3 2003/11/23 15:03:15 akuchling Exp $"
 
 import sys
-
-if sys.version_info < (3,):
-    import StringIO
-else:
-    import io as StringIO
+import io as StringIO
 
 import base64
 import gettext
@@ -76,11 +72,10 @@ def translate():
         base = temp[-1]
         localedir = os.path.join("/".join(["%s" % k for k in temp[:-1]]), "locale")
 
-    # print base, localedir, locale.getdefaultlocale()
-    localelang = locale.getdefaultlocale()[0]
-    if localelang == None:
-        localelang = "LC_ALL"
-    t = gettext.translation(base, localedir, [localelang], None, "en")
+    locale_lang = locale.getlocale()[0]
+    if locale_lang is None:
+        locale_lang = "LC_ALL"
+    t = gettext.translation(base, localedir, [locale_lang], None, "en")
     try:
         return t.ugettext
     # python3
@@ -105,9 +100,7 @@ DEFAULT_PATH = [
 
 
 class Signature:
-    """
-    Used to hold information about a signature result
-    """
+    """Used to hold information about a signature result."""
 
     def __init__(self):
         self.valid = 0
@@ -177,20 +170,28 @@ class Signature:
         # raise AssertionError, "File not properly loaded for signature."
 
     def is_valid(self):
-        """
-        returns boolean result of signature valididity
-        """
+        """Returns boolean result of signature validity."""
         return self.valid
 
 
 class ImportResult:
-    """
-    Used to hold information about a key import result
-    """
+    """Used to hold information about a key import result."""
 
-    counts = """count no_user_id imported imported_rsa unchanged
-            n_uids n_subk n_sigs n_revoc sec_read sec_imported
-            sec_dups not_imported""".split()
+    counts = [
+        "count",
+        "imported",
+        "imported_rsa",
+        "n_revoc",
+        "n_sigs",
+        "n_subk",
+        "n_uids",
+        "no_user_id",
+        "not_imported",
+        "sec_dups",
+        "sec_imported",
+        "sec_read",
+        "unchanged",
+    ]
 
     def __init__(self):
         self.imported = []
@@ -462,8 +463,8 @@ class GPGSubprocess:
         """
         Verify the signature on the contents of the string 'data'
         """
-        fileobj = StringIO.StringIO(data)
-        return self.verify_file(fileobj)
+        file_obj = StringIO.StringIO(data)
+        return self.verify_file(file_obj)
 
     def verify_file(self, file):
         """
@@ -574,7 +575,7 @@ def decode(filename):
     """
     Decodes data elements from a given PGP file name.
     """
-    if filename == None:
+    if filename is None:
         return []
     if filename.endswith(".asc"):
         return decode_asc(filename)

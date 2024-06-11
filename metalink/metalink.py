@@ -6,7 +6,7 @@
 # URL: https://github.com/metalink-dev/pymetalink
 # E-mail: nabber00@gmail.com
 #
-# Copyright: (C) 2007-2015, Hampus Wessman, Neil McNab
+# Copyright: (C) 2007-2016 Neil McNab and Hampus Wessman
 # License: MIT
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -35,14 +35,9 @@
 
 import sys
 
-if sys.version_info < (3,):
-    import rfc822
-    import StringIO
-    import urllib2
-else:
-    import io as StringIO
-    import urllib.request as urllib2
-    import email as rfc822
+import io as StringIO
+import urllib.request as urllib2
+import email as rfc822
 
 import calendar
 
@@ -93,7 +88,7 @@ def hashlookup(text):
 def get_first(x):
     try:
         return x[0]
-    except:
+    except IndexError:
         return x
 
 
@@ -105,8 +100,11 @@ class Resource:
         location="",
         preference="",
         maxconnections="",
-        attrs={},
+        attrs=None,
     ):
+        if attrs is None:
+            attrs = {}
+
         self.errors = []
         self.url = url
         self.location = location
@@ -167,7 +165,7 @@ class Resource:
             valid = False
         elif self.type in ["http", "https", "ftp", "ftps", "bittorrent"]:
             m = re.search(r"\w+://.+\..+/.*", self.url)
-            if m == None:
+            if m is None:
                 self.errors.append("Invalid URL: " + self.url + ".")
                 valid = False
         if self.location.strip() != "":
@@ -431,7 +429,7 @@ class Resource:
                         + "."
                     )
                     valid = False
-            except:
+            except ValueError:
                 self.errors.append("Preference must be a number, between 0 and 100.")
                 valid = False
         if self.maxconnections.strip() != "" and self.maxconnections.strip() != "-":
@@ -451,7 +449,7 @@ class Resource:
                         + "!"
                     )
                     valid = False
-            except:
+            except ValueError:
                 self.errors.append(
                     "Max connections must be a positive integer, not "
                     + self.maxconnections
@@ -508,7 +506,7 @@ class Resource4:
             valid = False
         elif self.type in allowed_types:
             m = re.search(r"\w+://.+\..+/.*", self.url)
-            if m == None:
+            if m is None:
                 self.errors.append("Invalid URL: " + self.url + ".")
                 valid = False
         if self.location.strip() != "":
@@ -770,7 +768,7 @@ class Resource4:
                         "Priority must be between 1 and 100, not " + self.priority + "."
                     )
                     valid = False
-            except:
+            except ValueError:
                 self.errors.append("Priority must be a number, between 1 and 100.")
                 valid = False
         return valid
@@ -906,11 +904,11 @@ class MetalinkFileBase:
                         print("Canceling scan!")
                         return False
             # Process the data
-            if md5hash != None:
+            if md5hash is not None:
                 md5hash.update(data)
-            if sha1hash != None:
+            if sha1hash is not None:
                 sha1hash.update(data)
-            if sha256hash != None:
+            if sha256hash is not None:
                 sha256hash.update(data)
             if use_chunks:
                 left = len(data)
@@ -939,7 +937,7 @@ class MetalinkFileBase:
         fp.close()
         self.hashlist["md5"] = md5hash.hexdigest()
         self.hashlist["sha1"] = sha1hash.hexdigest()
-        if sha256hash != None:
+        if sha256hash is not None:
             self.hashlist["sha256"] = sha256hash.hexdigest()
 
         # automatically add an ed2k url here
@@ -1005,12 +1003,12 @@ class MetalinkFile4(MetalinkFileBase):
             valid = False
         if self.hashlist["md5"].strip() != "":
             m = re.search(r"[^0-9a-fA-F]", self.hashlist["md5"])
-            if len(self.hashlist["md5"]) != 32 or m != None:
+            if len(self.hashlist["md5"]) != 32 or m is not None:
                 self.errors.append("Invalid md5 hash.")
                 valid = False
         if self.hashlist["sha-1"].strip() != "":
             m = re.search(r"[^0-9a-fA-F]", self.hashlist["sha-1"])
-            if len(self.hashlist["sha-1"]) != 40 or m != None:
+            if len(self.hashlist["sha-1"]) != 40 or m is not None:
                 self.errors.append("Invalid sha-1 hash.")
                 valid = False
         if str(self.size).strip() != "":
@@ -1123,12 +1121,12 @@ class MetalinkFile(MetalinkFileBase):
             valid = False
         if self.hashlist["md5"].strip() != "":
             m = re.search(r"[^0-9a-fA-F]", self.hashlist["md5"])
-            if len(self.hashlist["md5"]) != 32 or m != None:
+            if len(self.hashlist["md5"]) != 32 or m is not None:
                 self.errors.append("Invalid md5 hash.")
                 valid = False
         if self.hashlist["sha1"].strip() != "":
             m = re.search(r"[^0-9a-fA-F]", self.hashlist["sha1"])
-            if len(self.hashlist["sha1"]) != 40 or m != None:
+            if len(self.hashlist["sha1"]) != 40 or m is not None:
                 self.errors.append("Invalid sha-1 hash.")
                 valid = False
         if str(self.size).strip() != "":
@@ -1314,7 +1312,7 @@ class MetalinkBase:
             return False
         elif typestr in ["http", "https", "ftp", "ftps", "bittorrent"]:
             m = re.search(r"\w+://.+\..+/.*", url)
-            if m == None:
+            if m is None:
                 return False
         return True
 
@@ -1725,22 +1723,22 @@ class URLInfo(StringIO.StringIO):
 
 
 def open_compressed(fp):
-    compressedfp = URLInfo(fp)
-    newfp = DecompressFile(compressedfp)
+    compressed_fp = URLInfo(fp)
+    new_fp = DecompressFile(compressed_fp)
 
     try:
-        newfp.info()
-        return newfp
-    except IOError:
-        compressedfp.seek(0)
-        return compressedfp
+        new_fp.info()
+        return new_fp
+    except OSError:
+        compressed_fp.seek(0)
+        return compressed_fp
 
 
 class TemplateDecompress:
     def __init__(self, filename=None):
         self.handle = None
         self.buffer = ""
-        if filename != None:
+        if filename is not None:
             self.open(filename)
 
     def open(self, filename):
@@ -1857,7 +1855,7 @@ class Jigdo(Metalink):
                 local = parts[1]
 
             index = self.get_file_by_hash("md5", hexhash)
-            if index == None:
+            if index is None:
                 myfile = MetalinkFile(local)
                 myfile.add_checksum("md5", hexhash)
                 self.files.append(myfile)
@@ -2085,7 +2083,7 @@ def convert(metalinkobj, ver=4):
     elif metalinkobj.ver == 4 and ver == 3:
         return convert_4to3(metalinkobj)
     else:
-        raise AssertionError("Cannot do conversion %s to %s!" % (metalinkobj.ver, ver))
+        raise AssertionError(f"Cannot do conversion {metalinkobj.ver} to {ver}!")
 
 
 def rfc3339_parsedate(datestr):
@@ -2099,49 +2097,51 @@ def rfc3339_parsedate(datestr):
     datestr = datestr.split(".")[0]
     offset = __convert_offset(offset)
     # Convert to UNIX epoch time to add offset and then convert back to Python time tuple
-    unixtime = calendar.timegm(time.strptime(datestr, "%Y-%m-%dT%H:%M:%S"))
-    unixtime += offset
-    return time.gmtime(unixtime)
+    unix_time = calendar.timegm(time.strptime(datestr, "%Y-%m-%dT%H:%M:%S"))
+    unix_time += offset
+    return time.gmtime(unix_time)
 
 
-def __convert_offset(offsetstr):
+def __convert_offset(offset_str):
     """
     Convert string offset of the form "-08:00" to an int of seconds for
     use with UNIX epoch time.
     """
-    offsetstr = offsetstr.replace(":", "")
-    operator = offsetstr[0]
-    hour = offsetstr[1:3]
-    minute = offsetstr[3:5]
-    offsetsecs = 0
-    offsetsecs += int(hour) * 3600
-    offsetsecs += int(minute) * 60
+    offset_str = offset_str.replace(":", "")
+    operator = offset_str[0]
+    hour = offset_str[1:3]
+    minute = offset_str[3:5]
+    offset_secs = 0
+    offset_secs += int(hour) * 3600
+    offset_secs += int(minute) * 60
     if operator == "+":
-        offsetsecs *= -1
-    return offsetsecs
+        offset_secs *= -1
+    return offset_secs
 
 
 def parsefile(filename, ver=3):
-    xml = Metalink4()
+    # Renamed xml to avoid conflict with module name
+    _xml = Metalink4()
     try:
-        xml.parsefile(filename)
+        _xml.parsefile(filename)
     except AssertionError:
-        xml = Metalink()
-        xml.parsefile(filename)
-    xml = convert(xml, ver)
-    return xml
+        _xml = Metalink()
+        _xml.parsefile(filename)
+    _xml = convert(_xml, ver)
+    return _xml
 
 
 def parsehandle(handle, ver=3):
     text = handle.read()
-    xml = Metalink4()
+    # Renamed xml to avoid conflict with module name
+    _xml = Metalink4()
     try:
-        xml.parse(text)
+        _xml.parse(text)
     except AssertionError:
-        xml = Metalink()
-        xml.parse(text)
-    xml = convert(xml, ver)
-    return xml
+        _xml = Metalink()
+        _xml.parse(text)
+    _xml = convert(_xml, ver)
+    return _xml
 
 
 def read_sig(filename):
@@ -2187,12 +2187,12 @@ def compute_ed2k(filename, size=None, ed2khash=None):
     """
     Generates an ed2k link for a file on the local filesystem.
     """
-    if size == None:
+    if size is None:
         size = os.path.getsize(filename)
-    if ed2khash == None:
+    if ed2khash is None:
         ed2khash = ed2k_hash(filename)
 
-    return "ed2k://|file|%s|%s|%s|/" % (os.path.basename(filename), size, ed2khash)
+    return f"ed2k://|file|{os.path.basename(filename)}|{size}|{ed2khash}|/"
 
 
 def ed2k_hash(filename):
@@ -2211,7 +2211,7 @@ def ed2k_hash(filename):
         data = handle.read(blocksize)
 
     # handle file size of zero
-    if md4 == None:
+    if md4 is None:
         md4 = hashlib.new("md4")
     outputhash = md4.hexdigest()
 
@@ -2258,15 +2258,15 @@ def filehash(thisfile, filesha):
 
 
 def compute_magnet(filename, size=None, md5=None, sha1=None, ed2khash=None):
-    if size == None:
+    if size is None:
         size = os.path.getsize(filename)
-    if ed2khash == None:
+    if ed2khash is None:
         ed2khash = ed2k_hash(filename)
-    if md5 == None:
+    if md5 is None:
         md5 = file_hash(filename, "md5")
-    if sha1 == None:
+    if sha1 is None:
         sha1 = file_hash(filename, "sha1")
-    return "magnet:?dn=%s&amp;xl=%s&amp;xt=urn:sha1:%s&amp;xt=urn:md5:%s&amp;xt=urn:ed2k:%s" % (
+    return "magnet:?dn={}&amp;xl={}&amp;xt=urn:sha1:{}&amp;xt=urn:md5:{}&amp;xt=urn:ed2k:{}".format(
         os.path.basename(filename),
         size,
         base64.b32encode(binascii.unhexlify(sha1)),

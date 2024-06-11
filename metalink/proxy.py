@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 ########################################################################
 #
 # Project: pyMetalink
 # URL: https://github.com/metalink-dev/pymetalink
 # E-mail: nabber00@gmail.com
 #
-# Copyright: (C) 2011, Neil McNab
+# Copyright: (C) 2007-2016 Neil McNab and Hampus Wessman
 # License: MIT
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -53,31 +52,23 @@
 
 import sys
 
-if sys.version_info < (3,):
-    import HTMLParser
-    import httplib
-    import urllib2
-    import urlparse
-else:
-    import html.parser as HTMLParser
-    import http.client as httplib
-    import urllib.parse as urlparse
-    import urllib.request as urllib2
+import http.client as httplib
+import urllib.parse as urlparse
+import urllib.request as urllib2
 
-    unicode = str
-    import urllib.request
+unicode = str
+import urllib.request
 
-    urllib.ftpwrapper = urllib.request.ftpwrapper
-    urllib.FancyURLopener = urllib.request.FancyURLopener
+urllib.ftpwrapper = urllib.request.ftpwrapper
+urllib.FancyURLopener = urllib.request.FancyURLopener
 
+import urllib
 import base64
 import ftplib
 import gettext
 import locale
 import os
-import socket
-import ssl
-import urllib
+
 
 # Configure proxies (user and password optional)
 # HTTP_PROXY = http://user:password@myproxy:port
@@ -98,7 +89,7 @@ def translate():
             base = os.path.basename(__file__)[:-3]
             localedir = os.path.join(os.path.dirname(__file__), "locale")
         except NameError:
-            if sys.executable != None:
+            if sys.executable is not None:
                 base = os.path.basename(sys.executable)[:-4]
                 localedir = os.path.join(os.path.dirname(sys.executable), "locale")
     else:
@@ -107,10 +98,10 @@ def translate():
         localedir = os.path.join("/".join(["%s" % k for k in temp[:-1]]), "locale")
 
     # print base, localedir
-    localelang = locale.getdefaultlocale()[0]
-    if localelang == None:
-        localelang = "LC_ALL"
-    t = gettext.translation(base, localedir, [localelang], None, "en")
+    locale_lang = locale.getdefaultlocale()[0]
+    if locale_lang is None:
+        locale_lang = "LC_ALL"
+    t = gettext.translation(base, localedir, [locale_lang], None, "en")
     try:
         return t.ugettext
     # python3
@@ -141,23 +132,23 @@ def reg_query(keyname, value=None):
 
     blanklines = 1
 
-    if value == None:
-        tempresult = os.popen2('reg.exe query "%s"' % keyname)
+    if value is None:
+        tempresult = os.popen2(f'reg.exe query "{keyname}"' % keyname)
     else:
-        tempresult = os.popen2('reg.exe query "%s" /v "%s"' % (keyname, value))
+        tempresult = os.popen2(f'reg.exe query "{keyname}" /v "{value}"')
     stdout = tempresult[1]
     stdout = stdout.readlines()
 
     # handle case when reg.exe isn't in path
     if len(stdout) == 0:
-        if value == None:
+        if value is None:
             tempresult = os.popen2(
-                os.environ["WINDIR"] + '\\system32\\reg.exe query "%s"' % keyname
+                os.environ["WINDIR"] + f'\\system32\\reg.exe query "{keyname}"'
             )
         else:
             tempresult = os.popen2(
                 os.environ["WINDIR"]
-                + '\\system32\\reg.exe query "%s" /v "%s"' % (keyname, value)
+                + f'\\system32\\reg.exe query "{keyname}" /v "{value}"'
             )
         stdout = tempresult[1]
         stdout = stdout.readlines()
@@ -165,7 +156,7 @@ def reg_query(keyname, value=None):
     # For Windows XP, this was changed in Vista!
     if len(stdout) > 0 and stdout[1].startswith("! REG.EXE"):
         blanklines += 2
-        if value == None:
+        if value is None:
             blanklines += 2
 
     stdout = stdout[blanklines:]
@@ -181,7 +172,7 @@ def get_key_value(key, value):
     Returns the uninstall command as a string
     """
     # does not handle non-paths yet
-    result = u""
+    result = ""
 
     try:
         keyid = win32api.RegOpenKeyEx(win32con.HKEY_CURRENT_USER, key)
@@ -297,11 +288,11 @@ class ftpwrapper(urllib.ftpwrapper):
                 conn = self.ftp.ntransfercmd(cmd)
             except ftplib.error_perm as reason:
                 if str(reason)[:3] != "550":
-                    raise IOError(("ftp error", reason), sys.exc_info()[2])
+                    raise OSError(("ftp error", reason), sys.exc_info()[2])
 
         self.busy = 1
         # Pass back both a suitably decorated object and a retrieval length
-        return (urllib.addclosehook(conn[0].makefile("rb"), self.endtransfer), conn[1])
+        return urllib.addclosehook(conn[0].makefile("rb"), self.endtransfer), conn[1]
 
     def endtransfer(self):
         if not self.busy:
@@ -309,6 +300,7 @@ class ftpwrapper(urllib.ftpwrapper):
         self.busy = 0
         try:
             self.ftp.voidresp()
+        # FIXME: There is no such exception as ftperrors
         except ftperrors():
             pass
 
@@ -316,6 +308,7 @@ class ftpwrapper(urllib.ftpwrapper):
         self.endtransfer()
         try:
             self.ftp.close()
+        # FIXME: There is no such exception as ftperrors
         except ftperrors():
             pass
 
@@ -391,9 +384,9 @@ class FTP(ftplib.FTP):
             else:
                 host = url[1]
 
-            if url.port != None:
+            if url.port is not None:
                 port = url.port
-            if url.username != None:
+            if url.username is not None:
                 self.headers["Proxy-authorization"] = (
                     "Basic "
                     + base64.encodestring(url.username + ":" + url.password)
@@ -424,8 +417,9 @@ class FTP(ftplib.FTP):
 
                 result = self.conn.request("GET", url, "", headers)
                 result.recv = result.read
-                return (result, size)
-            return (None, None)
+                # FIXME: There is no size variable in the result object
+                return result, size
+            return None, None
         else:
             return ftplib.FTP.ntransfercmd(self, cmd, rest)
 
@@ -449,14 +443,14 @@ class FTP(ftplib.FTP):
                 return True
             return False
         else:
-            urlparts = urlparse.urlsplit(url)
+            url_parts = urlparse.urlsplit(url)
             try:
-                files = ftplib.FTP.nlst(self, os.path.dirname(urlparts.path))
+                files = ftplib.FTP.nlst(self, os.path.dirname(url_parts.path))
             except:
                 return False
 
             # directory listing can be in two formats, full path or current directory
-            if (os.path.basename(urlparts.path) in files) or (urlparts.path in files):
+            if (os.path.basename(url_parts.path) in files) or (url_parts.path in files):
                 return True
 
             return False
@@ -497,9 +491,9 @@ class HTTPConnection(httplib.HTTPConnection):
             self._set_hostport(host, port)
 
             if proxy.username is not None:
-                userpass = base64.encodestring(proxy.username + ":" + proxy.password)
+                userpass = base64.encodestring(f"{proxy.username}:{proxy.password}")
                 userpass.replace("\n", "")
-                self.proxy_headers["Proxy-Authorization"] = "Basic " + userpass
+                self.proxy_headers["Proxy-Authorization"] = f"Basic {userpass}"
 
     def _send_request(self, method, url, body, headers, encode_chunked=False):
         headers.update(self.proxy_headers)
@@ -530,9 +524,9 @@ class HTTPSConnection(httplib.HTTPSConnection):
                 )
 
             if proxy.username is not None:
-                userpass = base64.encodestring(proxy.username + ":" + proxy.password)
+                userpass = base64.encodestring(f"{proxy.username}:{proxy.password}")
                 userpass.replace("\n", "")
-                headers["Proxy-Authorization"] = "Basic " + userpass
+                headers["Proxy-Authorization"] = f"Basic {userpass}"
 
             self._set_tunnel(host, port, headers)
 
