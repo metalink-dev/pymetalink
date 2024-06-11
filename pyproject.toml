@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pymetalink"
-version = "6.3"
+version = "0"
 description = "A metalink library for Python"
 authors = ["Neil McNab <nabber00@gmail.com>", "Bram Neijt <bram@neijt.nl>"]
 license = "MIT"
@@ -10,6 +10,9 @@ repository = "https://github.com/metalink-dev/pymetalink"
 
 [tool.poetry.dependencies]
 python = "^3.8"
+
+[tool.poetry-version-plugin]
+source = "git-tag"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
