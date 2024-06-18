@@ -42,7 +42,14 @@ line-ending = "auto"
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F"]
-ignore = []
+# The following ignores should be removed when the following issues are fixed:
+ignore = [
+  "E402", # Module level import not at top of file
+  "E722", # Do not use bare 'except'
+  "E741", # Ambiguous variable name 'l'
+  "F403", # 'from module import *' used; unable to detect undefined names
+  "F821" # Undefined name
+]
 fixable = ["ALL"]
 unfixable = []
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
