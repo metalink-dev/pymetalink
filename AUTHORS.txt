@@ -2,3 +2,6 @@ Neil McNab <webmaster@nabber.org>
 Hampus Wessman
 Andrew Kuchling
 Richard Jones
+Bram Nejit
+Carsten Ehbrecht
+Trevor James Smith

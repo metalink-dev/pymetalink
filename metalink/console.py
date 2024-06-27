@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# Copyright: (C) 2016, Neil McNab
+# Copyright: (C) 2007-2016 Neil McNab and Hampus Wessman
 # License: MIT
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -55,8 +55,6 @@ class ProgressBar:
         self.show_time = True
         self.show_bytes = True
         self.show_percent = True
-        # print ""
-        # self.update(0, 0)
         self.total_size = 0
 
     def download_update(self, block_count, block_size, total_size):

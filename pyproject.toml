@@ -23,6 +23,9 @@ ruff = "^0.4.0"
 [tool.poetry.scripts]
 pymetalink = 'metalink.console:main'
 
+[tool.poetry-version-plugin]
+source = "git-tag"
+
 [tool.ruff]
 exclude = [
   ".eggs",

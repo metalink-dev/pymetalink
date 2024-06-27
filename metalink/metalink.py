@@ -5,7 +5,7 @@
 # URL: https://github.com/metalink-dev/pymetalink
 # E-mail: nabber00@gmail.com
 #
-# Copyright: (C) 2007-2015, Hampus Wessman, Neil McNab
+# Copyright: (C) 2007-2016 Neil McNab and Hampus Wessman
 # License: MIT
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -86,7 +86,7 @@ def hashlookup(text):
 def get_first(x):
     try:
         return x[0]
-    except:
+    except IndexError:
         return x
 
 
@@ -98,8 +98,11 @@ class Resource:
         location="",
         preference="",
         maxconnections="",
-        attrs={},
+        attrs=None,
     ):
+        if attrs is None:
+            attrs = {}
+
         self.errors = []
         self.url = url
         self.location = location
@@ -424,7 +427,7 @@ class Resource:
                         + "."
                     )
                     valid = False
-            except:
+            except ValueError:
                 self.errors.append("Preference must be a number, between 0 and 100.")
                 valid = False
         if self.maxconnections.strip() != "" and self.maxconnections.strip() != "-":
@@ -444,7 +447,7 @@ class Resource:
                         + "!"
                     )
                     valid = False
-            except:
+            except ValueError:
                 self.errors.append(
                     "Max connections must be a positive integer, not "
                     + self.maxconnections
@@ -763,7 +766,7 @@ class Resource4:
                         "Priority must be between 1 and 100, not " + self.priority + "."
                     )
                     valid = False
-            except:
+            except ValueError:
                 self.errors.append("Priority must be a number, between 1 and 100.")
                 valid = False
         return valid
@@ -1718,15 +1721,15 @@ class URLInfo(StringIO.StringIO):
 
 
 def open_compressed(fp):
-    compressedfp = URLInfo(fp)
-    newfp = DecompressFile(compressedfp)
+    compressed_fp = URLInfo(fp)
+    new_fp = DecompressFile(compressed_fp)
 
     try:
-        newfp.info()
-        return newfp
+        new_fp.info()
+        return new_fp
     except OSError:
-        compressedfp.seek(0)
-        return compressedfp
+        compressed_fp.seek(0)
+        return compressed_fp
 
 
 class TemplateDecompress:
@@ -2092,49 +2095,51 @@ def rfc3339_parsedate(datestr):
     datestr = datestr.split(".")[0]
     offset = __convert_offset(offset)
     # Convert to UNIX epoch time to add offset and then convert back to Python time tuple
-    unixtime = calendar.timegm(time.strptime(datestr, "%Y-%m-%dT%H:%M:%S"))
-    unixtime += offset
-    return time.gmtime(unixtime)
+    unix_time = calendar.timegm(time.strptime(datestr, "%Y-%m-%dT%H:%M:%S"))
+    unix_time += offset
+    return time.gmtime(unix_time)
 
 
-def __convert_offset(offsetstr):
+def __convert_offset(offset_str):
     """
     Convert string offset of the form "-08:00" to an int of seconds for
     use with UNIX epoch time.
     """
-    offsetstr = offsetstr.replace(":", "")
-    operator = offsetstr[0]
-    hour = offsetstr[1:3]
-    minute = offsetstr[3:5]
-    offsetsecs = 0
-    offsetsecs += int(hour) * 3600
-    offsetsecs += int(minute) * 60
+    offset_str = offset_str.replace(":", "")
+    operator = offset_str[0]
+    hour = offset_str[1:3]
+    minute = offset_str[3:5]
+    offset_secs = 0
+    offset_secs += int(hour) * 3600
+    offset_secs += int(minute) * 60
     if operator == "+":
-        offsetsecs *= -1
-    return offsetsecs
+        offset_secs *= -1
+    return offset_secs
 
 
 def parsefile(filename, ver=3):
-    xml = Metalink4()
+    # Renamed xml to avoid conflict with module name
+    _xml = Metalink4()
     try:
-        xml.parsefile(filename)
+        _xml.parsefile(filename)
     except AssertionError:
-        xml = Metalink()
-        xml.parsefile(filename)
-    xml = convert(xml, ver)
-    return xml
+        _xml = Metalink()
+        _xml.parsefile(filename)
+    _xml = convert(_xml, ver)
+    return _xml
 
 
 def parsehandle(handle, ver=3):
     text = handle.read()
-    xml = Metalink4()
+    # Renamed xml to avoid conflict with module name
+    _xml = Metalink4()
     try:
-        xml.parse(text)
+        _xml.parse(text)
     except AssertionError:
-        xml = Metalink()
-        xml.parse(text)
-    xml = convert(xml, ver)
-    return xml
+        _xml = Metalink()
+        _xml.parse(text)
+    _xml = convert(_xml, ver)
+    return _xml
 
 
 def read_sig(filename):

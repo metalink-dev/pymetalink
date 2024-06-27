@@ -72,11 +72,10 @@ def translate():
         base = temp[-1]
         localedir = os.path.join("/".join(["%s" % k for k in temp[:-1]]), "locale")
 
-    # print base, localedir, locale.getdefaultlocale()
-    localelang = locale.getdefaultlocale()[0]
-    if localelang is None:
-        localelang = "LC_ALL"
-    t = gettext.translation(base, localedir, [localelang], None, "en")
+    locale_lang = locale.getlocale()[0]
+    if locale_lang is None:
+        locale_lang = "LC_ALL"
+    t = gettext.translation(base, localedir, [locale_lang], None, "en")
     try:
         return t.ugettext
     # python3
@@ -101,9 +100,7 @@ DEFAULT_PATH = [
 
 
 class Signature:
-    """
-    Used to hold information about a signature result
-    """
+    """Used to hold information about a signature result."""
 
     def __init__(self):
         self.valid = 0
@@ -173,20 +170,28 @@ class Signature:
         # raise AssertionError, "File not properly loaded for signature."
 
     def is_valid(self):
-        """
-        returns boolean result of signature valididity
-        """
+        """Returns boolean result of signature validity."""
         return self.valid
 
 
 class ImportResult:
-    """
-    Used to hold information about a key import result
-    """
+    """Used to hold information about a key import result."""
 
-    counts = """count no_user_id imported imported_rsa unchanged
-            n_uids n_subk n_sigs n_revoc sec_read sec_imported
-            sec_dups not_imported""".split()
+    counts = [
+        "count",
+        "imported",
+        "imported_rsa",
+        "n_revoc",
+        "n_sigs",
+        "n_subk",
+        "n_uids",
+        "no_user_id",
+        "not_imported",
+        "sec_dups",
+        "sec_imported",
+        "sec_read",
+        "unchanged",
+    ]
 
     def __init__(self):
         self.imported = []
@@ -458,8 +463,8 @@ class GPGSubprocess:
         """
         Verify the signature on the contents of the string 'data'
         """
-        fileobj = StringIO.StringIO(data)
-        return self.verify_file(fileobj)
+        file_obj = StringIO.StringIO(data)
+        return self.verify_file(file_obj)
 
     def verify_file(self, file):
         """
