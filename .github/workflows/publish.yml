@@ -27,6 +27,5 @@ jobs:
           TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
         run: |
-          python -m poetry version ${{ github.event.release.tag_name }}
           python -m poetry build
           python -m poetry run twine upload dist/*
