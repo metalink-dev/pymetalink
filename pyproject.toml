@@ -15,16 +15,16 @@ repository = "https://github.com/metalink-dev/pymetalink"
 [tool.poetry.dependencies]
 python = "^3.8"
 
-[tool.poetry-version-plugin]
-source = "git-tag"
-
-[tool.poetry.dev-dependencies]
-pytest = "^6.2.5"
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.2.2"
 pre-commit = "^3.5.0"
 ruff = "^0.4.0"
 
 [tool.poetry.scripts]
 pymetalink = 'metalink.console:main'
+
+[tool.poetry-version-plugin]
+source = "git-tag"
 
 [tool.ruff]
 exclude = [

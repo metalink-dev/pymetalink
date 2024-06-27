@@ -6,15 +6,31 @@ on:
   pull_request:
 
 jobs:
+  linting:
+    name: Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.9
+      - name: Run pre-commit checks
+        uses: pre-commit/action@v3.0.1
+
   main:
     name: Test on Python ${{ matrix.python-version }}
+    needs: linting
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+        python-version: [ "3.10", "3.11", "3.12" ]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install poetry
@@ -23,10 +39,6 @@ jobs:
       - name: Install pymetalink
         run: |
           python -m poetry install
-      - name: Run linting
-        if: matrix.python-version == '3.8'
+      - name: Test pymetalink
         run: |
-          python -m poetry run black --check .
-      - name: Run tests
-        run: |
-          python -m poetry run pytest tests/test_metalink4.py
+          poetry run pytest tests/test_metalink4.py
