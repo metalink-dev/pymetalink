@@ -100,16 +100,6 @@ except ImportError:
 # try: import bz2
 # except ImportError: pass
 
-try:
-    import win32api
-except ImportError:
-    pass
-
-try:
-    import win32con
-except ImportError:
-    pass
-
 # Deprecated since Python version 3.6
 # OpenSSL has deprecated all version specific protocols.
 SSL_ANYTHING = ssl.SSLContext(ssl.PROTOCOL_TLS)  # previously, ssl.PROTOCOL_SSLv23
@@ -137,7 +127,7 @@ LANG = []
 OS = None
 COUNTRY = None
 
-lang = locale.getlocale()[0]
+lang = locale.getdefaultlocale()[0]
 if lang is None:
     lang = "LC_ALL"
 lang = lang.replace("_", "-").lower()
@@ -286,7 +276,13 @@ def digest_parse(digest):
 
 
 def get(
-    src, path, checksums=None, force=False, handlers=None, segmented=SEGMENTED, headers=None
+    src,
+    path,
+    checksums=None,
+    force=False,
+    handlers=None,
+    segmented=SEGMENTED,
+    headers=None,
 ):
     """
     Download a file, decodes metalinks.
@@ -829,7 +825,13 @@ def parse_rss(src, headers={}):
 
 
 def download_rss(
-    src, path, force=False, handlers=None, segmented=SEGMENTED, headers=None, nocheck=False
+    src,
+    path,
+    force=False,
+    handlers=None,
+    segmented=SEGMENTED,
+    headers=None,
+    nocheck=False,
 ):
     if handlers is None:
         handlers = {}
@@ -865,7 +867,13 @@ def download_rss(
 
 
 def download_metalink(
-    src, path, force=False, handlers=None, segmented=SEGMENTED, headers=None, nocheck=False
+    src,
+    path,
+    force=False,
+    handlers=None,
+    segmented=SEGMENTED,
+    headers=None,
+    nocheck=False,
 ):
     """
     Decode a metalink file, can be local or remote
@@ -974,7 +982,9 @@ def download_jigdo(
     results = []
     results.extend(template)
     for file_node in url_list:
-        result = download_file_node(file_node, path, force, handlers, segmented, headers)
+        result = download_file_node(
+            file_node, path, force, handlers, segmented, headers
+        )
         if result:
             results.append(result)
     if len(results) == 0:
@@ -1216,7 +1226,7 @@ class FileResume:
 
     def _read(self):
         try:
-            filehandle = open(self.filename, "r")
+            filehandle = open(self.filename)
             resume_str = filehandle.readline()
             (size, blocks) = resume_str.split(":")
             self.blocks = blocks.split(",")
@@ -1245,7 +1255,7 @@ def verify_chunk_checksum(chunkstring, checksums=None):
     if checksums is None:
         checksums = {}
 
-    hash_algorithms = ['sha512', 'sha384', 'sha256', 'sha1', 'md5']
+    hash_algorithms = ["sha512", "sha384", "sha256", "sha1", "md5"]
 
     for algorithm in hash_algorithms:
         try:
@@ -1813,7 +1823,7 @@ class Segment_Manager(Manager):
                         socket.timeout,
                         ftplib.error_temp,
                         ftplib.error_perm,
-                        OSError
+                        OSError,
                     ):
                         self.urls.pop(urls[number])
                         return None
@@ -2135,7 +2145,7 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
                 self.error = _("AttributeError")
                 self.close()
                 return
-            except socket.error:
+            except OSError:
                 try:
                     self.host.reconnect()
                 except:

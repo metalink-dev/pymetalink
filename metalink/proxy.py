@@ -132,7 +132,7 @@ def reg_query(keyname, value=None):
     blanklines = 1
 
     if value is None:
-        tempresult = os.popen2(f'reg.exe query "{keyname}"' % keyname)
+        tempresult = os.popen2(f'reg.exe query "{keyname}"')
     else:
         tempresult = os.popen2(f'reg.exe query "{keyname}" /v "{value}"')
     stdout = tempresult[1]
