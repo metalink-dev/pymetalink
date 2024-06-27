@@ -16,6 +16,7 @@ repository = "https://github.com/metalink-dev/pymetalink"
 python = "^3.8"
 
 [tool.poetry.group.dev.dependencies]
+poetry-version-plugin = "^0.2.0"
 pytest = "^8.2.2"
 pre-commit = "^3.5.0"
 ruff = "^0.4.0"
