@@ -8,6 +8,17 @@ version = "0"
 description = "A metalink library for Python"
 authors = ["Neil McNab <nabber00@gmail.com>", "Bram Neijt <bram@neijt.nl>"]
 license = "MIT"
+classifiers = [
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Internet :: WWW/HTTP",
+  "Topic :: Software Development :: Libraries"
+]
 readme = "README.md"
 packages = [{include = "metalink"}]
 repository = "https://github.com/metalink-dev/pymetalink"
@@ -16,6 +27,7 @@ repository = "https://github.com/metalink-dev/pymetalink"
 python = "^3.8"
 
 [tool.poetry.group.dev.dependencies]
+poetry-version-plugin = "^0.2.0"
 pytest = "^8.2.2"
 pre-commit = "^3.5.0"
 ruff = "^0.4.0"

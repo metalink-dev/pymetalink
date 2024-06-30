@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.10", "3.11", "3.12" ]
+        python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -41,4 +41,4 @@ jobs:
           python -m poetry install
       - name: Test pymetalink
         run: |
-          poetry run pytest tests/test_metalink4.py
+          python -m poetry run pytest tests/test_metalink4.py
