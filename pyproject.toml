@@ -31,6 +31,7 @@ poetry-version-plugin = "^0.2.0"
 pytest = "^8.2.2"
 pre-commit = "^3.5.0"
 ruff = "^0.4.0"
+twine = "^5.1.1"
 
 [tool.poetry.scripts]
 pymetalink = 'metalink.console:main'
@@ -39,15 +40,7 @@ pymetalink = 'metalink.console:main'
 source = "git-tag"
 
 [tool.ruff]
-exclude = [
-  ".eggs",
-  ".git",
-  ".pyenv",
-  ".ruff_cache",
-  "build",
-  "dist",
-  "venv"
-]
+exclude = [".eggs", ".git", ".pyenv", ".ruff_cache", "build", "dist", "venv"]
 
 [tool.ruff.format]
 quote-style = "double"

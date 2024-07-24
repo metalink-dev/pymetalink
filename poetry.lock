@@ -334,6 +334,17 @@ files = [
 ]
 
 [[package]]
+name = "docutils"
+version = "0.20"
+description = "Docutils -- Python Documentation Utilities"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "docutils-0.20-py3-none-any.whl", hash = "sha256:a428f10de4de4774389734c986a01b4af2d802d26717108b0f1b9356862937c5"},
+    {file = "docutils-0.20.tar.gz", hash = "sha256:f75a5a52fbcacd81b47e42888ad2b380748aaccfb3f13af0fe69deb759f01eb6"},
+]
+
+[[package]]
 name = "dulwich"
 version = "0.21.7"
 description = "Python Git Library"
@@ -606,6 +617,41 @@ docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.link
 testing = ["pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
 
 [[package]]
+name = "markdown-it-py"
+version = "3.0.0"
+description = "Python port of markdown-it. Markdown parsing, done right!"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "markdown-it-py-3.0.0.tar.gz", hash = "sha256:e3f60a94fa066dc52ec76661e37c851cb232d92f9886b15cb560aaada2df8feb"},
+    {file = "markdown_it_py-3.0.0-py3-none-any.whl", hash = "sha256:355216845c60bd96232cd8d8c40e8f9765cc86f46880e43a8fd22dc1a1a8cab1"},
+]
+
+[package.dependencies]
+mdurl = ">=0.1,<1.0"
+
+[package.extras]
+benchmarking = ["psutil", "pytest", "pytest-benchmark"]
+code-style = ["pre-commit (>=3.0,<4.0)"]
+compare = ["commonmark (>=0.9,<1.0)", "markdown (>=3.4,<4.0)", "mistletoe (>=1.0,<2.0)", "mistune (>=2.0,<3.0)", "panflute (>=2.3,<3.0)"]
+linkify = ["linkify-it-py (>=1,<3)"]
+plugins = ["mdit-py-plugins"]
+profiling = ["gprof2dot"]
+rtd = ["jupyter_sphinx", "mdit-py-plugins", "myst-parser", "pyyaml", "sphinx", "sphinx-copybutton", "sphinx-design", "sphinx_book_theme"]
+testing = ["coverage", "pytest", "pytest-cov", "pytest-regressions"]
+
+[[package]]
+name = "mdurl"
+version = "0.1.2"
+description = "Markdown URL utilities"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
+    {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
+]
+
+[[package]]
 name = "more-itertools"
 version = "10.3.0"
 description = "More routines for operating on iterables, beyond itertools"
@@ -682,6 +728,31 @@ files = [
 ]
 
 [[package]]
+name = "nh3"
+version = "0.2.18"
+description = "Python bindings to the ammonia HTML sanitization library."
+optional = false
+python-versions = "*"
+files = [
+    {file = "nh3-0.2.18-cp37-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:14c5a72e9fe82aea5fe3072116ad4661af5cf8e8ff8fc5ad3450f123e4925e86"},
+    {file = "nh3-0.2.18-cp37-abi3-macosx_10_12_x86_64.whl", hash = "sha256:7b7c2a3c9eb1a827d42539aa64091640bd275b81e097cd1d8d82ef91ffa2e811"},
+    {file = "nh3-0.2.18-cp37-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:42c64511469005058cd17cc1537578eac40ae9f7200bedcfd1fc1a05f4f8c200"},
+    {file = "nh3-0.2.18-cp37-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:0411beb0589eacb6734f28d5497ca2ed379eafab8ad8c84b31bb5c34072b7164"},
+    {file = "nh3-0.2.18-cp37-abi3-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:5f36b271dae35c465ef5e9090e1fdaba4a60a56f0bb0ba03e0932a66f28b9189"},
+    {file = "nh3-0.2.18-cp37-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:34c03fa78e328c691f982b7c03d4423bdfd7da69cd707fe572f544cf74ac23ad"},
+    {file = "nh3-0.2.18-cp37-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:19aaba96e0f795bd0a6c56291495ff59364f4300d4a39b29a0abc9cb3774a84b"},
+    {file = "nh3-0.2.18-cp37-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:de3ceed6e661954871d6cd78b410213bdcb136f79aafe22aa7182e028b8c7307"},
+    {file = "nh3-0.2.18-cp37-abi3-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:6955369e4d9f48f41e3f238a9e60f9410645db7e07435e62c6a9ea6135a4907f"},
+    {file = "nh3-0.2.18-cp37-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:f0eca9ca8628dbb4e916ae2491d72957fdd35f7a5d326b7032a345f111ac07fe"},
+    {file = "nh3-0.2.18-cp37-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:3a157ab149e591bb638a55c8c6bcb8cdb559c8b12c13a8affaba6cedfe51713a"},
+    {file = "nh3-0.2.18-cp37-abi3-musllinux_1_2_i686.whl", hash = "sha256:c8b3a1cebcba9b3669ed1a84cc65bf005728d2f0bc1ed2a6594a992e817f3a50"},
+    {file = "nh3-0.2.18-cp37-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:36c95d4b70530b320b365659bb5034341316e6a9b30f0b25fa9c9eff4c27a204"},
+    {file = "nh3-0.2.18-cp37-abi3-win32.whl", hash = "sha256:a7f1b5b2c15866f2db413a3649a8fe4fd7b428ae58be2c0f6bca5eefd53ca2be"},
+    {file = "nh3-0.2.18-cp37-abi3-win_amd64.whl", hash = "sha256:8ce0f819d2f1933953fca255db2471ad58184a60508f03e6285e5114b6254844"},
+    {file = "nh3-0.2.18.tar.gz", hash = "sha256:94a166927e53972a9698af9542ace4e38b9de50c34352b962f4d9a7d4c927af4"},
+]
+
+[[package]]
 name = "nodeenv"
 version = "1.9.1"
 description = "Node.js virtual environment builder"
@@ -719,13 +790,13 @@ ptyprocess = ">=0.5"
 
 [[package]]
 name = "pkginfo"
-version = "1.11.1"
+version = "1.10.0"
 description = "Query metadata from sdists / bdists / installed packages."
 optional = false
-python-versions = ">=3.8"
+python-versions = ">=3.6"
 files = [
-    {file = "pkginfo-1.11.1-py3-none-any.whl", hash = "sha256:bfa76a714fdfc18a045fcd684dbfc3816b603d9d075febef17cb6582bea29573"},
-    {file = "pkginfo-1.11.1.tar.gz", hash = "sha256:2e0dca1cf4c8e39644eed32408ea9966ee15e0d324c62ba899a393b3c6b467aa"},
+    {file = "pkginfo-1.10.0-py3-none-any.whl", hash = "sha256:889a6da2ed7ffc58ab5b900d888ddce90bce912f2d2de1dc1c26f4cb9fe65097"},
+    {file = "pkginfo-1.10.0.tar.gz", hash = "sha256:5df73835398d10db79f8eecd5cd86b1f6d29317589ea70796994d49399af6297"},
 ]
 
 [package.extras]
@@ -880,6 +951,20 @@ files = [
 ]
 
 [[package]]
+name = "pygments"
+version = "2.18.0"
+description = "Pygments is a syntax highlighting package written in Python."
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "pygments-2.18.0-py3-none-any.whl", hash = "sha256:b8e6aca0523f3ab76fee51799c488e38782ac06eafcf95e7ba832985c8e7b13a"},
+    {file = "pygments-2.18.0.tar.gz", hash = "sha256:786ff802f32e91311bff3889f6e9a86e81505fe99f2735bb6d60ae0c5004f199"},
+]
+
+[package.extras]
+windows-terminal = ["colorama (>=0.4.6)"]
+
+[[package]]
 name = "pyproject-hooks"
 version = "1.1.0"
 description = "Wrappers to call pyproject.toml-based build backend hooks."
@@ -935,7 +1020,6 @@ files = [
     {file = "PyYAML-6.0.1-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:69b023b2b4daa7548bcfbd4aa3da05b3a74b772db9e23b982788168117739938"},
     {file = "PyYAML-6.0.1-cp310-cp310-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:81e0b275a9ecc9c0c0c07b4b90ba548307583c125f54d5b6946cfee6360c733d"},
     {file = "PyYAML-6.0.1-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ba336e390cd8e4d1739f42dfe9bb83a3cc2e80f567d8805e11b46f4a943f5515"},
-    {file = "PyYAML-6.0.1-cp310-cp310-musllinux_1_1_x86_64.whl", hash = "sha256:326c013efe8048858a6d312ddd31d56e468118ad4cdeda36c719bf5bb6192290"},
     {file = "PyYAML-6.0.1-cp310-cp310-win32.whl", hash = "sha256:bd4af7373a854424dabd882decdc5579653d7868b8fb26dc7d0e99f823aa5924"},
     {file = "PyYAML-6.0.1-cp310-cp310-win_amd64.whl", hash = "sha256:fd1592b3fdf65fff2ad0004b5e363300ef59ced41c2e6b3a99d4089fa8c5435d"},
     {file = "PyYAML-6.0.1-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:6965a7bc3cf88e5a1c3bd2e0b5c22f8d677dc88a455344035f03399034eb3007"},
@@ -943,16 +1027,8 @@ files = [
     {file = "PyYAML-6.0.1-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:42f8152b8dbc4fe7d96729ec2b99c7097d656dc1213a3229ca5383f973a5ed6d"},
     {file = "PyYAML-6.0.1-cp311-cp311-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:062582fca9fabdd2c8b54a3ef1c978d786e0f6b3a1510e0ac93ef59e0ddae2bc"},
     {file = "PyYAML-6.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:d2b04aac4d386b172d5b9692e2d2da8de7bfb6c387fa4f801fbf6fb2e6ba4673"},
-    {file = "PyYAML-6.0.1-cp311-cp311-musllinux_1_1_x86_64.whl", hash = "sha256:e7d73685e87afe9f3b36c799222440d6cf362062f78be1013661b00c5c6f678b"},
     {file = "PyYAML-6.0.1-cp311-cp311-win32.whl", hash = "sha256:1635fd110e8d85d55237ab316b5b011de701ea0f29d07611174a1b42f1444741"},
     {file = "PyYAML-6.0.1-cp311-cp311-win_amd64.whl", hash = "sha256:bf07ee2fef7014951eeb99f56f39c9bb4af143d8aa3c21b1677805985307da34"},
-    {file = "PyYAML-6.0.1-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:855fb52b0dc35af121542a76b9a84f8d1cd886ea97c84703eaa6d88e37a2ad28"},
-    {file = "PyYAML-6.0.1-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:40df9b996c2b73138957fe23a16a4f0ba614f4c0efce1e9406a184b6d07fa3a9"},
-    {file = "PyYAML-6.0.1-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a08c6f0fe150303c1c6b71ebcd7213c2858041a7e01975da3a99aed1e7a378ef"},
-    {file = "PyYAML-6.0.1-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:6c22bec3fbe2524cde73d7ada88f6566758a8f7227bfbf93a408a9d86bcc12a0"},
-    {file = "PyYAML-6.0.1-cp312-cp312-musllinux_1_1_x86_64.whl", hash = "sha256:8d4e9c88387b0f5c7d5f281e55304de64cf7f9c0021a3525bd3b1c542da3b0e4"},
-    {file = "PyYAML-6.0.1-cp312-cp312-win32.whl", hash = "sha256:d483d2cdf104e7c9fa60c544d92981f12ad66a457afae824d146093b8c294c54"},
-    {file = "PyYAML-6.0.1-cp312-cp312-win_amd64.whl", hash = "sha256:0d3304d8c0adc42be59c5f8a4d9e3d7379e6955ad754aa9d6ab7a398b59dd1df"},
     {file = "PyYAML-6.0.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:50550eb667afee136e9a77d6dc71ae76a44df8b3e51e41b77f6de2932bfe0f47"},
     {file = "PyYAML-6.0.1-cp36-cp36m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:1fe35611261b29bd1de0070f0b2f47cb6ff71fa6595c077e42bd0c419fa27b98"},
     {file = "PyYAML-6.0.1-cp36-cp36m-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:704219a11b772aea0d8ecd7058d0082713c3562b4e271b849ad7dc4a5c90c13c"},
@@ -969,7 +1045,6 @@ files = [
     {file = "PyYAML-6.0.1-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a0cd17c15d3bb3fa06978b4e8958dcdc6e0174ccea823003a106c7d4d7899ac5"},
     {file = "PyYAML-6.0.1-cp38-cp38-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:28c119d996beec18c05208a8bd78cbe4007878c6dd15091efb73a30e90539696"},
     {file = "PyYAML-6.0.1-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:7e07cbde391ba96ab58e532ff4803f79c4129397514e1413a7dc761ccd755735"},
-    {file = "PyYAML-6.0.1-cp38-cp38-musllinux_1_1_x86_64.whl", hash = "sha256:49a183be227561de579b4a36efbb21b3eab9651dd81b1858589f796549873dd6"},
     {file = "PyYAML-6.0.1-cp38-cp38-win32.whl", hash = "sha256:184c5108a2aca3c5b3d3bf9395d50893a7ab82a38004c8f61c258d4428e80206"},
     {file = "PyYAML-6.0.1-cp38-cp38-win_amd64.whl", hash = "sha256:1e2722cc9fbb45d9b87631ac70924c11d3a401b2d7f410cc0e3bbf249f2dca62"},
     {file = "PyYAML-6.0.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:9eb6caa9a297fc2c2fb8862bc5370d0303ddba53ba97e71f08023b6cd73d16a8"},
@@ -977,7 +1052,6 @@ files = [
     {file = "PyYAML-6.0.1-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:5773183b6446b2c99bb77e77595dd486303b4faab2b086e7b17bc6bef28865f6"},
     {file = "PyYAML-6.0.1-cp39-cp39-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:b786eecbdf8499b9ca1d697215862083bd6d2a99965554781d0d8d1ad31e13a0"},
     {file = "PyYAML-6.0.1-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:bc1bf2925a1ecd43da378f4db9e4f799775d6367bdb94671027b73b393a7c42c"},
-    {file = "PyYAML-6.0.1-cp39-cp39-musllinux_1_1_x86_64.whl", hash = "sha256:04ac92ad1925b2cff1db0cfebffb6ffc43457495c9b3c39d3fcae417d7125dc5"},
     {file = "PyYAML-6.0.1-cp39-cp39-win32.whl", hash = "sha256:faca3bdcf85b2fc05d06ff3fbc1f83e1391b3e724afa3feba7d13eeab355484c"},
     {file = "PyYAML-6.0.1-cp39-cp39-win_amd64.whl", hash = "sha256:510c9deebc5c0225e8c96813043e62b680ba2f9c50a08d3724c7f28a747d1486"},
     {file = "PyYAML-6.0.1.tar.gz", hash = "sha256:bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43"},
@@ -1089,6 +1163,25 @@ files = [
 full = ["numpy"]
 
 [[package]]
+name = "readme-renderer"
+version = "43.0"
+description = "readme_renderer is a library for rendering readme descriptions for Warehouse"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "readme_renderer-43.0-py3-none-any.whl", hash = "sha256:19db308d86ecd60e5affa3b2a98f017af384678c63c88e5d4556a380e674f3f9"},
+    {file = "readme_renderer-43.0.tar.gz", hash = "sha256:1818dd28140813509eeed8d62687f7cd4f7bad90d4db586001c5dc09d4fde311"},
+]
+
+[package.dependencies]
+docutils = ">=0.13.1"
+nh3 = ">=0.2.14"
+Pygments = ">=2.5.1"
+
+[package.extras]
+md = ["cmarkgfm (>=0.8.0)"]
+
+[[package]]
 name = "requests"
 version = "2.32.3"
 description = "Python HTTP for Humans."
@@ -1122,6 +1215,39 @@ files = [
 
 [package.dependencies]
 requests = ">=2.0.1,<3.0.0"
+
+[[package]]
+name = "rfc3986"
+version = "2.0.0"
+description = "Validating URI References per RFC 3986"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "rfc3986-2.0.0-py2.py3-none-any.whl", hash = "sha256:50b1502b60e289cb37883f3dfd34532b8873c7de9f49bb546641ce9cbd256ebd"},
+    {file = "rfc3986-2.0.0.tar.gz", hash = "sha256:97aacf9dbd4bfd829baad6e6309fa6573aaf1be3f6fa735c8ab05e46cecb261c"},
+]
+
+[package.extras]
+idna2008 = ["idna"]
+
+[[package]]
+name = "rich"
+version = "13.7.1"
+description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
+optional = false
+python-versions = ">=3.7.0"
+files = [
+    {file = "rich-13.7.1-py3-none-any.whl", hash = "sha256:4edbae314f59eb482f54e9e30bf00d33350aaa94f4bfcd4e9e3110e64d0d7222"},
+    {file = "rich-13.7.1.tar.gz", hash = "sha256:9be308cb1fe2f1f57d67ce99e95af38a1e2bc71ad9813b0e247cf7ffbcc3a432"},
+]
+
+[package.dependencies]
+markdown-it-py = ">=2.2.0"
+pygments = ">=2.13.0,<3.0.0"
+typing-extensions = {version = ">=4.0.0,<5.0", markers = "python_version < \"3.9\""}
+
+[package.extras]
+jupyter = ["ipywidgets (>=7.5.1,<9)"]
 
 [[package]]
 name = "ruff"
@@ -1206,6 +1332,39 @@ python-versions = "*"
 files = [
     {file = "trove_classifiers-2024.5.22-py3-none-any.whl", hash = "sha256:c43ade18704823e4afa3d9db7083294bc4708a5e02afbcefacd0e9d03a7a24ef"},
     {file = "trove_classifiers-2024.5.22.tar.gz", hash = "sha256:8a6242bbb5c9ae88d34cf665e816b287d2212973c8777dfaef5ec18d72ac1d03"},
+]
+
+[[package]]
+name = "twine"
+version = "5.1.1"
+description = "Collection of utilities for publishing packages on PyPI"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "twine-5.1.1-py3-none-any.whl", hash = "sha256:215dbe7b4b94c2c50a7315c0275d2258399280fbb7d04182c7e55e24b5f93997"},
+    {file = "twine-5.1.1.tar.gz", hash = "sha256:9aa0825139c02b3434d913545c7b847a21c835e11597f5255842d457da2322db"},
+]
+
+[package.dependencies]
+importlib-metadata = ">=3.6"
+keyring = ">=15.1"
+pkginfo = ">=1.8.1,<1.11"
+readme-renderer = ">=35.0"
+requests = ">=2.20"
+requests-toolbelt = ">=0.8.0,<0.9.0 || >0.9.0"
+rfc3986 = ">=1.4.0"
+rich = ">=12.0.0"
+urllib3 = ">=1.26.0"
+
+[[package]]
+name = "typing-extensions"
+version = "4.12.2"
+description = "Backported and Experimental Type Hints for Python 3.8+"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "typing_extensions-4.12.2-py3-none-any.whl", hash = "sha256:04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d"},
+    {file = "typing_extensions-4.12.2.tar.gz", hash = "sha256:1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"},
 ]
 
 [[package]]
@@ -1336,4 +1495,4 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "df1a6021a98396c2984d87eb7ef40da1ce3525e1de2abbacf25d00d96bd4cbe5"
+content-hash = "1e0ccdc7a6b62860c245073d881b9478cc5279f719ed0aa7b845516e75dfa5c0"
