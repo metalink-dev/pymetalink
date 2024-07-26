@@ -1,10 +1,10 @@
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
 
 [tool.poetry]
 name = "pymetalink"
-version = "0"
+version = "0.0.0"
 description = "A metalink library for Python"
 authors = ["Neil McNab <nabber00@gmail.com>", "Bram Neijt <bram@neijt.nl>"]
 license = "MIT"
@@ -27,7 +27,6 @@ repository = "https://github.com/metalink-dev/pymetalink"
 python = "^3.8"
 
 [tool.poetry.group.dev.dependencies]
-poetry-version-plugin = "^0.2.0"
 pytest = "^8.2.2"
 pre-commit = "^3.5.0"
 ruff = "^0.4.0"
@@ -36,8 +35,12 @@ twine = "^5.1.1"
 [tool.poetry.scripts]
 pymetalink = 'metalink.console:main'
 
-[tool.poetry-version-plugin]
-source = "git-tag"
+[tool.poetry-dynamic-versioning]
+enable = true
+metadata = true
+vcs = "git"
+strict = true
+style = "semver"
 
 [tool.ruff]
 exclude = [".eggs", ".git", ".pyenv", ".ruff_cache", "build", "dist", "venv"]
