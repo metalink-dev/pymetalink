@@ -15,7 +15,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: "3.12"
       - name: Run pre-commit checks
         uses: pre-commit/action@v3.0.1
 
@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [ "3.8", "3.9", "3.10", "3.11", "3.12" ]
+        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -38,7 +38,7 @@ jobs:
           python -m pip install poetry==1.8.3
       - name: Install pymetalink
         run: |
-          python -m poetry install
+          poetry install
       - name: Test pymetalink
         run: |
-          python -m poetry run pytest tests/test_metalink4.py
+          poetry run pytest tests/test_metalink4.py
