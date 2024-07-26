@@ -34,6 +34,29 @@ files = metalink.download.get("file.metalink", os.getcwd())
 
 CHANGELOG:
 
+Version 6.6
+-----------
+- Fixed an issue with git-based versioning for better Anaconda Python support
+
+Version 6.5
+-----------
+- Dropped support for Python 3.7 and older versions, removed Python 2.7 code artifacts
+- Addressed several deprecation warnings raised from API changes in dependencies
+- Added Ruff formatter and addressed several PEP8-related coding style issues
+- Updated workflows and added builds to perform testing across more Python versions
+- Added git-based versioning
+- Updated package metadata and licensing attributions
+
+Version 6.4
+-----------
+- Updated release system to use GitHub Workflow CI
+
+Version 6.3
+-----------
+- Fixed various bugs related to Python 3.x support
+- Now using Poetry as the packaging system
+- Code styling now follows the Black formatting conventions
+
 Version 6.2
 -----------
 - Tested
