@@ -939,7 +939,8 @@ class MetalinkFileBase:
             self.hashlist["sha256"] = sha256hash.hexdigest()
 
         # automatically add an ed2k url here
-        ed2khash = ed2k_hash(filename)
+        if self.do_ed2k or self.do_magnet:
+            ed2khash = ed2k_hash(filename)
 
         if self.do_ed2k:
             self.ed2k = compute_ed2k(filename, ed2khash)
