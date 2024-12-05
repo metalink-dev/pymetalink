@@ -52,6 +52,7 @@
 
 import sys
 
+import http.client
 import http.client as httplib
 import urllib.parse as urlparse
 import urllib.request as urllib2
@@ -68,6 +69,7 @@ import ftplib
 import gettext
 import locale
 import os
+import subprocess
 
 # Configure proxies (user and password optional)
 # HTTP_PROXY = http://user:password@myproxy:port
@@ -131,36 +133,30 @@ def reg_query(keyname, value=None):
 
     blanklines = 1
 
-    if value is None:
-        tempresult = os.popen2(f'reg.exe query "{keyname}"')
-    else:
-        tempresult = os.popen2(f'reg.exe query "{keyname}" /v "{value}"')
-    stdout = tempresult[1]
-    stdout = stdout.readlines()
+    reg_path = os.path.join(os.environ["WINDIR"], "system32", "reg.exe")
 
-    # handle case when reg.exe isn't in path
-    if len(stdout) == 0:
+    try:
         if value is None:
-            tempresult = os.popen2(
-                os.environ["WINDIR"] + f'\\system32\\reg.exe query "{keyname}"'
-            )
+            command = [reg_path, "query", keyname]
         else:
-            tempresult = os.popen2(
-                os.environ["WINDIR"]
-                + f'\\system32\\reg.exe query "{keyname}" /v "{value}"'
-            )
-        stdout = tempresult[1]
-        stdout = stdout.readlines()
+            command = [reg_path, "query", keyname, "/v", value]
 
-    # For Windows XP, this was changed in Vista!
-    if len(stdout) > 0 and stdout[1].startswith("! REG.EXE"):
-        blanklines += 2
-        if value is None:
+        # Execute the command
+        result = subprocess.run(command, capture_output=True, text=True)
+        stdout = result.stdout.splitlines()
+
+        # For Windows XP, this was changed in Vista!
+        if len(stdout) > 0 and stdout[0].startswith("! REG.EXE"):
             blanklines += 2
+            if value is None:
+                blanklines += 2
 
-    stdout = stdout[blanklines:]
+        stdout = stdout[blanklines:]
+        return stdout
 
-    return stdout
+    except FileNotFoundError:
+        print("reg.exe not found. Ensure it is in your PATH or system32 folder.")
+        return []
 
 
 def get_key_value(key, value):
@@ -174,12 +170,19 @@ def get_key_value(key, value):
     result = ""
 
     try:
-        keyid = win32api.RegOpenKeyEx(win32con.HKEY_CURRENT_USER, key)
-        tempvalue = win32api.RegQueryValueEx(keyid, value)
-        win32api.RegCloseKey(keyid)
-        result = unicode(tempvalue[0])
+        python_version = sys.version_info[0]
+        if python_version == 3:
+            import winreg
+            with winreg.ConnectRegistry(None, winreg.HKEY_CURRENT_USER) as registry:
+                with winreg.OpenKey(registry, key) as key:
+                    result = winreg.QueryValue(key, value)
+        else:
+            keyid = win32api.RegOpenKeyEx(win32con.HKEY_CURRENT_USER, key)
+            tempvalue = win32api.RegQueryValueEx(keyid, value)
+            win32api.RegCloseKey(keyid)
+            result = unicode(tempvalue[0])
     except NameError:
-        # alternate method if win32api is not available, probably only works on Windows NT variants
+        # alternate method if neither win32api nor winreg is available, probably only works on Windows NT variants
         stdout = reg_query("HKCU\\" + key, value)
 
         try:
@@ -467,32 +470,29 @@ class FTP(ftplib.FTP):
             ftplib.FTP.close(self)
 
 
-class HTTPConnection(httplib.HTTPConnection):
-    ######## this works for proxy now!
+
+class HTTPConnection(http.client.HTTPConnection):
     def __init__(self, host, port=None, *args, **kwargs):
-        httplib.HTTPConnection.__init__(self, host, port, *args, **kwargs)
+        super().__init__(host, port, *args, **kwargs)
 
-        self.proxy_headers = {}
-        if HTTP_PROXY != "":
-            proxy = urlparse.urlparse(HTTP_PROXY)
-            if not (proxy.scheme == "" or proxy.scheme == "http"):
-                raise AssertionError(
-                    "Transport %s not supported for HTTP_PROXY" % proxy.scheme
-                )
+        if HTTP_PROXY:
+            headers = {}
+            proxy = urllib.parse.urlparse(HTTP_PROXY)
+            if proxy.scheme not in ("", "http"):
+                raise ValueError(f"Transport {proxy.scheme} not supported for HTTP_PROXY")
 
-            host = proxy.hostname
+            if proxy.username:
+                # Encode username and password for proxy authorization
+                userpass = f"{proxy.username}:{proxy.password}"
+                encoded_userpass = base64.b64encode(userpass.encode()).decode()
+                headers["Proxy-Authorization"] = f"Basic {encoded_userpass}"
 
-            if port is None:
-                port = httplib.HTTP_PORT
-            if proxy.port is not None:
-                port = proxy.port
+            # Set up the tunnel through the proxy
+            self.set_tunnel(host, port, headers)
 
-            self._set_hostport(host, port)
-
-            if proxy.username is not None:
-                userpass = base64.encodestring(f"{proxy.username}:{proxy.password}")
-                userpass.replace("\n", "")
-                self.proxy_headers["Proxy-Authorization"] = f"Basic {userpass}"
+            # Update host and port to the proxy
+            self.host = proxy.hostname
+            self.port = proxy.port if proxy.port else http.client.HTTP_PORT
 
     def _send_request(self, method, url, body, headers, encode_chunked=False):
         headers.update(self.proxy_headers)
@@ -508,35 +508,28 @@ class HTTPConnection(httplib.HTTPConnection):
             )
 
 
-class HTTPSConnection(httplib.HTTPSConnection):
-    ######## this works for proxy now!
+class HTTPSConnection(http.client.HTTPSConnection):
     def __init__(self, host, port=None, *args, **kwargs):
-        httplib.HTTPSConnection.__init__(self, host, port, *args, **kwargs)
+        super().__init__(host, port, *args, **kwargs)
 
-        proxy = None
-        if HTTPS_PROXY != "":
+        if HTTPS_PROXY:
             headers = {}
-            proxy = urlparse.urlparse(HTTPS_PROXY)
-            if not (proxy.scheme == "" or proxy.scheme == "http"):
-                raise AssertionError(
-                    "Transport %s not supported for HTTPS_PROXY" % proxy.scheme
-                )
+            proxy = urllib.parse.urlparse(HTTPS_PROXY)
+            if proxy.scheme not in ("", "http"):
+                raise ValueError(f"Transport {proxy.scheme} not supported for HTTPS_PROXY")
 
-            if proxy.username is not None:
-                userpass = base64.encodestring(f"{proxy.username}:{proxy.password}")
-                userpass.replace("\n", "")
-                headers["Proxy-Authorization"] = f"Basic {userpass}"
+            if proxy.username:
+                # Encode username and password for proxy authorization
+                userpass = f"{proxy.username}:{proxy.password}"
+                encoded_userpass = base64.b64encode(userpass.encode()).decode()
+                headers["Proxy-Authorization"] = f"Basic {encoded_userpass}"
 
-            self._set_tunnel(host, port, headers)
+            # Set up the tunnel through the proxy
+            self.set_tunnel(host, port, headers)
 
-            host = proxy.hostname
-
-            if port is None:
-                port = httplib.HTTP_PORT
-            if proxy.port is not None:
-                port = proxy.port
-
-            self._set_hostport(host, port)
+            # Update host and port to the proxy
+            self.host = proxy.hostname
+            self.port = proxy.port if proxy.port else http.client.HTTP_PORT
 
 
 # def test_urllib2(url):

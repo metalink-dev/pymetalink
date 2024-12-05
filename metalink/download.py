@@ -58,8 +58,9 @@ import http.client as httplib
 import http.server as BaseHTTPServer
 import io
 import urllib.parse as urlparse
-
 import urllib.request as urllib2
+
+from typing import List
 
 file = io.FileIO
 import base64
@@ -1499,7 +1500,7 @@ class Segment_Manager(Manager):
 
         self.headers = headers.copy()
         self.sockets = []
-        self.chunks = []
+        self.chunks: List[Http_Host_Segment] = []
         self.limit_per_host = LIMIT_PER_HOST
         self.host_limit = HOST_LIMIT
         # self.size = 0
@@ -1749,7 +1750,7 @@ class Segment_Manager(Manager):
             if self.chunks[i] is None or self.chunks[i].error is not None:
                 return i
             # weed out dead segments that have temp errors and reassign
-            if not self.chunks[i].isAlive() and self.chunks[i].bytes == 0:
+            if not self.chunks[i].is_alive() and self.chunks[i].bytes == 0:
                 return i
         i += 1
 
