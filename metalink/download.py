@@ -52,36 +52,29 @@
 #   bitrate - kilobits per second (float)
 #
 ########################################################################
-import sys
-
-import http.client as httplib
-import http.server as BaseHTTPServer
-import io
-import urllib.parse as urlparse
-import urllib.request as urllib2
-
-from typing import List
-
-file = io.FileIO
 import base64
 import binascii
 import copy
 import ftplib
 import gettext
-
 import hashlib
+import http.client
+import http.server
+import io
 import locale
 import os
 import random
 import socket
 import ssl
+import sys
 import threading
-
 import time
+import urllib.parse
+import urllib.request
 import uuid
+from typing import List
 
 import metalink
-
 
 try:
     import GPG
@@ -141,7 +134,7 @@ PGP_KEY_DIR = "."
 PGP_KEY_EXTS = (".gpg", ".asc")
 PGP_KEY_STORE = None
 
-# Streaming server setings to use
+# Streaming server settings to use
 HOST = "localhost"
 PORT = None
 
@@ -207,7 +200,7 @@ def get_uuid():
 def urlopen(url, data=None, metalink_header=False, headers={}):
     # print "URLOPEN:", url, headers
     url = complete_url(url)
-    req = urllib2.Request(url, data, headers)
+    req = urllib.request.Request(url, data, headers)
     req.add_header("User-agent", USER_AGENT)
     if UUID:
         req.add_header(
@@ -220,7 +213,7 @@ def urlopen(url, data=None, metalink_header=False, headers={}):
     if metalink_header:
         req.add_header("Accept", MIME_TYPE + ", */*")
 
-    fp = urllib2.urlopen(req)
+    fp = urllib.request.urlopen(req)
     try:
         if fp.headers["Content-Encoding"] == "gzip":
             return metalink.open_compressed(fp)
@@ -236,7 +229,7 @@ def urlhead(url, metalink_header=False, headers={}):
     """
     # print "URLHEAD:", url, headers
     url = complete_url(url)
-    req = urllib2.Request(url, None, headers)
+    req = urllib.request.Request(url, None, headers)
     req.add_header("User-agent", USER_AGENT)
     if UUID:
         req.add_header(
@@ -250,10 +243,10 @@ def urlhead(url, metalink_header=False, headers={}):
 
     req.get_method = lambda: "HEAD"
     # logging.debug(url)
-    fp = urllib2.urlopen(req)
-    newheaders = fp.headers
+    fp = urllib.request.urlopen(req)
+    new_headers = fp.headers
     fp.close()
-    return newheaders
+    return new_headers
 
 
 def digest_parse(digest):
@@ -261,19 +254,19 @@ def digest_parse(digest):
         return {}
 
     hashes = digest.split(",")
-    digestsums = {}
-    for myhash in hashes:
-        parts = myhash.split("=", 1)
+    digest_sums = {}
+    for hash_str in hashes:
+        parts = hash_str.split("=", 1)
         # create digest list here
         if parts[0].strip() == "sha":
-            digestsums["sha-1"] = binascii.hexlify(
+            digest_sums["sha-1"] = binascii.hexlify(
                 binascii.a2b_base64(parts[1].strip())
             )
         else:
-            digestsums[parts[0].strip()] = binascii.hexlify(
+            digest_sums[parts[0].strip()] = binascii.hexlify(
                 binascii.a2b_base64(parts[1].strip())
             )
-    return digestsums
+    return digest_sums
 
 
 def get(
@@ -363,16 +356,16 @@ def download_file(
     if headers is None:
         headers = {}
 
-    fileobj = metalink.MetalinkFile(local_file)
+    file_obj = metalink.MetalinkFile(local_file)
     # Need to set this again for absolute file paths
-    fileobj.filename = local_file
-    fileobj.set_size(size)
-    fileobj.hashlist = checksums
-    fileobj.pieces = chunksums
-    fileobj.piecelength = chunk_size
-    fileobj.add_url(url)
+    file_obj.filename = local_file
+    file_obj.set_size(size)
+    file_obj.hashlist = checksums
+    file_obj.pieces = chunksums
+    file_obj.piecelength = chunk_size
+    file_obj.add_url(url)
 
-    return download_file_urls(fileobj, force, handlers, segmented, headers)
+    return download_file_urls(file_obj, force, handlers, segmented, headers)
 
 
 def download_file_urls(
@@ -539,10 +532,10 @@ class Manager:
         if bitrate == 0 or (self.size - bytes) < 0:
             return "??:??"
 
-        secondsleft = (self.size - bytes) / (bitrate * 1024 / 8)
-        hours = secondsleft / 3600
-        minutes = (secondsleft % 3600) / 60
-        seconds = secondsleft % 60
+        seconds_left = (self.size - bytes) / (bitrate * 1024 / 8)
+        hours = seconds_left / 3600
+        minutes = (seconds_left % 3600) / 60
+        seconds = seconds_left % 60
         if int(hours) > 0:
             return "%.2d:%.2d:%.2d" % (hours, minutes, seconds)
         return "%.2d:%.2d" % (minutes, seconds)
@@ -701,19 +694,19 @@ class URLManager(Manager):
 
 def filecheck(local_file, checksums, size, handler=None):
     if verify_checksum(local_file, checksums):
-        actsize = 0
+        act_size = 0
         try:
-            actsize = os.stat(local_file).st_size
+            act_size = os.stat(local_file).st_size
         except:
             pass
 
         if handler is not None:
-            tempsize = size
+            temp_size = size
             if size == 0:
-                tempsize = actsize
-            handler(1, actsize, tempsize)
+                temp_size = act_size
+            handler(1, act_size, temp_size)
 
-        if int(actsize) == int(size) or size == 0:
+        if int(act_size) == int(size) or size == 0:
             return True
 
     print("\n" + _("Checksum failed for %s.") % os.path.basename(local_file))
@@ -742,8 +735,8 @@ def parse_metalink(src, headers=None, nocheck=False, ver=3):
             # does not check for describedby urls but we can't use any of those anyway
             # TODO this should be more robust and ignore commas in <> for urls
             links = my_headers["link"].split(",")
-            fileobj = metalink.MetalinkFile4(os.path.basename(src))
-            fileobj.set_size(my_headers["content-length"])
+            file_obj = metalink.MetalinkFile4(os.path.basename(src))
+            file_obj.set_size(my_headers["content-length"])
             for link in links:
                 parts = link.split(";")
                 mydict = {}
@@ -756,9 +749,9 @@ def parse_metalink(src, headers=None, nocheck=False, ver=3):
                     pri = mydict["pri"]
                 except KeyError:
                     pass
-                typestr = ""
+                type_str = ""
                 try:
-                    typestr = mydict["type"]
+                    type_str = mydict["type"]
                 except KeyError:
                     pass
                 try:
@@ -767,7 +760,7 @@ def parse_metalink(src, headers=None, nocheck=False, ver=3):
                         and type == "application/metalink4+xml"
                     ):
                         # TODO support metalink describedby type
-                        # fileobj.add_url(parts[0].strip(" <>"), preference=pri)
+                        # file_obj.add_url(parts[0].strip(" <>"), preference=pri)
                         pass
                     elif (
                         mydict["rel"] == '"describedby"'
@@ -775,26 +768,26 @@ def parse_metalink(src, headers=None, nocheck=False, ver=3):
                     ):
                         # support openpgp describedby type
                         fp = urlopen(parts[0].strip(" <>"), headers={"referer": src})
-                        fileobj.hashlist["pgp"] = fp.read()
+                        file_obj.hashlist["pgp"] = fp.read()
                         fp.close()
                     elif (
                         mydict["rel"] == '"describedby"'
                         or mydict["rel"] == '"duplicate"'
                     ):
-                        fileobj.add_url(
-                            parts[0].strip(" <>"), type=typestr, priority=pri
+                        file_obj.add_url(
+                            parts[0].strip(" <>"), type=type_str, priority=pri
                         )
                 except KeyError:
                     pass
             try:
-                fileobj.hashlist = digest_parse(my_headers["digest"])
+                file_obj.hashlist = digest_parse(my_headers["digest"])
             except KeyError:
                 # RFC requires link headers to be ignored if no digest header, use standard download method
                 return False
             print(_("Using Metalink HTTP Link headers."))
-            mobj = metalink.Metalink4()
-            mobj.files.append(fileobj)
-            return metalink.convert(mobj, ver)
+            metalink4 = metalink.Metalink4()
+            metalink4.files.append(file_obj)
+            return metalink.convert(metalink4, ver)
     except KeyError:
         pass
 
@@ -806,9 +799,9 @@ def parse_metalink(src, headers=None, nocheck=False, ver=3):
     except:
         return False
 
-    metalinkobj = metalink.parsehandle(datasource, ver)
+    metalink_obj = metalink.parsehandle(datasource, ver)
     datasource.close()
-    return metalinkobj
+    return metalink_obj
 
 
 def parse_rss(src, headers={}):
@@ -819,10 +812,10 @@ def parse_rss(src, headers={}):
     except:
         return False
 
-    rssobj = metalink.RSSAtom()
-    rssobj.parsehandle(datasource)
+    rss_obj = metalink.RSSAtom()
+    rss_obj.parsehandle(datasource)
     datasource.close()
-    return rssobj
+    return rss_obj
 
 
 def download_rss(
@@ -917,14 +910,14 @@ def download_metalink(
         return False
 
     results = []
-    for filenode in url_list:
-        ostag = filenode.os
-        langtag = filenode.language
+    for file_node in url_list:
+        os_tag = file_node.os
+        lang_tag = file_node.language
 
-        if OS is None or len(ostag) == 0 or ostag[0].lower() == OS.lower():
-            if "any" in LANG or len(langtag) == 0 or langtag.lower() in LANG:
+        if OS is None or len(os_tag) == 0 or os_tag[0].lower() == OS.lower():
+            if "any" in LANG or len(lang_tag) == 0 or lang_tag.lower() in LANG:
                 result = download_file_node(
-                    filenode, path, force, handlers, segmented, my_headers
+                    file_node, path, force, handlers, segmented, my_headers
                 )
                 if result:
                     results.append(result)
@@ -1019,10 +1012,10 @@ def convert_jigdo(src, headers=None):
     jigdo.parsehandle(datasource)
     datasource.close()
 
-    fileobj = metalink.MetalinkFile(jigdo.template)
-    fileobj.add_url(os.path.dirname(src) + "/" + jigdo.template)
-    fileobj.add_checksum("md5", jigdo.template_md5)
-    jigdo.files.insert(0, fileobj)
+    file_obj = metalink.MetalinkFile(jigdo.template)
+    file_obj.add_url(os.path.dirname(src) + "/" + jigdo.template)
+    file_obj.add_checksum("md5", jigdo.template_md5)
+    jigdo.files.insert(0, file_obj)
 
     url_list = jigdo.files
     if len(url_list) == 0:
@@ -1344,9 +1337,9 @@ def pgp_verify_sig(filename, sig):
     gpg = GPG.GPGSubprocess(keyring=PGP_KEY_STORE)
 
     for root, dirs, files in os.walk(PGP_KEY_DIR):
-        for thisfile in files:
-            if thisfile[-4:] in PGP_KEY_EXTS:
-                gpg.import_key(open(thisfile).read())
+        for this_file in files:
+            if this_file[-4:] in PGP_KEY_EXTS:
+                gpg.import_key(open(this_file).read())
 
     sign = gpg.verify_file_detached(filename, sig)
 
@@ -1421,11 +1414,11 @@ def filehash(thisfile, filesha):
     except:
         return ""
 
-    chunksize = 1024 * 1024
-    data = filehandle.read(chunksize)
+    chunk_size = 1024 * 1024
+    data = filehandle.read(chunk_size)
     while data != b"":
         filesha.update(data)
-        data = filehandle.read(chunksize)
+        data = filehandle.read(chunk_size)
 
     filehandle.close()
     return filesha.hexdigest()
@@ -1444,7 +1437,7 @@ def path_join(first, second):
 
     if is_remote(first):
         if is_local(second):
-            return urlparse.urljoin(first, second)
+            return urllib.parse.urljoin(first, second)
         return second
 
     return os.path.normpath(os.path.join(first, second))
@@ -1482,9 +1475,9 @@ def sort_prefs(mydict):
 ############# segmented download functions #############
 
 
-class ThreadSafeFile(file):
+class ThreadSafeFile(io.FileIO):
     def __init__(self, *args):
-        file.__init__(self, *args)
+        io.FileIO.__init__(self, *args)
         self.lock = threading.Lock()
 
     def acquire(self):
@@ -1558,20 +1551,20 @@ class Segment_Manager(Manager):
             url = urls[i]
             protocol = get_transport(url)
             if protocol == "http":
-                status = httplib.MOVED_PERMANENTLY
+                status = http.client.MOVED_PERMANENTLY
                 count = 0
                 size = None
                 checksum_dict = {}
                 while (
-                    status == httplib.MOVED_PERMANENTLY or status == httplib.FOUND
+                    status == http.client.MOVED_PERMANENTLY or status == http.client.FOUND
                 ) and count < MAX_REDIRECTS:
-                    http = Http_Host(url)
-                    if http.conn is not None:
+                    http_host = Http_Host(url)
+                    if http_host.conn is not None:
                         try:
                             headers = {"Want-Digest": DIGESTS}
                             headers.update(self.headers)
-                            http.conn.request("HEAD", url, headers=headers)
-                            response = http.conn.getresponse()
+                            http_host.conn.request("HEAD", url, headers=headers)
+                            response = http_host.conn.getresponse()
                             status = response.status
                             url = response.getheader("Location")
                             size = response.getheader("content-length")
@@ -1580,10 +1573,10 @@ class Segment_Manager(Manager):
                             )
                         except:
                             pass
-                        http.close()
+                        http_host.close()
                     count += 1
 
-                if (status == httplib.OK) and (size is not None):
+                if (status == http.client.OK) and (size is not None):
                     sizes.append(size)
                     if len(checksum_dict) > 0:
                         checksums.append(checksum_dict)
@@ -1772,7 +1765,7 @@ class Segment_Manager(Manager):
     def active_count(self):
         count = 0
         for item in self.chunks:
-            if item.isAlive():
+            if item.is_alive():
                 count += 1
         return count
 
@@ -1840,8 +1833,8 @@ class Segment_Manager(Manager):
         for item in self.chunks:
             if item is not None and item.error is not None:
                 if (
-                    item.error == httplib.MOVED_PERMANENTLY
-                    or item.error == httplib.FOUND
+                    item.error == http.client.MOVED_PERMANENTLY
+                    or item.error == http.client.FOUND
                 ):
                     try:
                         new_item = copy.deepcopy(self.urls[item.url])
@@ -1945,7 +1938,7 @@ class Ftp_Host(Host_Base):
 
     def connect(self):
         if self.protocol == "ftp":
-            url_parts = urlparse.urlsplit(self.url)
+            url_parts = urllib.parse.urlsplit(self.url)
             try:
                 username = url_parts.username
                 password = url_parts.password
@@ -1995,32 +1988,32 @@ class Http_Host(Host_Base):
     def __init__(self, url, memmap=None):
         Host_Base.__init__(self, url, memmap)
 
-        urlparts = urlparse.urlsplit(self.url)
+        url_parts = urllib.parse.urlsplit(self.url)
         if self.url.endswith(".torrent"):
             self.error = _("unsupported protocol")
             return
         elif self.protocol == "http":
             try:
-                port = urlparts.port
+                port = url_parts.port
             except:
-                port = httplib.HTTP_PORT
+                port = http.client.HTTP_PORT
             if port is None:
-                port = httplib.HTTP_PORT
+                port = http.client.HTTP_PORT
             try:
-                self.conn = proxy.HTTPConnection(urlparts[1], port)
-            except httplib.InvalidURL:
+                self.conn = proxy.HTTPConnection(url_parts[1], port)
+            except http.client.InvalidURL:
                 self.error = _("invalid url")
                 return
         elif self.protocol == "https":
             try:
-                port = urlparts.port
+                port = url_parts.port
             except:
-                port = httplib.HTTPS_PORT
+                port = http.client.HTTPS_PORT
             if port is None:
-                port = httplib.HTTPS_PORT
+                port = http.client.HTTPS_PORT
             try:
-                self.conn = proxy.HTTPSConnection(urlparts[1], port)
-            except httplib.InvalidURL:
+                self.conn = proxy.HTTPSConnection(url_parts[1], port)
+            except http.client.InvalidURL:
                 self.error = _("invalid url")
                 return
         else:
@@ -2114,7 +2107,7 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
             return
 
         # check for supported hosts/urls
-        urlparts = urlparse.urlsplit(self.url)
+        url_parts = urllib.parse.urlsplit(self.url)
         if self.host.conn is None:
             # print "bad socket"
             self.error = _("bad socket")
@@ -2128,7 +2121,7 @@ class Ftp_Host_Segment(threading.Thread, Host_Segment):
             retry = False
             try:
                 (self.response, size) = self.host.conn.ntransfercmd(
-                    "RETR " + urlparts.path, self.byte_start, self.byte_end
+                    "RETR " + url_parts.path, self.byte_start, self.byte_end
                 )
             except ftplib.error_perm as error:
                 self.error = error.message
@@ -2314,17 +2307,17 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
                 self.error = _("timeout")
                 return False
             # not an error state, connection closed, kicks us out of thread
-            except httplib.ResponseNotReady:
+            except http.client.ResponseNotReady:
                 return False
             except:
                 self.error = _("response error")
                 return False
 
-        if self.response.status == httplib.PARTIAL_CONTENT:
+        if self.response.status == http.client.PARTIAL_CONTENT:
             return True
         elif (
-            self.response.status == httplib.MOVED_PERMANENTLY
-            or self.response.status == httplib.FOUND
+            self.response.status == http.client.MOVED_PERMANENTLY
+            or self.response.status == http.client.FOUND
         ):
             self.location = self.response.getheader("Location")
             self.error = self.response.status
@@ -2342,7 +2335,7 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
             self.error = _("timeout")
             self.response = None
             return
-        except httplib.IncompleteRead:
+        except http.client.IncompleteRead:
             self.error = _("incomplete read")
             self.response = None
             return
@@ -2400,7 +2393,7 @@ class Http_Host_Segment(threading.Thread, Host_Segment):
             self.response = None
 
 
-class StreamRequest(BaseHTTPServer.BaseHTTPRequestHandler):
+class StreamRequest(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         self.send_response(200)
         self.send_header("Content-Type", "application/octet-stream")
@@ -2428,16 +2421,18 @@ class StreamRequest(BaseHTTPServer.BaseHTTPRequestHandler):
             time.sleep(0.1)
 
 
-class StreamServer(BaseHTTPServer.HTTPServer):
+class StreamServer(http.server.HTTPServer):
+
     def __init__(self, *args):
-        BaseHTTPServer.HTTPServer.__init__(self, *args)
+        http.server.HTTPServer.__init__(self, *args)
         self.fileobj = None
         self.length = 0
+        self.run = False
 
     # based on: http://code.activestate.com/recipes/425210/
     def server_bind(self):
-        BaseHTTPServer.HTTPServer.server_bind(self)
-        self.socket.setblocking(0)
+        http.server.HTTPServer.server_bind(self)
+        self.socket.setblocking(False)
         self.socket.settimeout(1)
         self.run = True
 
@@ -2445,7 +2440,7 @@ class StreamServer(BaseHTTPServer.HTTPServer):
         while self.run:
             try:
                 sock, addr = self.socket.accept()
-                sock.setblocking(0)
+                sock.setblocking(False)
                 sock.settimeout(30)
                 return sock, addr
             except socket.timeout:
