@@ -72,7 +72,7 @@ import time
 import urllib.parse
 import urllib.request
 import uuid
-from typing import List
+from typing import List, Callable
 
 import metalink
 
@@ -148,7 +148,7 @@ MIME_TYPE = "application/metalink+xml"
 DIGESTS = "md5,sha,sha-256,sha-384,sha-512"
 
 
-def translate():
+def translate() -> Callable[[str], str]:
     """Setup translation path."""
     if __name__ == "__main__":
         base = ""
@@ -165,11 +165,17 @@ def translate():
         base = temp[-1]
         localedir = os.path.join("/".join(["%s" % k for k in temp[:-1]]), "locale")
 
-    # print base, localedir
-    locale_lang = locale.getlocale()[0]
+    locale_lang = locale.getdefaultlocale()[0]
     if locale_lang is None:
-        locale_lang = "LC_ALL"
-    t = gettext.translation(base, localedir, [locale_lang], None, "en")
+        locale_lang = "en" # Fallback to "en" if no system locale is found
+
+    try:
+        # Load translation
+        t = gettext.translation(domain=base, localedir=localedir, languages=[locale_lang], fallback=True)
+    except FileNotFoundError:
+        # If the translation file doesn't exist, use a fallback
+        t = gettext.NullTranslations()
+
     return t.gettext
 
 

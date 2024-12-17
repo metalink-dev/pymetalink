@@ -49,6 +49,7 @@ import locale
 import os
 import os.path
 import subprocess
+from typing import Callable
 
 try:
     import win32process
@@ -56,7 +57,7 @@ except ImportError:
     pass
 
 
-def translate():
+def translate() -> Callable[[str], str]:
     """
     Setup translation path
     """
@@ -74,13 +75,16 @@ def translate():
 
     locale_lang = locale.getlocale()[0]
     if locale_lang is None:
-        locale_lang = "LC_ALL"
-    t = gettext.translation(base, localedir, [locale_lang], None, "en")
+        locale_lang = "en" # Fallback to "en" if no system locale is found
+
     try:
-        return t.ugettext
-    # python3
-    except:
-        return t.gettext
+        # Load translation
+        t = gettext.translation(domain=base, localedir=localedir, languages=[locale_lang], fallback=True)
+    except FileNotFoundError:
+        # If the translation file doesn't exist, use a fallback
+        t = gettext.NullTranslations()
+
+    return t.gettext
 
 
 _ = translate()
