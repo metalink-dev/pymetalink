@@ -75,11 +75,13 @@ def translate() -> Callable[[str], str]:
 
     locale_lang = locale.getlocale()[0]
     if locale_lang is None:
-        locale_lang = "en" # Fallback to "en" if no system locale is found
+        locale_lang = "en"  # Fallback to "en" if no system locale is found
 
     try:
         # Load translation
-        t = gettext.translation(domain=base, localedir=localedir, languages=[locale_lang], fallback=True)
+        t = gettext.translation(
+            domain=base, localedir=localedir, languages=[locale_lang], fallback=True
+        )
     except FileNotFoundError:
         # If the translation file doesn't exist, use a fallback
         t = gettext.NullTranslations()

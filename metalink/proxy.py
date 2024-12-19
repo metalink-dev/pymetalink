@@ -94,16 +94,19 @@ def translate() -> Callable[[str], str]:
 
     locale_lang = locale.getdefaultlocale()[0]
     if locale_lang is None:
-        locale_lang = "en" # Fallback to "en" if no system locale is found
+        locale_lang = "en"  # Fallback to "en" if no system locale is found
 
     try:
         # Load translation
-        t = gettext.translation(domain=base, localedir=localedir, languages=[locale_lang], fallback=True)
+        t = gettext.translation(
+            domain=base, localedir=localedir, languages=[locale_lang], fallback=True
+        )
     except FileNotFoundError:
         # If the translation file doesn't exist, use a fallback
         t = gettext.NullTranslations()
 
     return t.gettext
+
 
 _ = translate()
 
@@ -149,11 +152,11 @@ def get_proxy_info():
     if "https_proxy" in os.environ and HTTPS_PROXY == "":
         HTTPS_PROXY = os.environ["https_proxy"]
 
-    if platform.system() == 'Windows':
+    if platform.system() == "Windows":
         # from IE in registry
         proxy_enable = get_key_value(
             r"Software\Microsoft\Windows\CurrentVersion\Internet Settings",
-            "ProxyEnable"
+            "ProxyEnable",
         )
         try:
             proxy_enable = bool(proxy_enable[-1])
@@ -165,17 +168,23 @@ def get_proxy_info():
                 "Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings",
                 "ProxyServer",
             )
-            if not "=" in proxy_string:
+            if "=" not in proxy_string:
                 # if all use the same settings
                 for proxy in ("HTTP_PROXY", "FTP_PROXY", "HTTPS_PROXY"):
                     if getattr(sys.modules[__name__], proxy) == "":
-                        setattr(sys.modules[__name__], proxy, "http://" + str(proxy_string))
+                        setattr(
+                            sys.modules[__name__], proxy, "http://" + str(proxy_string)
+                        )
             else:
                 proxies = proxy_string.split(";")
                 for proxy in proxies:
                     name, value = proxy.split("=")
                     if getattr(sys.modules[__name__], name.upper() + "_PROXY") == "":
-                        setattr(sys.modules[__name__], name.upper() + "_PROXY", "http://" + value)
+                        setattr(
+                            sys.modules[__name__],
+                            name.upper() + "_PROXY",
+                            "http://" + value,
+                        )
     else:
         # Todo
         pass
@@ -381,7 +390,6 @@ class FTP(ftplib.FTP):
             ftplib.FTP.close(self)
 
 
-
 class HTTPConnection(http.client.HTTPConnection):
     def __init__(self, host, port=None, *args, **kwargs):
         super().__init__(host, port, *args, **kwargs)
@@ -390,7 +398,9 @@ class HTTPConnection(http.client.HTTPConnection):
             headers = {}
             proxy = urllib.parse.urlparse(HTTP_PROXY)
             if proxy.scheme not in ("", "http"):
-                raise ValueError(f"Transport {proxy.scheme} not supported for HTTP_PROXY")
+                raise ValueError(
+                    f"Transport {proxy.scheme} not supported for HTTP_PROXY"
+                )
 
             if proxy.username:
                 # Encode username and password for proxy authorization
@@ -414,7 +424,9 @@ class HTTPSConnection(http.client.HTTPSConnection):
             headers = {}
             proxy = urllib.parse.urlparse(HTTPS_PROXY)
             if proxy.scheme not in ("", "http"):
-                raise ValueError(f"Transport {proxy.scheme} not supported for HTTPS_PROXY")
+                raise ValueError(
+                    f"Transport {proxy.scheme} not supported for HTTPS_PROXY"
+                )
 
             if proxy.username:
                 # Encode username and password for proxy authorization

@@ -167,11 +167,13 @@ def translate() -> Callable[[str], str]:
 
     locale_lang = locale.getdefaultlocale()[0]
     if locale_lang is None:
-        locale_lang = "en" # Fallback to "en" if no system locale is found
+        locale_lang = "en"  # Fallback to "en" if no system locale is found
 
     try:
         # Load translation
-        t = gettext.translation(domain=base, localedir=localedir, languages=[locale_lang], fallback=True)
+        t = gettext.translation(
+            domain=base, localedir=localedir, languages=[locale_lang], fallback=True
+        )
     except FileNotFoundError:
         # If the translation file doesn't exist, use a fallback
         t = gettext.NullTranslations()
@@ -1562,7 +1564,8 @@ class Segment_Manager(Manager):
                 size = None
                 checksum_dict = {}
                 while (
-                    status == http.client.MOVED_PERMANENTLY or status == http.client.FOUND
+                    status == http.client.MOVED_PERMANENTLY
+                    or status == http.client.FOUND
                 ) and count < MAX_REDIRECTS:
                     http_host = Http_Host(url)
                     if http_host.conn is not None:
@@ -2428,7 +2431,6 @@ class StreamRequest(http.server.BaseHTTPRequestHandler):
 
 
 class StreamServer(http.server.HTTPServer):
-
     def __init__(self, *args):
         http.server.HTTPServer.__init__(self, *args)
         self.fileobj = None
