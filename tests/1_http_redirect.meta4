@@ -3,19 +3,19 @@
 type="dynamic" refreshdate="Wed, 23 Apr 2008 03:25:45 GMT">
 <publisher>
 <name>curl</name>
-<url>http://curl.haxx.se/</url>
+<url>http://127.0.0.1:HTTPPORT/redirect/payload.bin</url>
 </publisher>
 <description>curl Generic source tar, bzip2</description>
-<files><file name="curl-7.18.1.tar.bz2">
+<files><file name="payload.bin">
 <version>7.18.1</version>
-<size>1700966</size>
+<size>32768</size>
 <verification>
-<hash type="md5">805834fc1136ff7600d2179bc0386c5a</hash>
-<hash type="sha1">685b9388ee9e646158a83cd435f7be664816ad78</hash>
+<hash type="md5">7af396400a24d98c51636cdf68c3a044</hash>
+<hash type="sha1">454654e90cfe689e169ce78b2989280a7aa0b963</hash>
 </verification>
 <!-- resource preferences are for use in an unknown location -->
 <resources>
-<url type="http" location="us" preference="30">http://curl.mirrors.redwire.net/download/curl-7.18.1.tar.bz2</url>
+<url type="http" location="us" preference="30">http://127.0.0.1:HTTPPORT/redirect/payload.bin</url>
 </resources>
 </file></files>
 </metalink>

@@ -1,39 +1,34 @@
-[build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
-
-[tool.poetry]
+[project]
 name = "pymetalink"
 version = "0.0.1"
 description = "A metalink library for Python"
-authors = ["Neil McNab <nabber00@gmail.com>", "Bram Neijt <bram@neijt.nl>"]
+readme = "README.md"
+requires-python = ">=3.11"
 license = "MIT"
+authors = [{ name = "Neil McNab", email = "nabber00@gmail.com" }, { name = "Bram Neijt", email = "bram@neijt.nl" }]
 classifiers = [
-  "License :: OSI Approved :: MIT License",
   "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
   "Topic :: Internet :: WWW/HTTP",
-  "Topic :: Software Development :: Libraries"
+  "Topic :: Software Development :: Libraries",
 ]
-readme = "README.md"
-packages = [{include = "metalink"}]
-repository = "https://github.com/metalink-dev/pymetalink"
+dependencies = []
 
-[tool.poetry.dependencies]
-python = "^3.8"
+[project.urls]
+Repository = "https://github.com/metalink-dev/pymetalink"
 
-[tool.poetry.group.dev.dependencies]
-pytest = "^8.2.2"
-pre-commit = "^3.5.0"
-ruff = "^0.4.0"
-twine = "^5.1.1"
+[project.scripts]
+pymetalink = "metalink.console:main"
 
-[tool.poetry.scripts]
-pymetalink = 'metalink.console:main'
+[dependency-groups]
+dev = ["prek>=0.5.2", "pyftpdlib>=2.0", "pytest>=8.2.2", "ruff>=0.4.0", "twine>=5.1.1"]
+
+[build-system]
+requires = ["uv_build>=0.12.3,<0.13.0"]
+build-backend = "uv_build"
 
 [tool.ruff]
 exclude = [".eggs", ".git", ".pyenv", ".ruff_cache", "build", "dist", "venv"]
@@ -48,12 +43,15 @@ line-ending = "auto"
 select = ["E4", "E7", "E9", "F"]
 # The following ignores should be removed when the following issues are fixed:
 ignore = [
-  "E402", # Module level import not at top of file
-  "E722", # Do not use bare 'except'
-  "E741", # Ambiguous variable name 'l'
-  "F403", # 'from module import *' used; unable to detect undefined names
-  "F821" # Undefined name
+  "E402",  # Module level import not at top of file
+  "E722",  # Do not use bare 'except'
+  "E741",  # Ambiguous variable name 'l'
+  "F403",  # 'from module import *' used; unable to detect undefined names
+  "F821"  # Undefined name
 ]
 fixable = ["ALL"]
 unfixable = []
 dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.uv.build-backend]
+module-name = "metalink"

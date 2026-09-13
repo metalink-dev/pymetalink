@@ -35,7 +35,7 @@
 
 import io as StringIO
 import urllib.request as urllib2
-import email as rfc822
+import email.utils as rfc822
 
 import calendar
 

@@ -96,9 +96,11 @@ except ImportError:
 
 # Deprecated since Python version 3.6
 # OpenSSL has deprecated all version specific protocols.
-SSL_ANYTHING = ssl.SSLContext(ssl.PROTOCOL_TLS)  # previously, ssl.PROTOCOL_SSLv23
+SSL_ANYTHING = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+SSL_ANYTHING.check_hostname = False
+SSL_ANYTHING.verify_mode = ssl.CERT_NONE
 SSL_DEFAULT = ssl.create_default_context()
-SSL_HIGH = ssl.SSLContext(ssl.PROTOCOL_TLS)  # previously, ssl.PROTOCOL_TLSv1_2
+SSL_HIGH = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 SSL_HIGH.verify_mode = ssl.CERT_REQUIRED
 SSL_HIGH.verify_flags = ssl.VERIFY_CRL_CHECK_CHAIN
 SSL_HIGH.set_ciphers(
@@ -121,7 +123,7 @@ LANG = []
 OS = None
 COUNTRY = None
 
-lang = locale.getdefaultlocale()[0]
+lang = locale.getlocale()[0]
 if lang is None:
     lang = "LC_ALL"
 lang = lang.replace("_", "-").lower()
@@ -165,7 +167,7 @@ def translate() -> Callable[[str], str]:
         base = temp[-1]
         localedir = os.path.join("/".join(["%s" % k for k in temp[:-1]]), "locale")
 
-    locale_lang = locale.getdefaultlocale()[0]
+    locale_lang = locale.getlocale()[0]
     if locale_lang is None:
         locale_lang = "en"  # Fallback to "en" if no system locale is found
 
@@ -212,7 +214,8 @@ def urlopen(url, data=None, metalink_header=False, headers={}):
     req.add_header("User-agent", USER_AGENT)
     if UUID:
         req.add_header(
-            "Authorization", "Basic " + base64.encodestring("%s:" % UUID).strip()
+            "Authorization",
+            "Basic " + base64.b64encode(("%s:" % UUID).encode()).decode(),
         )
     req.add_header("Cache-Control", "no-cache")
     req.add_header("Pragma", "no-cache")
@@ -241,7 +244,8 @@ def urlhead(url, metalink_header=False, headers={}):
     req.add_header("User-agent", USER_AGENT)
     if UUID:
         req.add_header(
-            "Authorization", "Basic " + base64.encodestring("%s:" % UUID).strip()
+            "Authorization",
+            "Basic " + base64.b64encode(("%s:" % UUID).encode()).decode(),
         )
     req.add_header("Cache-Control", "no-cache")
     req.add_header("Pragma", "no-cache")
@@ -765,14 +769,14 @@ def parse_metalink(src, headers=None, nocheck=False, ver=3):
                 try:
                     if (
                         mydict["rel"] == '"describedby"'
-                        and type == "application/metalink4+xml"
+                        and type_str == "application/metalink4+xml"
                     ):
                         # TODO support metalink describedby type
                         # file_obj.add_url(parts[0].strip(" <>"), preference=pri)
                         pass
                     elif (
                         mydict["rel"] == '"describedby"'
-                        and type == "application/pgp-signature"
+                        and type_str == "application/pgp-signature"
                     ):
                         # support openpgp describedby type
                         fp = urlopen(parts[0].strip(" <>"), headers={"referer": src})
@@ -1966,7 +1970,7 @@ class Ftp_Host(Host_Base):
                 port = ftplib.FTP_PORT
 
             self.conn = proxy.FTP()
-            self.conn.connect(url_parts[1], port)
+            self.conn.connect(url_parts.hostname, port)
             try:
                 self.conn.login(username, password)
             except:
@@ -2009,7 +2013,7 @@ class Http_Host(Host_Base):
             if port is None:
                 port = http.client.HTTP_PORT
             try:
-                self.conn = proxy.HTTPConnection(url_parts[1], port)
+                self.conn = proxy.HTTPConnection(url_parts.hostname, port)
             except http.client.InvalidURL:
                 self.error = _("invalid url")
                 return
@@ -2021,7 +2025,7 @@ class Http_Host(Host_Base):
             if port is None:
                 port = http.client.HTTPS_PORT
             try:
-                self.conn = proxy.HTTPSConnection(url_parts[1], port)
+                self.conn = proxy.HTTPSConnection(url_parts.hostname, port)
             except http.client.InvalidURL:
                 self.error = _("invalid url")
                 return
