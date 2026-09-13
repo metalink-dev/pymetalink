@@ -1970,7 +1970,7 @@ class Ftp_Host(Host_Base):
                 port = ftplib.FTP_PORT
 
             self.conn = proxy.FTP()
-            self.conn.connect(url_parts[1], port)
+            self.conn.connect(url_parts.hostname, port)
             try:
                 self.conn.login(username, password)
             except:
@@ -2013,7 +2013,7 @@ class Http_Host(Host_Base):
             if port is None:
                 port = http.client.HTTP_PORT
             try:
-                self.conn = proxy.HTTPConnection(url_parts[1], port)
+                self.conn = proxy.HTTPConnection(url_parts.hostname, port)
             except http.client.InvalidURL:
                 self.error = _("invalid url")
                 return
@@ -2025,7 +2025,7 @@ class Http_Host(Host_Base):
             if port is None:
                 port = http.client.HTTPS_PORT
             try:
-                self.conn = proxy.HTTPSConnection(url_parts[1], port)
+                self.conn = proxy.HTTPSConnection(url_parts.hostname, port)
             except http.client.InvalidURL:
                 self.error = _("invalid url")
                 return

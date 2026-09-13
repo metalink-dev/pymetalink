@@ -41,35 +41,14 @@
 
 import hashlib
 import os
+import re
 import tempfile
 
 import pytest
 
 from metalink import console
 
-TIMEOUT = 600
-SUBDIR = "subdir"
-
 TESTS_FOLDER = os.path.dirname(__file__)
-
-
-FILELIST = [
-    {
-        "filename": "curl-7.46.0.tar.bz2",
-        "size": 3494481,
-        "checksums": {"sha1": "96fbe5abe8ecfb923e4ab0a579b3d6be43ef0e96"},
-    },
-    {
-        "filename": "curl-7.46.0.tar.bz2.1",
-        "size": 3494481,
-        "checksums": {"sha1": "96fbe5abe8ecfb923e4ab0a579b3d6be43ef0e96"},
-    },
-    {
-        "filename": "curl-7.46.0.tar.bz2.2",
-        "size": 3494481,
-        "checksums": {"sha1": "96fbe5abe8ecfb923e4ab0a579b3d6be43ef0e96"},
-    },
-]
 
 
 @pytest.fixture
@@ -79,125 +58,108 @@ def outdir():
         yield tmpdir
 
 
-def test_1_create_subdir(outdir):
-    run_test("1_create_subdir.meta4", outdir)
+@pytest.fixture
+def run_meta4(outdir, payload, http_server, ftp_server):
+    """Run a ``.meta4`` fixture against the loopback test servers.
 
+    The fixture files use ``HTTPPORT``/``FTPPORT`` placeholders which are
+    replaced with the ports of the servers started for the test session.
+    """
 
-def test_1_empty_size(outdir):
-    run_test("1_empty_size.meta4", outdir)
+    def _run(filename, expect_failure=False):
+        source = os.path.join(TESTS_FOLDER, filename)
+        with open(source, encoding="utf-8") as handle:
+            text = handle.read()
 
+        text = text.replace("HTTPPORT", str(http_server.server_address[1]))
+        text = text.replace("FTPPORT", str(ftp_server.socket.getsockname()[1]))
 
-def test_1_fail_bad_directory_and_network_errors(outdir):
-    run_test("1_fail_bad_directory_and_network_errors.meta4", outdir)
+        meta4 = os.path.join(outdir, filename)
+        with open(meta4, "w", encoding="utf-8") as handle:
+            handle.write(text)
 
+        old_wd = os.getcwd()
+        retcode = -1
+        try:
+            os.chdir(outdir)
+            retcode = console.run([meta4])
+        finally:
+            os.chdir(old_wd)
 
-def test_1_http_redirect(outdir):
-    run_test("1_http_redirect.meta4", outdir)
+        if expect_failure:
+            assert retcode != 0, "Expected a non-zero return code."
+            return
 
-
-def test_1_metalink_one_file(outdir):
-    run_test("1_metalink_one_file.meta4", outdir)
-
-
-def test_1_metalink_three_files(outdir):
-    run_test("1_metalink_three_files.meta4", outdir)
-
-
-def test_1_no_checksums(outdir):
-    run_test("1_no_checksums.meta4", outdir)
-
-
-def test_1_only_ftp_and_http(outdir):
-    run_test("1_only_ftp_and_http.meta4", outdir)
-
-
-def test_2_fail_metalink_one_file_bad_main_md5(outdir):
-    run_test("2_fail_metalink_one_file_bad_main_md5.meta4", outdir)
-
-
-def test_2_only_ftp(outdir):
-    run_test("2_only_ftp.meta4", outdir)
-
-
-def test_2_only_http(outdir):
-    run_test("2_only_http.meta4", outdir)
-
-
-def test_3_fail_bad_only_advanced_checksums(outdir):
-    run_test("3_fail_bad_only_advanced_checksums.meta4", outdir)
-
-
-def test_3_metalink_bad_piece1and2(outdir):
-    run_test("3_metalink_bad_piece1and2.meta4", outdir)
-
-
-def test_3_metalink_bad_piece2(outdir):
-    run_test("3_metalink_bad_piece2.meta4", outdir)
-
-
-def test_3_only_advanced_checksums(outdir):
-    run_test("3_only_advanced_checksums.meta4", outdir)
-
-
-def test_4_empty_size_only_p2p(outdir):
-    run_test("4_empty_size_only_p2p.meta4", outdir)
-
-
-def test_4_fail_metalink_bad_piece1and2_only_p2p(outdir):
-    run_test("4_fail_metalink_bad_piece1and2_only_p2p.meta4", outdir)
-
-
-def test_4_fail_metalink_bad_piece2_only_p2p(outdir):
-    run_test("4_fail_metalink_bad_piece2_only_p2p.meta4", outdir)
-
-
-def test_4_fail_metalink_one_file_bad_main_md5_only_p2p(outdir):
-    run_test("4_fail_metalink_one_file_bad_main_md5_only_p2p.meta4", outdir)
-
-
-def test_4_no_checksums_only_p2p(outdir):
-    run_test("4_no_checksums_only_p2p.meta4", outdir)
-
-
-def test_4_only_p2p(outdir):
-    run_test("4_only_p2p.meta4", outdir)
-
-
-def run_test(filename, outdir):
-    subdir = "."
-    if filename.find("subdir") != -1:
-        subdir = SUBDIR
-
-    old_wd = os.getcwd()
-    retcode = -1
-    try:
-        os.chdir(outdir)
-        retcode = console.run([os.path.join(TESTS_FOLDER, filename)])
-    finally:
-        os.chdir(old_wd)
-
-    if filename.find("fail") == -1:
         assert retcode == 0, "Expected return code of zero."
-    else:
-        assert retcode != 0, "Expected non zero return code."
-        return True
+        for name in re.findall(r'<file name="([^"]+)"', text):
+            path = os.path.join(outdir, name)
+            assert os.access(path, os.F_OK), "File does not exist %s." % path
+            assert os.stat(path).st_size == payload["size"], "Wrong file size."
+            assert filehash(path, hashlib.sha1()) == payload["sha1"], (
+                "Bad file checksum."
+            )
 
-    checklist = [0]
-    if filename.find("three") != -1:
-        checklist = [0, 1, 2]
-    elif filename.startswith("4"):
-        checklist = [3]
+    return _run
 
-    for checkindex in checklist:
-        temp = FILELIST[checkindex]
-        tempname = os.path.join(outdir, subdir, temp["filename"])
-        assert os.access(tempname, os.F_OK), "File does not exist %s." % tempname
-        assert os.stat(tempname).st_size == temp["size"], "Wrong file size."
-        assert filehash(tempname, hashlib.sha1()) == temp["checksums"]["sha1"], (
-            "Bad file checksum."
-        )
 
-    return True
+def test_1_create_subdir(run_meta4):
+    run_meta4("1_create_subdir.meta4")
+
+
+def test_1_empty_size(run_meta4):
+    run_meta4("1_empty_size.meta4")
+
+
+def test_1_fail_bad_directory_and_network_errors(run_meta4):
+    run_meta4("1_fail_bad_directory_and_network_errors.meta4", expect_failure=True)
+
+
+def test_1_http_redirect(run_meta4):
+    run_meta4("1_http_redirect.meta4")
+
+
+def test_1_metalink_one_file(run_meta4):
+    run_meta4("1_metalink_one_file.meta4")
+
+
+def test_1_metalink_three_files(run_meta4):
+    run_meta4("1_metalink_three_files.meta4")
+
+
+def test_1_no_checksums(run_meta4):
+    run_meta4("1_no_checksums.meta4")
+
+
+def test_1_only_ftp_and_http(run_meta4):
+    run_meta4("1_only_ftp_and_http.meta4")
+
+
+def test_2_fail_metalink_one_file_bad_main_md5(run_meta4):
+    run_meta4("2_fail_metalink_one_file_bad_main_md5.meta4", expect_failure=True)
+
+
+def test_2_only_ftp(run_meta4):
+    run_meta4("2_only_ftp.meta4")
+
+
+def test_2_only_http(run_meta4):
+    run_meta4("2_only_http.meta4")
+
+
+def test_3_fail_bad_only_advanced_checksums(run_meta4):
+    run_meta4("3_fail_bad_only_advanced_checksums.meta4", expect_failure=True)
+
+
+def test_3_metalink_bad_piece1and2(run_meta4):
+    run_meta4("3_metalink_bad_piece1and2.meta4")
+
+
+def test_3_metalink_bad_piece2(run_meta4):
+    run_meta4("3_metalink_bad_piece2.meta4")
+
+
+def test_3_only_advanced_checksums(run_meta4):
+    run_meta4("3_only_advanced_checksums.meta4")
 
 
 def filehash(thisfile, filesha):

@@ -40,6 +40,7 @@ Unreleased
 - Consolidated pre-commit configuration into `prek.toml` (dropped pyupgrade)
 - Added Python 3.13/3.14 support and replaced APIs removed from the standard library
 - Rewrote the console tests to use a `tempfile`-backed pytest fixture instead of hard-coded `/tmp`
+- Console tests now run against local HTTP/FTP loopback servers instead of external mirrors
 
 Version 6.5.2
 -------------
