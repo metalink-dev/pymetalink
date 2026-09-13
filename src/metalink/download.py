@@ -765,14 +765,14 @@ def parse_metalink(src, headers=None, nocheck=False, ver=3):
                 try:
                     if (
                         mydict["rel"] == '"describedby"'
-                        and type == "application/metalink4+xml"
+                        and type_str == "application/metalink4+xml"
                     ):
                         # TODO support metalink describedby type
                         # file_obj.add_url(parts[0].strip(" <>"), preference=pri)
                         pass
                     elif (
                         mydict["rel"] == '"describedby"'
-                        and type == "application/pgp-signature"
+                        and type_str == "application/pgp-signature"
                     ):
                         # support openpgp describedby type
                         fp = urlopen(parts[0].strip(" <>"), headers={"referer": src})

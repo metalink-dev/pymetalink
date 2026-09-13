@@ -35,7 +35,7 @@
 #   Command line application that tests metalink clients.  Requires Python 2.5
 # or newer.
 #
-# Instructions: poetry run pytest
+# Instructions: uv run pytest
 #
 ########################################################################
 
@@ -186,9 +186,9 @@ def run_test(filename):
         tempname = os.path.join(OUTDIR, subdir, temp["filename"])
         assert os.access(tempname, os.F_OK), "File does not exist %s." % tempname
         assert os.stat(tempname).st_size == temp["size"], "Wrong file size."
-        assert (
-            filehash(tempname, hashlib.sha1()) == temp["checksums"]["sha1"]
-        ), "Bad file checksum."
+        assert filehash(tempname, hashlib.sha1()) == temp["checksums"]["sha1"], (
+            "Bad file checksum."
+        )
 
     return True
 

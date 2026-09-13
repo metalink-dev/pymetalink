@@ -34,6 +34,11 @@ files = metalink.download.get("file.metalink", os.getcwd())
 
 CHANGELOG:
 
+Unreleased
+----------
+- Migrated packaging and dependency management from Poetry to uv
+- Consolidated pre-commit configuration into `prek.toml` (dropped pyupgrade)
+
 Version 6.5.2
 -------------
 - Removed poetry-version-plugin
