@@ -1,6 +1,6 @@
 [[repos]]
 repo = "https://github.com/astral-sh/ruff-pre-commit"
-rev = "v0.16.3"
+rev = "v0.16.7"
 hooks = [{ id = "ruff-check", args = ["--fix"] }, { id = "ruff-format" }]
 
 [[repos]]
@@ -16,12 +16,12 @@ hooks = [
 
 [[repos]]
 repo = "https://github.com/python-jsonschema/check-jsonschema"
-rev = "0.28.2"
+rev = "0.38.0"
 hooks = [{ id = "check-github-workflows" }]
 
 [[repos]]
 repo = "https://github.com/astral-sh/ty-pre-commit"
-rev = "v0.0.73" # ty version.
+rev = "v0.0.80" # ty version.
 hooks = [
   { id = "ty" },
 ]

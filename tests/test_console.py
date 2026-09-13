@@ -39,14 +39,14 @@
 #
 ########################################################################
 
-import os
 import hashlib
-import shutil
+import os
+import tempfile
+
 import pytest
 
 from metalink import console
 
-OUTDIR = "/tmp"
 TIMEOUT = 600
 SUBDIR = "subdir"
 
@@ -72,91 +72,98 @@ FILELIST = [
 ]
 
 
-def test_1_create_subdir():
-    run_test("1_create_subdir.meta4")
+@pytest.fixture
+def outdir():
+    """Provide a temporary download directory that is cleaned up afterwards."""
+    with tempfile.TemporaryDirectory(prefix="pymetalink-") as tmpdir:
+        yield tmpdir
 
 
-def test_1_empty_size():
-    run_test("1_empty_size.meta4")
+def test_1_create_subdir(outdir):
+    run_test("1_create_subdir.meta4", outdir)
 
 
-def test_1_fail_bad_directory_and_network_errors():
-    run_test("1_fail_bad_directory_and_network_errors.meta4")
+def test_1_empty_size(outdir):
+    run_test("1_empty_size.meta4", outdir)
 
 
-def test_1_http_redirect():
-    run_test("1_http_redirect.meta4")
+def test_1_fail_bad_directory_and_network_errors(outdir):
+    run_test("1_fail_bad_directory_and_network_errors.meta4", outdir)
 
 
-def test_1_metalink_one_file():
-    run_test("1_metalink_one_file.meta4")
+def test_1_http_redirect(outdir):
+    run_test("1_http_redirect.meta4", outdir)
 
 
-def test_1_metalink_three_files():
-    run_test("1_metalink_three_files.meta4")
+def test_1_metalink_one_file(outdir):
+    run_test("1_metalink_one_file.meta4", outdir)
 
 
-def test_1_no_checksums():
-    run_test("1_no_checksums.meta4")
+def test_1_metalink_three_files(outdir):
+    run_test("1_metalink_three_files.meta4", outdir)
 
 
-def test_1_only_ftp_and_http():
-    run_test("1_only_ftp_and_http.meta4")
+def test_1_no_checksums(outdir):
+    run_test("1_no_checksums.meta4", outdir)
 
 
-def test_2_fail_metalink_one_file_bad_main_md5():
-    run_test("2_fail_metalink_one_file_bad_main_md5.meta4")
+def test_1_only_ftp_and_http(outdir):
+    run_test("1_only_ftp_and_http.meta4", outdir)
 
 
-def test_2_only_ftp():
-    run_test("2_only_ftp.meta4")
+def test_2_fail_metalink_one_file_bad_main_md5(outdir):
+    run_test("2_fail_metalink_one_file_bad_main_md5.meta4", outdir)
 
 
-def test_2_only_http():
-    run_test("2_only_http.meta4")
+def test_2_only_ftp(outdir):
+    run_test("2_only_ftp.meta4", outdir)
 
 
-def test_3_fail_bad_only_advanced_checksums():
-    run_test("3_fail_bad_only_advanced_checksums.meta4")
+def test_2_only_http(outdir):
+    run_test("2_only_http.meta4", outdir)
 
 
-def test_3_metalink_bad_piece1and2():
-    run_test("3_metalink_bad_piece1and2.meta4")
+def test_3_fail_bad_only_advanced_checksums(outdir):
+    run_test("3_fail_bad_only_advanced_checksums.meta4", outdir)
 
 
-def test_3_metalink_bad_piece2():
-    run_test("3_metalink_bad_piece2.meta4")
+def test_3_metalink_bad_piece1and2(outdir):
+    run_test("3_metalink_bad_piece1and2.meta4", outdir)
 
 
-def test_3_only_advanced_checksums():
-    run_test("3_only_advanced_checksums.meta4")
+def test_3_metalink_bad_piece2(outdir):
+    run_test("3_metalink_bad_piece2.meta4", outdir)
 
 
-def test_4_empty_size_only_p2p():
-    run_test("4_empty_size_only_p2p.meta4")
+def test_3_only_advanced_checksums(outdir):
+    run_test("3_only_advanced_checksums.meta4", outdir)
 
 
-def test_4_fail_metalink_bad_piece1and2_only_p2p():
-    run_test("4_fail_metalink_bad_piece1and2_only_p2p.meta4")
+def test_4_empty_size_only_p2p(outdir):
+    run_test("4_empty_size_only_p2p.meta4", outdir)
 
 
-def test_4_fail_metalink_bad_piece2_only_p2p():
-    run_test("4_fail_metalink_bad_piece2_only_p2p.meta4")
+def test_4_fail_metalink_bad_piece1and2_only_p2p(outdir):
+    run_test("4_fail_metalink_bad_piece1and2_only_p2p.meta4", outdir)
 
 
-def test_4_fail_metalink_one_file_bad_main_md5_only_p2p():
-    run_test("4_fail_metalink_one_file_bad_main_md5_only_p2p.meta4")
+def test_4_fail_metalink_bad_piece2_only_p2p(outdir):
+    run_test("4_fail_metalink_bad_piece2_only_p2p.meta4", outdir)
 
 
-def test_4_no_checksums_only_p2p():
-    run_test("4_no_checksums_only_p2p.meta4")
+def test_4_fail_metalink_one_file_bad_main_md5_only_p2p(outdir):
+    run_test("4_fail_metalink_one_file_bad_main_md5_only_p2p.meta4", outdir)
 
 
-def test_4_only_p2p():
-    run_test("4_only_p2p.meta4")
+def test_4_no_checksums_only_p2p(outdir):
+    run_test("4_no_checksums_only_p2p.meta4", outdir)
 
 
-def run_test(filename):
+def test_4_only_p2p(outdir):
+    run_test("4_only_p2p.meta4", outdir)
+
+
+def run_test(filename, outdir):
     subdir = "."
     if filename.find("subdir") != -1:
         subdir = SUBDIR
@@ -164,7 +171,7 @@ def run_test(filename):
     old_wd = os.getcwd()
     retcode = -1
     try:
-        os.chdir(OUTDIR)
+        os.chdir(outdir)
         retcode = console.run([os.path.join(TESTS_FOLDER, filename)])
     finally:
         os.chdir(old_wd)
@@ -183,7 +190,7 @@ def run_test(filename):
 
     for checkindex in checklist:
         temp = FILELIST[checkindex]
-        tempname = os.path.join(OUTDIR, subdir, temp["filename"])
+        tempname = os.path.join(outdir, subdir, temp["filename"])
         assert os.access(tempname, os.F_OK), "File does not exist %s." % tempname
         assert os.stat(tempname).st_size == temp["size"], "Wrong file size."
         assert filehash(tempname, hashlib.sha1()) == temp["checksums"]["sha1"], (
@@ -191,21 +198,6 @@ def run_test(filename):
         )
 
     return True
-
-
-@pytest.fixture(autouse=True, scope="session")
-def clean():
-    print("Running cleanup...")
-    for fileitem in FILELIST:
-        try:
-            os.remove(os.path.join(OUTDIR, fileitem["filename"]))
-        except:
-            pass
-        try:
-            os.remove(os.path.join(OUTDIR, SUBDIR, fileitem["filename"]))
-        except:
-            pass
-        shutil.rmtree(os.path.join(OUTDIR, SUBDIR), True)
 
 
 def filehash(thisfile, filesha):

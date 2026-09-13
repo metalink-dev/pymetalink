@@ -96,9 +96,11 @@ except ImportError:
 
 # Deprecated since Python version 3.6
 # OpenSSL has deprecated all version specific protocols.
-SSL_ANYTHING = ssl.SSLContext(ssl.PROTOCOL_TLS)  # previously, ssl.PROTOCOL_SSLv23
+SSL_ANYTHING = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+SSL_ANYTHING.check_hostname = False
+SSL_ANYTHING.verify_mode = ssl.CERT_NONE
 SSL_DEFAULT = ssl.create_default_context()
-SSL_HIGH = ssl.SSLContext(ssl.PROTOCOL_TLS)  # previously, ssl.PROTOCOL_TLSv1_2
+SSL_HIGH = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
 SSL_HIGH.verify_mode = ssl.CERT_REQUIRED
 SSL_HIGH.verify_flags = ssl.VERIFY_CRL_CHECK_CHAIN
 SSL_HIGH.set_ciphers(
@@ -121,7 +123,7 @@ LANG = []
 OS = None
 COUNTRY = None
 
-lang = locale.getdefaultlocale()[0]
+lang = locale.getlocale()[0]
 if lang is None:
     lang = "LC_ALL"
 lang = lang.replace("_", "-").lower()
@@ -165,7 +167,7 @@ def translate() -> Callable[[str], str]:
         base = temp[-1]
         localedir = os.path.join("/".join(["%s" % k for k in temp[:-1]]), "locale")
 
-    locale_lang = locale.getdefaultlocale()[0]
+    locale_lang = locale.getlocale()[0]
     if locale_lang is None:
         locale_lang = "en"  # Fallback to "en" if no system locale is found
 
@@ -212,7 +214,8 @@ def urlopen(url, data=None, metalink_header=False, headers={}):
     req.add_header("User-agent", USER_AGENT)
     if UUID:
         req.add_header(
-            "Authorization", "Basic " + base64.encodestring("%s:" % UUID).strip()
+            "Authorization",
+            "Basic " + base64.b64encode(("%s:" % UUID).encode()).decode(),
         )
     req.add_header("Cache-Control", "no-cache")
     req.add_header("Pragma", "no-cache")
@@ -241,7 +244,8 @@ def urlhead(url, metalink_header=False, headers={}):
     req.add_header("User-agent", USER_AGENT)
     if UUID:
         req.add_header(
-            "Authorization", "Basic " + base64.encodestring("%s:" % UUID).strip()
+            "Authorization",
+            "Basic " + base64.b64encode(("%s:" % UUID).encode()).decode(),
         )
     req.add_header("Cache-Control", "no-cache")
     req.add_header("Pragma", "no-cache")

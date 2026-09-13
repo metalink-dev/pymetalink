@@ -61,8 +61,12 @@ import sys
 import urllib
 import urllib.parse
 import urllib.request
-import winreg
 from typing import Callable
+
+if platform.system() == "Windows":
+    import winreg
+else:
+    winreg = None
 
 unicode = str
 # Configure proxies (user and password optional)
@@ -92,7 +96,7 @@ def translate() -> Callable[[str], str]:
         base = temp[-1]
         localedir = os.path.join("/".join(["%s" % k for k in temp[:-1]]), "locale")
 
-    locale_lang = locale.getdefaultlocale()[0]
+    locale_lang = locale.getlocale()[0]
     if locale_lang is None:
         locale_lang = "en"  # Fallback to "en" if no system locale is found
 
@@ -279,9 +283,11 @@ def getproxies():
 ########### PROXYING OBJECTS ########################
 
 
-class FancyURLopener(urllib.request.FancyURLopener):
-    def open(self, fullurl, data=None):
-        return urllib.request.urlopen(fullurl, data)
+if hasattr(urllib.request, "FancyURLopener"):
+
+    class FancyURLopener(urllib.request.FancyURLopener):
+        def open(self, fullurl, data=None):
+            return urllib.request.urlopen(fullurl, data)
 
 
 class FTP(ftplib.FTP):
@@ -311,7 +317,9 @@ class FTP(ftplib.FTP):
             if url.username is not None:
                 self.headers["Proxy-authorization"] = (
                     "Basic "
-                    + base64.encodestring(url.username + ":" + url.password)
+                    + base64.b64encode(
+                        (url.username + ":" + url.password).encode()
+                    ).decode()
                     + "\r\n"
                 )
 
